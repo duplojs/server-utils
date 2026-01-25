@@ -7,7 +7,6 @@ export default defineConfig({
 		globals: true,
 		include: [
 			"tests/**/*.test.ts",
-			"integration/**/*.test.ts",
 		],
 		coverage: {
 			provider: "istanbul",
@@ -19,6 +18,7 @@ export default defineConfig({
 				"bin", 
 				"dist",
 				"docs",
+				"scripts/implementor.ts"
 			],
 			thresholds: {
 				lines: 100,
@@ -30,7 +30,6 @@ export default defineConfig({
 		benchmark: {
 			include: [
 				"tests/**/*.bench.ts",
-				"integration/**/*.bench.ts",
 			]
 		}
 	},

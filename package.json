@@ -17,6 +17,9 @@
     "test:tu:bench": "vitest bench",
     "test:tu:watch": "vitest --coverage --watch",
     "test:tu:update": "vitest --coverage --update",
+    "test:integration:node": "vitest --config integration/node/vitest.config.js",
+    "test:integration:bun": "bun test integration/bun",
+    "test:integration:deno": "deno test -c integration/deno/deno.json integration/deno",
     "test:types": "tsc -p tsconfig.test.json",
     "test:lint": "eslint",
     "test:lint:fix": "eslint --fix",
@@ -28,6 +31,16 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
+    },
+    "./file": {
+      "import": "./dist/file/index.mjs",
+      "require": "./dist/file/index.cjs",
+      "types": "./dist/file/index.d.ts"
+    },
+    "./common": {
+      "import": "./dist/common/index.mjs",
+      "require": "./dist/common/index.cjs",
+      "types": "./dist/common/index.d.ts"
     }
   },
   "files": [
@@ -56,8 +69,8 @@
     "vitest": "3.2.4",
     "@duplojs/dev-tools": "0.2.0"
   },
-  "dependencies": {
-    "@duplojs/utils": "1.3.30"
+  "peerDependencies": {
+    "@duplojs/utils": "1.4.44"
   },
   "workspaces": [
     "integration", 
@@ -66,7 +79,8 @@
   "keywords": [
     "duplojs",
     "server-utils",
-    "terminal"
+    "file",
+    "fileSystem"
   ],
   "engines": {
     "node": ">=22.15.1"
