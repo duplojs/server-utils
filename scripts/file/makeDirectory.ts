@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 interface MakeDirectoryParams {
 	recursive?: boolean;
@@ -12,7 +13,7 @@ declare module "@scripts/implementor" {
 		>(
 			path: GenericPath,
 			params?: MakeDirectoryParams
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -31,7 +32,7 @@ export const makeDirectory = implementFunction(
 				},
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path, params) => Deno.mkdir(
 			path,
@@ -40,6 +41,6 @@ export const makeDirectory = implementFunction(
 			},
 		)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

@@ -1,3 +1,8 @@
+/**
+ * {@include file/index.md}
+ */
+export * from "./types";
+
 export * from "./readFile";
 export * from "./readTextFile";
 export * from "./writeFile";

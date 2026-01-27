@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
@@ -8,7 +9,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string | URL = string | URL,
 		>(
 			path: GenericPath,
-		): Promise<E.EitherFail | E.EitherSuccess<GenericOutput>>;
+		): Promise<FileSystemLeft | E.Success<GenericOutput>>;
 	}
 }
 
@@ -23,18 +24,18 @@ export const readJsonFile = implementFunction(
 			return fs.readFile(path, { encoding: "utf-8" })
 				.then(JSON.parse)
 				.then(E.success)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 
 		DENO: (path) => Deno.readTextFile(path)
 			.then(JSON.parse)
 			.then(E.success)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 
 		BUN: (path) => Bun.file(path)
 			.text()
 			.then(JSON.parse)
 			.then(E.success)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

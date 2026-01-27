@@ -1,6 +1,7 @@
 import { D, E, innerPipe } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { Stats } from "node:fs";
+import type { FileSystemLeft } from "./types";
 
 export interface StatInfo {
 
@@ -48,7 +49,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string | URL,
 		>(
 			path: GenericPath,
-		): Promise<E.EitherFail | E.EitherSuccess<StatInfo>>;
+		): Promise<FileSystemLeft | E.Success<StatInfo>>;
 	}
 }
 
@@ -131,7 +132,7 @@ export const stat = implementFunction(
 						E.success,
 					),
 				)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path) => Deno
 			.stat(path)
@@ -141,7 +142,7 @@ export const stat = implementFunction(
 					E.success,
 				),
 			)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 		BUN: (path) => Bun.file(path)
 			.stat()
 			.then(
@@ -150,6 +151,6 @@ export const stat = implementFunction(
 					E.success,
 				),
 			)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

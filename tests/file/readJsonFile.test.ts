@@ -34,6 +34,17 @@ describe("readJsonFile", () => {
 		expect(E.isLeft(result)).toBe(true);
 	});
 
+	it("returns fail when DENO JSON parse throws", async() => {
+		setEnvironment("DENO");
+		setDenoMock({
+			readTextFile: vi.fn().mockResolvedValue("{bad"),
+		});
+
+		const result = await DServerFile.readJsonFile("/tmp/mock.json");
+
+		expect(E.isLeft(result)).toBe(true);
+	});
+
 	it("reads json file in DENO env", async() => {
 		setEnvironment("DENO");
 		setDenoMock({

@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 interface SetOwnerParams {
 	userId: number;
@@ -11,7 +12,7 @@ declare module "@scripts/implementor" {
 		setOwner(
 			path: string | URL,
 			params: SetOwnerParams,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -25,11 +26,11 @@ export const setOwner = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.chown(path, userId, groupId)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path, { userId, groupId }) => Deno
 			.chown(path, userId, groupId)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

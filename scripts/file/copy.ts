@@ -1,12 +1,13 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		copy(
 			fromPath: string | URL,
 			toPath: string | URL,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -24,7 +25,7 @@ export const copy = implementFunction(
 				{ recursive: true },
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 	},
 );

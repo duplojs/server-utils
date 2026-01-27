@@ -3,6 +3,7 @@ import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import { type FileInterface, createFileInterface } from "./fileInterface";
 import { type FolderInterface, createFolderInterface } from "./folderInterface";
 import { createUnknownInterface, type UnknownInterface } from "./unknownInterface";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
@@ -11,8 +12,8 @@ declare module "@scripts/implementor" {
 		>(
 			path: GenericPath,
 		): Promise<
-			E.EitherFail
-			| E.EitherSuccess<
+			FileSystemLeft
+			| E.Success<
 				Generator<FileInterface | FolderInterface | UnknownInterface>
 			>>;
 	}
@@ -60,7 +61,7 @@ export const walkDirectory = implementFunction(
 						E.success,
 					),
 				)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 	},
 );

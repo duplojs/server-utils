@@ -1,6 +1,6 @@
 import { SF } from "@scripts";
 
 const result = await SF.symlink("/tmp/target", "/tmp/link");
-// result: EitherOk | EitherFail
+// result: E.Ok | SF.FileSystemLeft
 
 await SF.symlink("/tmp/target", "/tmp/link-file", { type: "file" });

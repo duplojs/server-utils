@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 interface RemoveDirectoryParams {
 	recursive?: boolean;
@@ -12,7 +13,7 @@ declare module "@scripts/implementor" {
 		>(
 			path: GenericPath,
 			params?: RemoveDirectoryParams
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -27,12 +28,12 @@ export const remove = implementFunction(
 			return fs.rm(
 				path,
 				{
-					recursive: params?.recursive,
+					recursive: params?.recursive ?? false,
 					force: true,
 				},
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path, params) => Deno.remove(
 			path,
@@ -41,6 +42,6 @@ export const remove = implementFunction(
 			},
 		)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

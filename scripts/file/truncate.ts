@@ -1,5 +1,6 @@
 import { E, instanceOf, pipe, when } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
@@ -8,7 +9,7 @@ declare module "@scripts/implementor" {
 		>(
 			path: GenericPath,
 			size?: number,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -22,7 +23,7 @@ export const truncate = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.truncate(path, size)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path: string | URL, size) => pipe(
 			path,
@@ -33,7 +34,7 @@ export const truncate = implementFunction(
 			(stringPath) => Deno
 				.truncate(stringPath, size)
 				.then(E.ok)
-				.catch(E.fail),
+				.catch((value) => E.left("file-system", value)),
 		),
 	},
 );

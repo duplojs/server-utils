@@ -2,7 +2,7 @@ import { asyncPipe } from "@duplojs/utils";
 import { SF } from "@scripts";
 
 const result = await SF.appendTextFile("/tmp/log.txt", "line\n");
-// result: EitherOk | EitherFail
+// result: E.Ok | SF.FileSystemLeft
 
 await SF.appendTextFile("/tmp/log.txt", "second line\n");
 

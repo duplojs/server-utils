@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 interface ReadDirectoryParams {
 	recursive?: true;
@@ -12,7 +13,7 @@ declare module "@scripts/implementor" {
 		>(
 			path: GenericPath,
 			params?: ReadDirectoryParams,
-		): Promise<E.EitherFail | E.EitherSuccess<string[]>>;
+		): Promise<FileSystemLeft | E.Success<string[]>>;
 	}
 }
 
@@ -27,7 +28,7 @@ export const readDirectory = implementFunction(
 
 			return fs.readdir(path, { recursive: params?.recursive })
 				.then(E.success)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 	},
 );

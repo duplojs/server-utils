@@ -17,9 +17,8 @@
     "test:tu:bench": "vitest bench",
     "test:tu:watch": "vitest --coverage --watch",
     "test:tu:update": "vitest --coverage --update",
-    "test:integration:node": "vitest --config integration/node/vitest.config.js",
     "test:integration:bun": "bun test integration/bun",
-    "test:integration:deno": "deno test -c integration/deno/deno.json integration/deno",
+    "test:integration:deno": "deno test -P -c integration/deno/deno.json integration/deno",
     "test:types": "tsc -p tsconfig.test.json",
     "test:lint": "eslint",
     "test:lint:fix": "eslint --fix",
@@ -70,7 +69,7 @@
     "@duplojs/dev-tools": "0.2.0"
   },
   "peerDependencies": {
-    "@duplojs/utils": "1.4.44"
+    "@duplojs/utils": ">=1.4.45 <2.0.0"
   },
   "workspaces": [
     "integration", 

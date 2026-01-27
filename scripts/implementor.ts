@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 import { type AnyFunction, createEnum, createGlobalStore, type GetEnumValue, type MaybePromise } from "@duplojs/utils";
 
 export interface ServerUtilsFunction {}
@@ -80,6 +81,6 @@ function createImportCache<
 	return memo;
 }
 
-export const nodeFileSystem = createImportCache(() => import("node:fs/promises"));
-export const nodeCrypto = createImportCache(() => import("node:crypto"));
-export const nodeOs = createImportCache(() => import("node:os"));
+export const nodeFileSystem = createImportCache(() => import("node:fs/promises") as Promise<typeof import("node:fs/promises")>);
+export const nodeCrypto = createImportCache(() => import("node:crypto") as Promise<typeof import("node:crypto")>);
+export const nodeOs = createImportCache(() => import("node:os") as Promise<typeof import("node:os")>);

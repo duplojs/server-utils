@@ -6,6 +6,7 @@ import { exists } from "./exists";
 import { move } from "./move";
 import { remove } from "./remove";
 import { type StatInfo, stat } from "./stat";
+import type { FileSystemLeft } from "./types";
 
 const fileInterfaceKind = createDuplojsServerUtilsKind("fileInterface");
 const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
@@ -18,11 +19,11 @@ export interface FileInterface extends Kind<
 	mimeType: SupportedMimeType | null;
 	extension: SupportedExtensionFile | null;
 	getParentPath(): string;
-	rename(newName: string): Promise<E.EitherFail | E.EitherSuccess<FileInterface>>;
-	exist(): Promise<E.EitherFail | E.EitherOk>;
-	relocate(parentPath: string | URL): Promise<E.EitherFail | E.EitherSuccess<FileInterface>>;
-	remove(): Promise<E.EitherFail | E.EitherOk>;
-	stat(): Promise<E.EitherFail | E.EitherSuccess<StatInfo>>;
+	rename(newName: string): Promise<FileSystemLeft | E.Success<FileInterface>>;
+	exist(): Promise<FileSystemLeft | E.Ok>;
+	relocate(parentPath: string | URL): Promise<FileSystemLeft | E.Success<FileInterface>>;
+	remove(): Promise<FileSystemLeft | E.Ok>;
+	stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
 }
 
 /**

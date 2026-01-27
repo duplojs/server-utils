@@ -1,12 +1,13 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		writeTextFile(
 			path: string | URL,
 			data: string,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -24,7 +25,7 @@ export const writeTextFile = implementFunction(
 				{ encoding: "utf-8" },
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path, data) => Deno
 			.writeTextFile(
@@ -32,11 +33,11 @@ export const writeTextFile = implementFunction(
 				data,
 			)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 		BUN: (path, data) => Bun
 			.file(path)
 			.write(data)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

@@ -98,7 +98,7 @@ describe("fileInterface", () => {
 
 		expect(E.isRight(result)).toBe(true);
 		expect(fs.rm).toHaveBeenCalledWith("/tmp/example.json", {
-			recursive: undefined,
+			recursive: false,
 			force: true,
 		});
 	});

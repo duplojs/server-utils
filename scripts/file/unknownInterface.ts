@@ -2,6 +2,7 @@ import { A, instanceOf, isType, justReturn, pipe, S, when, type E, type Kind } f
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import { stat, type StatInfo } from "./stat";
 import { exists } from "./exists";
+import type { FileSystemLeft } from "./types";
 
 const unknownInterfaceKind = createDuplojsServerUtilsKind("unknownInterface");
 const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
@@ -12,8 +13,8 @@ export interface UnknownInterface extends Kind<
 	name: string;
 	path: string;
 	getParentPath(): string;
-	stat(): Promise<E.EitherFail | E.EitherSuccess<StatInfo>>;
-	exist(): Promise<E.EitherFail | E.EitherOk>;
+	stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
+	exist(): Promise<FileSystemLeft | E.Ok>;
 }
 
 /**

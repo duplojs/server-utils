@@ -1,6 +1,6 @@
 import { SF } from "@scripts";
 
 const resolved = await SF.realPath("/tmp/./file.txt");
-// resolved: EitherSuccess<string> | EitherFail
+// resolved: E.Success<string> | SF.FileSystemLeft
 
 const other = await SF.realPath("/tmp/../tmp/file.txt");

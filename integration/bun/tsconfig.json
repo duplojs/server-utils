@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.test.json",
   "compilerOptions": {
 	"baseUrl": "./",
-	"types": ["deno"]
+	"types": ["bun"]
   },
   "include": ["**/*.ts"],
 }

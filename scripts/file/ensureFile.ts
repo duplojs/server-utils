@@ -1,11 +1,12 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		ensureFile<
 			GenericPath extends string | URL,
-		>(path: GenericPath): Promise<E.EitherFail | E.EitherOk>;
+		>(path: GenericPath): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -21,7 +22,7 @@ export const ensureFile = implementFunction(
 			return fs.open(path, "a")
 				.then((fh) => fh.close())
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path: string | URL) => Deno.open(path, {
 			write: true,
@@ -30,6 +31,6 @@ export const ensureFile = implementFunction(
 		})
 			.then((fh) => void fh.close())
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

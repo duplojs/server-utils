@@ -1,6 +1,6 @@
 import { SF } from "@scripts";
 
 const tmpDir = await SF.makeTemporaryDirectory("tmp-");
-// tmpDir: EitherSuccess<string> | EitherFail
+// tmpDir: E.Success<string> | SF.FileSystemLeft
 
 const cacheDir = await SF.makeTemporaryDirectory("cache-");

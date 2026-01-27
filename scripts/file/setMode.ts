@@ -1,5 +1,6 @@
 import { E, isType } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 interface Permissions {
 	read?: boolean;
@@ -50,7 +51,7 @@ declare module "@scripts/implementor" {
 		setMode(
 			path: string | URL,
 			mode: SetMode,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -64,11 +65,11 @@ export const setMode = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.chmod(path, toMode(mode))
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path, mode) => Deno
 			.chmod(path, toMode(mode))
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

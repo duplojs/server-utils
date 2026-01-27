@@ -1,7 +1,7 @@
 import { SF } from "@scripts";
 
 const result = await SF.setMode("/tmp/file.txt", 0o644);
-// result: EitherOk | EitherFail
+// result: E.Ok | SF.FileSystemLeft
 
 await SF.setMode("/tmp/file.txt", {
 	user: {

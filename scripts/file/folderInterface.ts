@@ -9,6 +9,7 @@ import { stat, type StatInfo } from "./stat";
 import { walkDirectory } from "./walkDirectory";
 import type { FileInterface } from "./fileInterface";
 import type { UnknownInterface } from "./unknownInterface";
+import type { FileSystemLeft } from "./types";
 
 const folderInterfaceKind = createDuplojsServerUtilsKind("folderInterface");
 const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
@@ -19,13 +20,13 @@ export interface FolderInterface extends Kind<
 	name: string;
 	path: string;
 	getParentPath(): string;
-	rename(newName: string): Promise<E.EitherFail | E.EitherSuccess<FolderInterface>>;
-	exist(): Promise<E.EitherFail | E.EitherOk>;
-	relocate(parentPath: string | URL): Promise<E.EitherFail | E.EitherSuccess<FolderInterface>>;
-	remove(): Promise<E.EitherFail | E.EitherOk>;
-	getChildren(): Promise<E.EitherFail | E.EitherSuccess<string[]>>;
-	stat(): Promise<E.EitherFail | E.EitherSuccess<StatInfo>>;
-	walk(): Promise<E.EitherFail | E.EitherSuccess<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
+	rename(newName: string): Promise<FileSystemLeft | E.Success<FolderInterface>>;
+	exist(): Promise<FileSystemLeft | E.Ok>;
+	relocate(parentPath: string | URL): Promise<FileSystemLeft | E.Success<FolderInterface>>;
+	remove(): Promise<FileSystemLeft | E.Ok>;
+	getChildren(): Promise<FileSystemLeft | E.Success<string[]>>;
+	stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
+	walk(): Promise<FileSystemLeft | E.Success<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
 }
 
 /**

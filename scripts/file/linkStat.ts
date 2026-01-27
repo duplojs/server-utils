@@ -2,6 +2,7 @@ import { D, E, innerPipe } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { StatInfo } from "./stat";
 import type { Stats } from "node:fs";
+import type { FileSystemLeft } from "./types";
 
 function createStatInfoWithFsSource(source: Stats): StatInfo {
 	return {
@@ -73,7 +74,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string | URL,
 		>(
 			path: GenericPath,
-		): Promise<E.EitherFail | E.EitherSuccess<StatInfo>>;
+		): Promise<FileSystemLeft | E.Success<StatInfo>>;
 	}
 }
 
@@ -92,7 +93,7 @@ export const linkStat = implementFunction(
 						E.success,
 					),
 				)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path) => Deno
 			.lstat(path)
@@ -102,6 +103,6 @@ export const linkStat = implementFunction(
 					E.success,
 				),
 			)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

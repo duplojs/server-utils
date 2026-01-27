@@ -1,12 +1,13 @@
 import { A, E, instanceOf, pipe, S, when } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		rename(
 			path: string | URL,
 			newName: string,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -40,10 +41,10 @@ export const rename = implementFunction(
 					`${parentPathResult.groups[0]}/${newName}`,
 				)
 					.then(E.ok)
-					.catch(E.fail);
+					.catch((value) => E.left("file-system", value));
 			}
 
-			return E.fail();
+			return E.left("file-system", new Error("Invalid path"));
 		},
 		DENO: async(path, newName) => {
 			const parentPathResult = pipe(
@@ -65,10 +66,10 @@ export const rename = implementFunction(
 					`${parentPathResult.groups[0]}/${newName}`,
 				)
 					.then(E.ok)
-					.catch(E.fail);
+					.catch((value) => E.left("file-system", value));
 			}
 
-			return E.fail();
+			return E.left("file-system", new Error("Invalid path"));
 		},
 	},
 );

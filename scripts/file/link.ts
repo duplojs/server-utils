@@ -1,12 +1,13 @@
-import { E, instanceOf, O, pipe, when } from "@duplojs/utils";
+import { E, instanceOf } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		link(
 			existingPath: string | URL,
 			newPath: string | URL,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -23,7 +24,7 @@ export const link = implementFunction(
 				newPath,
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (existingPath, newPath) => Deno
 			.link(
@@ -35,6 +36,6 @@ export const link = implementFunction(
 					: newPath,
 			)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

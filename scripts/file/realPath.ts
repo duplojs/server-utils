@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
@@ -7,7 +8,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string | URL,
 		>(
 			path: GenericPath,
-		): Promise<E.EitherFail | E.EitherSuccess<string>>;
+		): Promise<FileSystemLeft | E.Success<string>>;
 	}
 }
 
@@ -21,11 +22,11 @@ export const realPath = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.realpath(path)
 				.then(E.success)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path) => Deno
 			.realPath(path)
 			.then(E.success)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

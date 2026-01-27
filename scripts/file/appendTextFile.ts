@@ -1,12 +1,13 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		appendTextFile(
 			path: string | URL,
 			data: string,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -23,7 +24,7 @@ export const appendTextFile = implementFunction(
 				data,
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path, data) => Deno.writeTextFile(
 			path,
@@ -31,6 +32,6 @@ export const appendTextFile = implementFunction(
 			{ append: true },
 		)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

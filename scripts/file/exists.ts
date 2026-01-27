@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
@@ -7,7 +8,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string | URL,
 		>(
 			path: GenericPath,
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -21,19 +22,19 @@ export const exists = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.access(path)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path) => Deno
 			.stat(path)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 		BUN: (path) => Bun.file(path)
 			.exists()
 			.then(
 				(value) => value
 					? E.ok()
-					: E.fail(),
+					: E.left("file-system", new Error("Path does not exist")),
 			)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

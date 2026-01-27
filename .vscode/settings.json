@@ -20,4 +20,9 @@
 	},
 	
 	"typescript.tsdk": "node_modules/typescript/lib",
+
+	"deno.enable": true,
+	"deno.enablePaths": ["integration/deno"],
+	"deno.disablePaths": ["dist", "node_modules"],
+	"deno.config": "./integration/deno/deno.json"
 }

@@ -3,7 +3,7 @@ import { implementFunction } from "@scripts/implementor";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
-		getCurrentWorkDirectory(): E.EitherFail | E.EitherSuccess<string>;
+		getCurrentWorkDirectory(): E.Fail | E.Success<string>;
 	}
 }
 

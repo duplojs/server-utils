@@ -1,5 +1,6 @@
 import { D, E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 interface SetTimeParams {
 	accessTime: D.TheDate;
@@ -11,7 +12,7 @@ declare module "@scripts/implementor" {
 		setTime(
 			path: string | URL,
 			params: SetTimeParams
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -29,7 +30,7 @@ export const setTime = implementFunction(
 				D.toTimestamp(modifiedTime),
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (path, { accessTime, modifiedTime }) => Deno
 			.utime(
@@ -38,6 +39,6 @@ export const setTime = implementFunction(
 				D.toTimestamp(modifiedTime),
 			)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

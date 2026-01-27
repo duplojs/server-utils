@@ -7,6 +7,7 @@ export default defineConfig({
 		globals: true,
 		include: [
 			"tests/**/*.test.ts",
+			"integration/node/**/*.test.ts"
 		],
 		coverage: {
 			provider: "istanbul",
@@ -30,6 +31,7 @@ export default defineConfig({
 		benchmark: {
 			include: [
 				"tests/**/*.bench.ts",
+				"integration/node/**/*.bench.ts",
 			]
 		}
 	},

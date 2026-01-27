@@ -1,5 +1,6 @@
 import { asyncPipe, E, pipe } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 interface WriteJsonFile {
 	space?: number;
@@ -11,7 +12,7 @@ declare module "@scripts/implementor" {
 			path: string | URL,
 			data: unknown,
 			params?: WriteJsonFile
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -38,10 +39,10 @@ export const writeJsonFile = implementFunction(
 						{ encoding: "utf-8" },
 					)
 						.then(E.ok)
-						.catch(E.fail),
+						.catch((value) => E.left("file-system", value)),
 				),
 				E.whenIsLeft(
-					E.fail,
+					(value) => E.left("file-system", value),
 				),
 			);
 		},
@@ -59,10 +60,10 @@ export const writeJsonFile = implementFunction(
 					value,
 				)
 					.then(E.ok)
-					.catch(E.fail),
+					.catch((value) => E.left("file-system", value)),
 			),
 			E.whenIsLeft(
-				E.fail,
+				(value) => E.left("file-system", value),
 			),
 		),
 		BUN: (path, data, params) => asyncPipe(
@@ -77,10 +78,10 @@ export const writeJsonFile = implementFunction(
 				(value) => Bun.file(path)
 					.write(value)
 					.then(E.ok)
-					.catch(E.fail),
+					.catch((value) => E.left("file-system", value)),
 			),
 			E.whenIsLeft(
-				E.fail,
+				(value) => E.left("file-system", value),
 			),
 		),
 	},

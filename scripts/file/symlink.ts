@@ -1,5 +1,6 @@
 import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import type { FileSystemLeft } from "./types";
 
 export interface SymlinkParams {
 
@@ -17,7 +18,7 @@ declare module "@scripts/implementor" {
 			oldPath: string | URL,
 			newPath: string | URL,
 			params?: SymlinkParams
-		): Promise<E.EitherFail | E.EitherOk>;
+		): Promise<FileSystemLeft | E.Ok>;
 	}
 }
 
@@ -35,7 +36,7 @@ export const symlink = implementFunction(
 				params?.type,
 			)
 				.then(E.ok)
-				.catch(E.fail);
+				.catch((value) => E.left("file-system", value));
 		},
 		DENO: (oldPath, newPath, params) => Deno
 			.symlink(
@@ -44,6 +45,6 @@ export const symlink = implementFunction(
 				params,
 			)
 			.then(E.ok)
-			.catch(E.fail),
+			.catch((value) => E.left("file-system", value)),
 	},
 );

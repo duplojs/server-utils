@@ -1,6 +1,6 @@
 import { SF } from "@scripts";
 
 const entries = await SF.readDirectory("/tmp");
-// entries: EitherSuccess<string[]> | EitherFail
+// entries: E.Success<string[]> | SF.FileSystemLeft
 
 const recursive = await SF.readDirectory("/tmp", { recursive: true });

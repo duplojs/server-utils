@@ -1,6 +1,6 @@
 import { SF } from "@scripts";
 
 const result = await SF.readFile("/tmp/file.bin");
-// result: EitherSuccess<Uint8Array> | EitherFail
+// result: E.Success<Uint8Array> | SF.FileSystemLeft
 
 const other = await SF.readFile("/tmp/backup.bin");

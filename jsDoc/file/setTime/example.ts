@@ -6,7 +6,7 @@ const result = await SF.setTime("/tmp/file.txt", {
 	accessTime: now,
 	modifiedTime: now,
 });
-// result: EitherOk | EitherFail
+// result: E.Ok | SF.FileSystemLeft
 
 await SF.setTime("/tmp/report.txt", {
 	accessTime: now,

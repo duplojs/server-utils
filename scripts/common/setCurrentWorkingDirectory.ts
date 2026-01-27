@@ -5,7 +5,7 @@ declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		setCurrentWorkingDirectory<
 			GenericPath extends string | URL,
-		>(path: GenericPath): E.EitherFail | E.EitherOk;
+		>(path: GenericPath): E.Fail | E.Ok;
 	}
 }
 
