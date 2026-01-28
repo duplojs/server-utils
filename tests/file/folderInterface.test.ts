@@ -34,6 +34,17 @@ describe("folderInterface", () => {
 		vi.clearAllMocks();
 	});
 
+	it("detects folder interface with predicate", () => {
+		const folder = DServerFile.createFolderInterface("/tmp/demo");
+		const file = DServerFile.createFileInterface("/tmp/example.json");
+		const unknown = DServerFile.createUnknownInterface("/tmp/entry");
+
+		expect(DServerFile.isFolderInterface(folder)).toBe(true);
+		expect(DServerFile.isFolderInterface(file)).toBe(false);
+		expect(DServerFile.isFolderInterface(unknown)).toBe(false);
+		expect(DServerFile.isFolderInterface({})).toBe(false);
+	});
+
 	it("creates interface and trims trailing slash", () => {
 		const folder = DServerFile.createFolderInterface("/tmp/demo/");
 

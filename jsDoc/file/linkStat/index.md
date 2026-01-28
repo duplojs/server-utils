@@ -6,5 +6,5 @@ Return a StatInfo object for the link rather than the target.
 {@include file/linkStat/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/linkStat
+@see https://server-utils.duplojs.dev/en/v0/api/file/linkStat
 @namespace SF

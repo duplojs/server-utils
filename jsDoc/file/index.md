@@ -20,6 +20,6 @@ What you will find in this namespace:
 - Helpers: `ensureFile`, `makeTemporaryDirectory`, `makeTemporaryFile`
 - Interfaces: `createFileInterface`, `createFolderInterface`, `createUnknownInterface`
 
-@see https://server-utils.duplojs.dev/en/v1/api/file
+@see https://server-utils.duplojs.dev/en/v0/api/file
 
 @namespace SF

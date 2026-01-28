@@ -69,3 +69,12 @@ export function createUnknownInterface(path: string | URL) {
 		exist,
 	});
 }
+
+/**
+ * {@include file/isUnknownInterface/index.md}
+ */
+export function isUnknownInterface(
+	input: unknown,
+): input is UnknownInterface {
+	return unknownInterfaceKind.has(input);
+}

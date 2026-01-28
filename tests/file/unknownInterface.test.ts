@@ -34,6 +34,17 @@ describe("unknownInterface", () => {
 		vi.clearAllMocks();
 	});
 
+	it("detects unknown interface with predicate", () => {
+		const unknown = DServerFile.createUnknownInterface("/tmp/entry");
+		const file = DServerFile.createFileInterface("/tmp/example.json");
+		const folder = DServerFile.createFolderInterface("/tmp/demo");
+
+		expect(DServerFile.isUnknownInterface(unknown)).toBe(true);
+		expect(DServerFile.isUnknownInterface(file)).toBe(false);
+		expect(DServerFile.isUnknownInterface(folder)).toBe(false);
+		expect(DServerFile.isUnknownInterface({})).toBe(false);
+	});
+
 	it("creates interface with decoded path", () => {
 		const unknown = DServerFile.createUnknownInterface(new URL("file:///tmp/unknown%20path/"));
 

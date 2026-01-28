@@ -6,5 +6,5 @@ Parse JSON content and return the value as an Either.
 {@include file/readJsonFile/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/readJsonFile
+@see https://server-utils.duplojs.dev/en/v0/api/file/readJsonFile
 @namespace SF

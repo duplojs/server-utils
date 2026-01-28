@@ -135,3 +135,12 @@ export function createFolderInterface(path: string | URL) {
 		walk,
 	});
 }
+
+/**
+ * {@include file/isFolderInterface/index.md}
+ */
+export function isFolderInterface(
+	input: unknown,
+): input is FileInterface {
+	return folderInterfaceKind.has(input);
+}

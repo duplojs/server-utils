@@ -9,5 +9,12 @@
     },
     "types": ["vitest/globals", "node", "deno", "bun"],
   },
-  "include": ["tests/**/*.ts", "scripts/**/*.ts", "integration/node/**/*.ts", "integration/bun/**/*.ts"],
+  "include": [
+	"tests/**/*.ts", 
+	"scripts/**/*.ts", 
+	"integration/node/**/*.ts", 
+	"integration/bun/**/*.ts", 
+	"jsDoc/**/*.ts", 
+	"docs/examples/**/*.ts"
+  ],
 }

@@ -6,5 +6,5 @@ Return an Either with the file content as a string, or fail if the read fails.
 {@include file/readTextFile/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/readTextFile
+@see https://server-utils.duplojs.dev/en/v0/api/file/readTextFile
 @namespace SF

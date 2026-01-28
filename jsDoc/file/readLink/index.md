@@ -6,5 +6,5 @@ Return the link target path as a string, or fail.
 {@include file/readLink/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/readLink
+@see https://server-utils.duplojs.dev/en/v0/api/file/readLink
 @namespace SF

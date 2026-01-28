@@ -26,6 +26,12 @@ export default [
 		ignores: ["**/*.test.ts", "**/*.bench.ts", "test/**/*.ts", "**/*.d.ts"],
 	},
 	{
-		ignores: ["coverage", "dist"]
+		files: ["jsDoc/**/*.ts"],
+		rules: {
+			"@stylistic/js/line-comment-position": "off",
+		},
+	},
+	{
+		ignores: ["coverage", "dist", "docs/.vitepress/cache/*", "docs/.vitepress/dist/*", "docs/libs/*", "integration/deno/*"]
 	}
 ];

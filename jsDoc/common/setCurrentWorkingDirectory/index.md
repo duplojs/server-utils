@@ -9,4 +9,4 @@ and return an Either ok/fail based on the result.
 
 @remarks URLs are decoded to a filesystem path.
 
-@see https://server-utils.duplojs.dev/en/v1/api/common/setCurrentWorkingDirectory
+@see https://server-utils.duplojs.dev/en/v0/api/common/setCurrentWorkingDirectory

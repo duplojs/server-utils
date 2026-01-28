@@ -6,5 +6,5 @@ Return an object that exposes name, parent path, and basic checks. (`getParentFo
 {@include file/createUnknownInterface/example.ts[3,7]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/createUnknownInterface
+@see https://server-utils.duplojs.dev/en/v0/api/file/unknownInterface
 @namespace SF

@@ -6,5 +6,5 @@ Create a temp directory with the given prefix and return its path.
 {@include file/makeTemporaryDirectory/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/makeTemporaryDirectory
+@see https://server-utils.duplojs.dev/en/v0/api/file/makeTemporaryDirectory
 @namespace SF

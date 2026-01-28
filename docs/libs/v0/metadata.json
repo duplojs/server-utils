@@ -1,0 +1,412 @@
+{
+  "name": "@duplojs/server-utils",
+  "files": [
+    {
+      "name": "common",
+      "files": [
+        {
+          "name": "getCurrentWorkDirectory.cjs"
+        },
+        {
+          "name": "getCurrentWorkDirectory.d.ts"
+        },
+        {
+          "name": "getCurrentWorkDirectory.mjs"
+        },
+        {
+          "name": "index.cjs"
+        },
+        {
+          "name": "index.d.ts"
+        },
+        {
+          "name": "index.mjs"
+        },
+        {
+          "name": "setCurrentWorkingDirectory.cjs"
+        },
+        {
+          "name": "setCurrentWorkingDirectory.d.ts"
+        },
+        {
+          "name": "setCurrentWorkingDirectory.mjs"
+        }
+      ]
+    },
+    {
+      "name": "file",
+      "files": [
+        {
+          "name": "mimeType",
+          "files": [
+            {
+              "name": "database.cjs"
+            },
+            {
+              "name": "database.d.ts"
+            },
+            {
+              "name": "database.mjs"
+            },
+            {
+              "name": "index.d.ts"
+            },
+            {
+              "name": "isSupportedExtensionFile.cjs"
+            },
+            {
+              "name": "isSupportedExtensionFile.d.ts"
+            },
+            {
+              "name": "isSupportedExtensionFile.mjs"
+            }
+          ]
+        },
+        {
+          "name": "types",
+          "files": [
+            {
+              "name": "fileSystemLeft.d.ts"
+            },
+            {
+              "name": "index.d.ts"
+            }
+          ]
+        },
+        {
+          "name": "appendFile.cjs"
+        },
+        {
+          "name": "appendFile.d.ts"
+        },
+        {
+          "name": "appendFile.mjs"
+        },
+        {
+          "name": "appendTextFile.cjs"
+        },
+        {
+          "name": "appendTextFile.d.ts"
+        },
+        {
+          "name": "appendTextFile.mjs"
+        },
+        {
+          "name": "copy.cjs"
+        },
+        {
+          "name": "copy.d.ts"
+        },
+        {
+          "name": "copy.mjs"
+        },
+        {
+          "name": "ensureDirectory.cjs"
+        },
+        {
+          "name": "ensureDirectory.d.ts"
+        },
+        {
+          "name": "ensureDirectory.mjs"
+        },
+        {
+          "name": "ensureFile.cjs"
+        },
+        {
+          "name": "ensureFile.d.ts"
+        },
+        {
+          "name": "ensureFile.mjs"
+        },
+        {
+          "name": "exists.cjs"
+        },
+        {
+          "name": "exists.d.ts"
+        },
+        {
+          "name": "exists.mjs"
+        },
+        {
+          "name": "fileInterface.cjs"
+        },
+        {
+          "name": "fileInterface.d.ts"
+        },
+        {
+          "name": "fileInterface.mjs"
+        },
+        {
+          "name": "folderInterface.cjs"
+        },
+        {
+          "name": "folderInterface.d.ts"
+        },
+        {
+          "name": "folderInterface.mjs"
+        },
+        {
+          "name": "index.cjs"
+        },
+        {
+          "name": "index.d.ts"
+        },
+        {
+          "name": "index.mjs"
+        },
+        {
+          "name": "link.cjs"
+        },
+        {
+          "name": "link.d.ts"
+        },
+        {
+          "name": "link.mjs"
+        },
+        {
+          "name": "linkStat.cjs"
+        },
+        {
+          "name": "linkStat.d.ts"
+        },
+        {
+          "name": "linkStat.mjs"
+        },
+        {
+          "name": "makeDirectory.cjs"
+        },
+        {
+          "name": "makeDirectory.d.ts"
+        },
+        {
+          "name": "makeDirectory.mjs"
+        },
+        {
+          "name": "makeTemporaryDirectory.cjs"
+        },
+        {
+          "name": "makeTemporaryDirectory.d.ts"
+        },
+        {
+          "name": "makeTemporaryDirectory.mjs"
+        },
+        {
+          "name": "makeTemporaryFile.cjs"
+        },
+        {
+          "name": "makeTemporaryFile.d.ts"
+        },
+        {
+          "name": "makeTemporaryFile.mjs"
+        },
+        {
+          "name": "move.cjs"
+        },
+        {
+          "name": "move.d.ts"
+        },
+        {
+          "name": "move.mjs"
+        },
+        {
+          "name": "readDirectory.cjs"
+        },
+        {
+          "name": "readDirectory.d.ts"
+        },
+        {
+          "name": "readDirectory.mjs"
+        },
+        {
+          "name": "readFile.cjs"
+        },
+        {
+          "name": "readFile.d.ts"
+        },
+        {
+          "name": "readFile.mjs"
+        },
+        {
+          "name": "readJsonFile.cjs"
+        },
+        {
+          "name": "readJsonFile.d.ts"
+        },
+        {
+          "name": "readJsonFile.mjs"
+        },
+        {
+          "name": "readLink.cjs"
+        },
+        {
+          "name": "readLink.d.ts"
+        },
+        {
+          "name": "readLink.mjs"
+        },
+        {
+          "name": "readTextFile.cjs"
+        },
+        {
+          "name": "readTextFile.d.ts"
+        },
+        {
+          "name": "readTextFile.mjs"
+        },
+        {
+          "name": "realPath.cjs"
+        },
+        {
+          "name": "realPath.d.ts"
+        },
+        {
+          "name": "realPath.mjs"
+        },
+        {
+          "name": "remove.cjs"
+        },
+        {
+          "name": "remove.d.ts"
+        },
+        {
+          "name": "remove.mjs"
+        },
+        {
+          "name": "rename.cjs"
+        },
+        {
+          "name": "rename.d.ts"
+        },
+        {
+          "name": "rename.mjs"
+        },
+        {
+          "name": "setMode.cjs"
+        },
+        {
+          "name": "setMode.d.ts"
+        },
+        {
+          "name": "setMode.mjs"
+        },
+        {
+          "name": "setOwner.cjs"
+        },
+        {
+          "name": "setOwner.d.ts"
+        },
+        {
+          "name": "setOwner.mjs"
+        },
+        {
+          "name": "setTime.cjs"
+        },
+        {
+          "name": "setTime.d.ts"
+        },
+        {
+          "name": "setTime.mjs"
+        },
+        {
+          "name": "stat.cjs"
+        },
+        {
+          "name": "stat.d.ts"
+        },
+        {
+          "name": "stat.mjs"
+        },
+        {
+          "name": "symlink.cjs"
+        },
+        {
+          "name": "symlink.d.ts"
+        },
+        {
+          "name": "symlink.mjs"
+        },
+        {
+          "name": "truncate.cjs"
+        },
+        {
+          "name": "truncate.d.ts"
+        },
+        {
+          "name": "truncate.mjs"
+        },
+        {
+          "name": "unknownInterface.cjs"
+        },
+        {
+          "name": "unknownInterface.d.ts"
+        },
+        {
+          "name": "unknownInterface.mjs"
+        },
+        {
+          "name": "walkDirectory.cjs"
+        },
+        {
+          "name": "walkDirectory.d.ts"
+        },
+        {
+          "name": "walkDirectory.mjs"
+        },
+        {
+          "name": "writeFile.cjs"
+        },
+        {
+          "name": "writeFile.d.ts"
+        },
+        {
+          "name": "writeFile.mjs"
+        },
+        {
+          "name": "writeJsonFile.cjs"
+        },
+        {
+          "name": "writeJsonFile.d.ts"
+        },
+        {
+          "name": "writeJsonFile.mjs"
+        },
+        {
+          "name": "writeTextFile.cjs"
+        },
+        {
+          "name": "writeTextFile.d.ts"
+        },
+        {
+          "name": "writeTextFile.mjs"
+        }
+      ]
+    },
+    {
+      "name": "implementor.cjs"
+    },
+    {
+      "name": "implementor.d.ts"
+    },
+    {
+      "name": "implementor.mjs"
+    },
+    {
+      "name": "index.cjs"
+    },
+    {
+      "name": "index.d.ts"
+    },
+    {
+      "name": "index.mjs"
+    },
+    {
+      "name": "kind.cjs"
+    },
+    {
+      "name": "kind.d.ts"
+    },
+    {
+      "name": "kind.mjs"
+    }
+  ]
+}

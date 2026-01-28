@@ -6,5 +6,5 @@ Return the real, resolved path string or fail if resolution fails.
 {@include file/realPath/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/realPath
+@see https://server-utils.duplojs.dev/en/v0/api/file/realPath
 @namespace SF

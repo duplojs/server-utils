@@ -8,5 +8,5 @@ Update accessTime and modifiedTime for the path and return ok/fail.
 
 @remarks Dates are converted to timestamps before calling the runtime APIs.
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/setTime
+@see https://server-utils.duplojs.dev/en/v0/api/file/setTime
 @namespace SF

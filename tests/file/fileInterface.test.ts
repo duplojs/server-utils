@@ -34,6 +34,17 @@ describe("fileInterface", () => {
 		vi.clearAllMocks();
 	});
 
+	it("detects file interface with predicate", () => {
+		const file = DServerFile.createFileInterface("/tmp/example.json");
+		const folder = DServerFile.createFolderInterface("/tmp/demo");
+		const unknown = DServerFile.createUnknownInterface("/tmp/entry");
+
+		expect(DServerFile.isFileInterface(file)).toBe(true);
+		expect(DServerFile.isFileInterface(folder)).toBe(false);
+		expect(DServerFile.isFileInterface(unknown)).toBe(false);
+		expect(DServerFile.isFileInterface({})).toBe(false);
+	});
+
 	it("creates interface with name and mime info", () => {
 		const file = DServerFile.createFileInterface("/tmp/example.json");
 

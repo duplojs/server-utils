@@ -8,5 +8,5 @@ Accept a numeric mode or a permission object and return ok/fail.
 
 @remarks Object-based permissions are converted to a numeric mode internally.
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/setMode
+@see https://server-utils.duplojs.dev/en/v0/api/file/setMode
 @namespace SF

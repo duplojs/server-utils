@@ -6,5 +6,5 @@ Return an Either with the file content as a Uint8Array, or fail if the read fail
 {@include file/readFile/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/readFile
+@see https://server-utils.duplojs.dev/en/v0/api/file/readFile
 @namespace SF

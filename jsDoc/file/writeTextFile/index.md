@@ -6,5 +6,5 @@ Write the provided string to the target path and return ok/fail.
 {@include file/writeTextFile/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/writeTextFile
+@see https://server-utils.duplojs.dev/en/v0/api/file/writeTextFile
 @namespace SF

@@ -8,5 +8,5 @@ Create a symlink from newPath to oldPath and return ok/fail.
 
 @remarks On Windows you can specify type as "file", "dir", or "junction".
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/symlink
+@see https://server-utils.duplojs.dev/en/v0/api/file/symlink
 @namespace SF

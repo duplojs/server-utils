@@ -138,3 +138,12 @@ export function createFileInterface(path: string | URL) {
 		stat: localStat,
 	});
 }
+
+/**
+ * {@include file/isFileInterface/index.md}
+ */
+export function isFileInterface(
+	input: unknown,
+): input is FileInterface {
+	return fileInterfaceKind.has(input);
+}

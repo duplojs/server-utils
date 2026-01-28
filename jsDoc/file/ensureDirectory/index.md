@@ -6,5 +6,5 @@ Create the directory with recursive mode and return ok/fail.
 {@include file/ensureDirectory/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/ensureDirectory
+@see https://server-utils.duplojs.dev/en/v0/api/file/ensureDirectory
 @namespace SF

@@ -14,4 +14,4 @@ What you will find in this namespace:
 - `getCurrentWorkDirectory`
 - `setCurrentWorkingDirectory`
 
-@see https://server-utils.duplojs.dev/en/v1/api/common
+@see https://server-utils.duplojs.dev/en/v0/api/common

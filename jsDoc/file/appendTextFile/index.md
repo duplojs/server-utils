@@ -6,5 +6,5 @@ Append a string to the target file and return ok/fail.
 {@include file/appendTextFile/example.ts[4,12]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/appendTextFile
+@see https://server-utils.duplojs.dev/en/v0/api/file/appendTextFile
 @namespace SF

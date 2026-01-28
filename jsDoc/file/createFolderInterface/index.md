@@ -6,5 +6,5 @@ Return an object that exposes folder metadata and helper operations. (`getParent
 {@include file/createFolderInterface/example.ts[3,7]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/createFolderInterface
+@see https://server-utils.duplojs.dev/en/v0/api/file/folderInterface
 @namespace SF

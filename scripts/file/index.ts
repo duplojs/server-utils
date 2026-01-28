@@ -36,3 +36,4 @@ export * from "./makeTemporaryFile";
 export * from "./readJsonFile";
 export * from "./ensureFile";
 export * from "./writeJsonFile";
+export * from "./mimeType";

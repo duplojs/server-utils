@@ -6,5 +6,5 @@ Rename the entry to a new name and return ok/fail.
 {@include file/rename/example.ts[3,6]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/rename
+@see https://server-utils.duplojs.dev/en/v0/api/file/rename
 @namespace SF

@@ -8,5 +8,5 @@ Stringify the data and write it as UTF-8 text, returning ok/fail.
 
 @remarks If JSON.stringify throws, the function returns a fail.
 
-@see https://server-utils.duplojs.dev/en/v1/api/file/writeJsonFile
+@see https://server-utils.duplojs.dev/en/v0/api/file/writeJsonFile
 @namespace SF
