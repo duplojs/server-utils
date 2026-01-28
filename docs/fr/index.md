@@ -33,21 +33,3 @@ features:
     title: Standards DuploJS
     details: Toujours très typé, toujours robuste, toujours opiniâtre, toujours à gagner du temps sur des aspects techniques inutiles.
 ---
-
-::: code-group
-```bash [npm]
-npm install @duplojs/server-utils@0 @duplojs/utils@1
-```
-```bash [yarn]
-yarn add @duplojs/server-utils@0 @duplojs/utils@1
-```
-```bash [pnpm]
-pnpm add @duplojs/server-utils@0 @duplojs/utils@1
-```
-```bash [bun]
-bun add @duplojs/server-utils@0 @duplojs/utils@1
-```
-```bash [deno]
-deno add npm:@duplojs/server-utils@0 npm:@duplojs/utils@1
-```
-:::
