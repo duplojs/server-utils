@@ -153,7 +153,7 @@ export default defineConfig({
 	},
 	locales: {
 		fr: {
-			description: "",
+			description: "Utilitaires serveur légers et efficaces",
 			label: "Français",
 			lang: "fr",
 			link: "/fr/",
@@ -223,7 +223,7 @@ export default defineConfig({
 			},
 		},
 		root: {
-			description: "",
+			description: "Lightweight and efficient server utilities",
 			label: "English",
 			lang: "en",
 			link: "/en/",
