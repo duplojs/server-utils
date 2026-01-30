@@ -2,7 +2,7 @@ import { SF } from "@duplojs/server-utils";
 import { E, unwrap } from "@duplojs/utils";
 
 const entries = await SF.readDirectory("/tmp");
-// entries: E.Success<string[]> | SF.FileSystemLeft
+// entries: E.Success<string[]> | SF.FileSystemLeft<"read-directory">
 
 if (E.isRight(entries)) {
 	const list = unwrap(entries);
@@ -10,4 +10,4 @@ if (E.isRight(entries)) {
 }
 
 const recursive = await SF.readDirectory("/tmp", { recursive: true });
-// recursive: E.Success<string[]> | SF.FileSystemLeft
+// recursive: E.Success<string[]> | SF.FileSystemLeft<"read-directory">

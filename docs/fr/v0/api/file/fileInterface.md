@@ -1,8 +1,8 @@
 ---
 outline: [2, 3]
 prev:
-  text: "mimeType"
-  link: "/fr/v0/api/file/mimeType"
+  text: "ensureFile"
+  link: "/fr/v0/api/file/ensureFile"
 next:
   text: "folderInterface"
   link: "/fr/v0/api/file/folderInterface"
@@ -28,7 +28,7 @@ L'objet `FileInterface` ne garantit pas l'existence réelle du fichier. C'est un
 
 ```typescript
 function createFileInterface(
-  path: string | URL
+  path: string
 ): FileInterface
 ```
 
@@ -42,16 +42,17 @@ function isFileInterface(
 
 ```typescript
 interface FileInterface {
-  name: string;
   path: string;
-  mimeType: SupportedMimeType | null;
-  extension: SupportedExtensionFile | null;
-  getParentPath(): string;
-  rename(newName: string): Promise<FileSystemLeft | E.Success<FileInterface>>;
-  exist(): Promise<FileSystemLeft | E.Ok>;
-  relocate(parentPath: string | URL): Promise<FileSystemLeft | E.Success<FileInterface>>;
-  remove(): Promise<FileSystemLeft | E.Ok>;
-  stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
+  getName(): string | null;
+  getMimeType(): string | null;
+  getExtension(): string | null;
+  getParentPath(): string | null;
+  rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
+  relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;
+  move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FileInterface>>;
+  exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
+  remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
+  stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
 }
 ```
 
@@ -61,7 +62,7 @@ interface FileInterface {
 
 ## Valeur de retour
 
-- `FileInterface` : interface avec `name`, `extension`, `mimeType`, `path` et des méthodes comme `rename(newName)`, `exist()`, `relocate(parentPath)`, `remove()`, `stat()` et `getParentPath()`.
+- `FileInterface` : interface avec `path`, des getters (`getName`, `getExtension`, `getMimeType`, `getParentPath`) et des méthodes utilitaires comme `rename(newName)`, `exists()`, `relocate(parentPath)`, `move(newPath)`, `remove()` et `stat()`.
 
 ## Voir aussi
 

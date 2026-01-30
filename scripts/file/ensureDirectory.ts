@@ -5,10 +5,10 @@ import type { FileSystemLeft } from "./types";
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		ensureDirectory<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath,
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"ensure-directory"> | E.Ok>;
 	}
 }
 
@@ -27,7 +27,7 @@ export const ensureDirectory = implementFunction(
 				},
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-ensure-directory", value));
 		},
 		DENO: (path) => Deno.mkdir(
 			path,
@@ -36,6 +36,6 @@ export const ensureDirectory = implementFunction(
 			},
 		)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-ensure-directory", value)),
 	},
 );

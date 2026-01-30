@@ -11,16 +11,16 @@ const readFile = implementor.implementFunction("readFile", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.readFile(path)
             .then(utils.E.success)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-read-file", value));
     },
     DENO: (path) => Deno
         .readFile(path)
         .then(utils.E.success)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-read-file", value)),
     BUN: (path) => Bun.file(path)
         .bytes()
         .then(utils.E.success)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-read-file", value)),
 });
 
 exports.readFile = readFile;

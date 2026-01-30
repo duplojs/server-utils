@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        writeFile(path: string | URL, data: Uint8Array): Promise<FileSystemLeft | E.Ok>;
+        writeFile(path: string, data: Uint8Array): Promise<FileSystemLeft<"write-file"> | E.Ok>;
     }
 }
 /**
@@ -13,7 +13,7 @@ declare module "../implementor" {
  * ```ts
  * const data = new Uint8Array([1, 2, 3]);
  * const result = await SF.writeFile("/tmp/file.bin", data);
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"write-file">
  * 
  * await SF.writeFile("/tmp/backup.bin", data);
  * ```
@@ -22,4 +22,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const writeFile: (path: string | URL, data: Uint8Array) => Promise<FileSystemLeft | E.Ok>;
+export declare const writeFile: (path: string, data: Uint8Array) => Promise<FileSystemLeft<"write-file"> | E.Ok>;

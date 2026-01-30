@@ -24,9 +24,9 @@ Reduit ou etend un fichier a une taille donnée.
 
 ```typescript
 function truncate(
-  path: string | URL,
+  path: string,
   size?: number
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"truncate"> | E.Ok>
 ```
 
 ## Paramètres
@@ -37,7 +37,7 @@ function truncate(
 ## Valeur de retour
 
 - `E.Ok` : si l'opération réussit.
-- `FileSystemLeft` : si l'opération échoue.
+- `FileSystemLeft<"truncate">` : si l'opération échoue.
 
 ## Voir aussi
 

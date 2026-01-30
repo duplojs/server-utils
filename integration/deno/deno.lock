@@ -5,7 +5,7 @@
     "jsr:@std/assert@^1.0.17": "1.0.17",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@std/testing@1": "1.0.17",
-    "npm:@duplojs/utils@1.4.44": "1.4.44"
+    "npm:@duplojs/utils@1.4.52": "1.4.52"
   },
   "jsr": {
     "@std/assert@1.0.17": {
@@ -26,15 +26,15 @@
     }
   },
   "npm": {
-    "@duplojs/utils@1.4.44": {
-      "integrity": "sha512-s/g/OoCvS5Cqap5VZ2E1TmITKbWeSQ3sDqA2pAoqfOkU3MOAUhludrvyQZl6DTPpgllvHZwB7gwwE/iOH624EA=="
+    "@duplojs/utils@1.4.52": {
+      "integrity": "sha512-Rzpcc7GoN1CCfElJSV2CUdoTD4ce3I/lk50irr/ZHTdlVIo5/4/7618aN57HeDBAuN5NWHhMn3AadWQVXgIJSA=="
     }
   },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",
       "jsr:@std/testing@1",
-      "npm:@duplojs/utils@1.4.44"
+      "npm:@duplojs/utils@1.4.52"
     ]
   }
 }

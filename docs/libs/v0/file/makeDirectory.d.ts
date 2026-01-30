@@ -5,7 +5,7 @@ interface MakeDirectoryParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        makeDirectory<GenericPath extends string | URL>(path: GenericPath, params?: MakeDirectoryParams): Promise<FileSystemLeft | E.Ok>;
+        makeDirectory<GenericPath extends string>(path: GenericPath, params?: MakeDirectoryParams): Promise<FileSystemLeft<"make-directory"> | E.Ok>;
     }
 }
 /**
@@ -15,7 +15,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.makeDirectory("/tmp/project");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"make-directory">
  * 
  * await SF.makeDirectory("/tmp/project/sub", { recursive: true });
  * ```
@@ -24,5 +24,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const makeDirectory: <GenericPath extends string | URL>(path: GenericPath, params?: MakeDirectoryParams) => Promise<FileSystemLeft | E.Ok>;
+export declare const makeDirectory: <GenericPath extends string>(path: GenericPath, params?: MakeDirectoryParams) => Promise<FileSystemLeft<"make-directory"> | E.Ok>;
 export {};

@@ -10,9 +10,9 @@ interface SetTimeParams {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		setTime(
-			path: string | URL,
+			path: string,
 			params: SetTimeParams
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"set-time"> | E.Ok>;
 	}
 }
 
@@ -30,7 +30,7 @@ export const setTime = implementFunction(
 				D.toTimestamp(modifiedTime),
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-set-time", value));
 		},
 		DENO: (path, { accessTime, modifiedTime }) => Deno
 			.utime(
@@ -39,6 +39,6 @@ export const setTime = implementFunction(
 				D.toTimestamp(modifiedTime),
 			)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-set-time", value)),
 	},
 );

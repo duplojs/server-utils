@@ -10,9 +10,9 @@ interface SetOwnerParams {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		setOwner(
-			path: string | URL,
+			path: string,
 			params: SetOwnerParams,
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"set-owner"> | E.Ok>;
 	}
 }
 
@@ -26,11 +26,11 @@ export const setOwner = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.chown(path, userId, groupId)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-set-owner", value));
 		},
 		DENO: (path, { userId, groupId }) => Deno
 			.chown(path, userId, groupId)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-set-owner", value)),
 	},
 );

@@ -24,8 +24,8 @@ Reads the target of a symbolic link.
 
 ```typescript
 function readLink(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<string>>
+  path: string
+): Promise<FileSystemLeft<"read-link"> | E.Success<string>>
 ```
 
 ## Parameters
@@ -35,7 +35,7 @@ function readLink(
 ## Return value
 
 - `E.Success<string>` : link target path.
-- `FileSystemLeft` : if the read fails.
+- `FileSystemLeft<"read-link">` : if the read fails.
 
 ## See also
 

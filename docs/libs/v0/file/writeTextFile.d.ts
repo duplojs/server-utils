@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        writeTextFile(path: string | URL, data: string): Promise<FileSystemLeft | E.Ok>;
+        writeTextFile(path: string, data: string): Promise<FileSystemLeft<"write-text-file"> | E.Ok>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.writeTextFile("/tmp/log.txt", "hello\n");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"write-text-file">
  * 
  * await SF.writeTextFile("/tmp/log.txt", "world\n");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const writeTextFile: (path: string | URL, data: string) => Promise<FileSystemLeft | E.Ok>;
+export declare const writeTextFile: (path: string, data: string) => Promise<FileSystemLeft<"write-text-file"> | E.Ok>;

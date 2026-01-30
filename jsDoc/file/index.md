@@ -14,7 +14,7 @@ What you will find in this namespace:
 - Read/write: `readFile`, `readTextFile`, `writeFile`, `writeTextFile`, `appendFile`, `appendTextFile`
 - JSON: `readJsonFile`, `writeJsonFile`
 - Directory: `readDirectory`, `makeDirectory`, `ensureDirectory`, `walkDirectory`
-- Move/copy/remove: `copy`, `move`, `rename`, `remove`, `truncate`
+- Move/copy/remove: `copy`, `move`, `relocate`, `rename`, `remove`, `truncate`
 - Links: `symlink`, `readLink`, `link`, `linkStat`
 - Metadata: `exists`, `stat`, `realPath`, `setMode`, `setOwner`, `setTime`
 - Helpers: `ensureFile`, `makeTemporaryDirectory`, `makeTemporaryFile`

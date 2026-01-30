@@ -5,9 +5,9 @@ import type { FileSystemLeft } from "./types";
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		appendTextFile(
-			path: string | URL,
+			path: string,
 			data: string,
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"append-text-file"> | E.Ok>;
 	}
 }
 
@@ -24,7 +24,7 @@ export const appendTextFile = implementFunction(
 				data,
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-append-text-file", value));
 		},
 		DENO: (path, data) => Deno.writeTextFile(
 			path,
@@ -32,6 +32,6 @@ export const appendTextFile = implementFunction(
 			{ append: true },
 		)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-append-text-file", value)),
 	},
 );

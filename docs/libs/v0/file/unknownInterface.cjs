@@ -6,22 +6,25 @@ var stat = require('./stat.cjs');
 var exists = require('./exists.cjs');
 
 const unknownInterfaceKind = kind.createDuplojsServerUtilsKind("unknownInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
+/**
+ * {@include file/createUnknownInterface/index.md}
+ */
 function createUnknownInterface(path) {
-    const localPath = utils.pipe(path, utils.when(utils.instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), utils.when(utils.S.endsWith("/"), utils.S.slice(0, -1)));
-    const name = utils.pipe(localPath, utils.S.split("/"), utils.A.last, utils.when(utils.isType("undefined"), utils.justReturn("")));
+    function getName() {
+        return utils.Path.getBaseName(path);
+    }
     function getParentPath() {
-        return utils.S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+        return utils.Path.getParentFolderPath(path);
     }
     function localStat() {
-        return stat.stat(localPath);
+        return stat.stat(path);
     }
     function exist() {
-        return exists.exists(localPath);
+        return exists.exists(path);
     }
     return unknownInterfaceKind.addTo({
-        path: localPath,
-        name,
+        path,
+        getName,
         getParentPath,
         stat: localStat,
         exist,

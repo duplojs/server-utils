@@ -3,7 +3,7 @@ import type { StatInfo } from "./stat";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        linkStat<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Success<StatInfo>>;
+        linkStat<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"link-stat"> | E.Success<StatInfo>>;
     }
 }
 /**
@@ -13,7 +13,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const info = await SF.linkStat("/tmp/link");
- * // info: E.Success<StatInfo> | SF.FileSystemLeft
+ * // info: E.Success<StatInfo> | SF.FileSystemLeft<"link-stat">
  * 
  * const other = await SF.linkStat("/tmp/other-link");
  * ```
@@ -22,4 +22,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const linkStat: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Success<StatInfo>>;
+export declare const linkStat: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"link-stat"> | E.Success<StatInfo>>;

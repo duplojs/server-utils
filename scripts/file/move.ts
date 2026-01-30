@@ -5,9 +5,9 @@ import type { FileSystemLeft } from "./types";
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		move(
-			fromPath: string | URL,
-			toPath: string | URL,
-		): Promise<FileSystemLeft | E.Ok>;
+			fromPath: string,
+			toPath: string,
+		): Promise<FileSystemLeft<"move"> | E.Ok>;
 	}
 }
 
@@ -24,14 +24,14 @@ export const move = implementFunction(
 				toPath,
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-move", value));
 		},
 		DENO: (fromPath, toPath) => Deno.rename(
 			fromPath,
 			toPath,
 		)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-move", value)),
 	},
 );
 

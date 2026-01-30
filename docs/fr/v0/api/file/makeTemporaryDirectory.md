@@ -25,7 +25,7 @@ Crée un dossier temporaire.
 ```typescript
 function makeTemporaryDirectory(
   prefix: string
-): Promise<FileSystemLeft | E.Success<string>>
+): Promise<FileSystemLeft<"make-temporary-directory"> | E.Success<string>>
 ```
 
 ## Paramètres
@@ -35,7 +35,7 @@ function makeTemporaryDirectory(
 ## Valeur de retour
 
 - `E.Success<string>` : chemin du dossier temporaire.
-- `FileSystemLeft` : si la création échoue.
+- `FileSystemLeft<"make-temporary-directory">` : si la création échoue.
 
 ## Voir aussi
 

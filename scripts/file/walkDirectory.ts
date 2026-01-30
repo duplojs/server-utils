@@ -5,17 +5,23 @@ import { type FolderInterface, createFolderInterface } from "./folderInterface";
 import { createUnknownInterface, type UnknownInterface } from "./unknownInterface";
 import type { FileSystemLeft } from "./types";
 
+interface WalkDirectoryParams {
+	recursive?: boolean;
+}
+
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		walkDirectory<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath,
+			params?: WalkDirectoryParams,
 		): Promise<
-			FileSystemLeft
+			FileSystemLeft<"walk-directory">
 			| E.Success<
 				Generator<FileInterface | FolderInterface | UnknownInterface>
-			>>;
+			>
+		>;
 	}
 }
 
@@ -25,13 +31,13 @@ declare module "@scripts/implementor" {
 export const walkDirectory = implementFunction(
 	"walkDirectory",
 	{
-		NODE: async(path) => {
+		NODE: async(path, params) => {
 			const fs = await nodeFileSystem.value;
 
 			return fs.readdir(
 				path,
 				{
-					recursive: true,
+					recursive: params?.recursive ?? false,
 					withFileTypes: true,
 				},
 			)
@@ -61,7 +67,7 @@ export const walkDirectory = implementFunction(
 						E.success,
 					),
 				)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-walk-directory", value));
 		},
 	},
 );

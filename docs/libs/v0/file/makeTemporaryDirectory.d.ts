@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        makeTemporaryDirectory(prefix: string): Promise<FileSystemLeft | E.Success<string>>;
+        makeTemporaryDirectory(prefix: string): Promise<FileSystemLeft<"make-temporary-directory"> | E.Success<string>>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const tmpDir = await SF.makeTemporaryDirectory("tmp-");
- * // tmpDir: E.Success<string> | SF.FileSystemLeft
+ * // tmpDir: E.Success<string> | SF.FileSystemLeft<"make-temporary-directory">
  * 
  * const cacheDir = await SF.makeTemporaryDirectory("cache-");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const makeTemporaryDirectory: (prefix: string) => Promise<FileSystemLeft | E.Success<string>>;
+export declare const makeTemporaryDirectory: (prefix: string) => Promise<FileSystemLeft<"make-temporary-directory"> | E.Success<string>>;

@@ -24,9 +24,9 @@ Crée un lien physique.
 
 ```typescript
 function link(
-  existingPath: string | URL,
-  newPath: string | URL
-): Promise<FileSystemLeft | E.Ok>
+  existingPath: string,
+  newPath: string
+): Promise<FileSystemLeft<"link"> | E.Ok>
 ```
 
 ## Paramètres
@@ -37,7 +37,7 @@ function link(
 ## Valeur de retour
 
 - `E.Ok` : si la création réussit.
-- `FileSystemLeft` : si la création échoue.
+- `FileSystemLeft<"link">` : si la création échoue.
 
 ## Voir aussi
 

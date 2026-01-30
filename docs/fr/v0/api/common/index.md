@@ -29,5 +29,8 @@ import * as SC from "@duplojs/server-utils/common";
 ### [`getCurrentWorkDirectory`](/fr/v0/api/common/getCurrentWorkDirectory)
 retourne le répertoire de travail courant pour le runtime actif.
 
+### [`getCurrentWorkDirectoryOrThrow`](/fr/v0/api/common/getCurrentWorkDirectoryOrThrow)
+retourne le répertoire de travail courant ou lance une erreur.
+
 ### [`setCurrentWorkingDirectory`](/fr/v0/api/common/setCurrentWorkingDirectory)
-change le répertoire de travail courant à partir d'un chemin ou d'une URL.
+change le répertoire de travail courant à partir d'un chemin.

@@ -5,10 +5,10 @@ import type { FileSystemLeft } from "./types";
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		readFile<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath
-		): Promise<FileSystemLeft | E.Success<Uint8Array>>;
+		): Promise<FileSystemLeft<"read-file"> | E.Success<Uint8Array>>;
 	}
 }
 
@@ -22,15 +22,15 @@ export const readFile = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.readFile(path)
 				.then(E.success)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-read-file", value));
 		},
 		DENO: (path) => Deno
 			.readFile(path)
 			.then(E.success)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-read-file", value)),
 		BUN: (path) => Bun.file(path)
 			.bytes()
 			.then(E.success)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-read-file", value)),
 	},
 );

@@ -3,17 +3,17 @@ import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 interface ReadDirectoryParams {
-	recursive?: true;
+	recursive?: boolean;
 }
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		readDirectory<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath,
 			params?: ReadDirectoryParams,
-		): Promise<FileSystemLeft | E.Success<string[]>>;
+		): Promise<FileSystemLeft<"read-directory"> | E.Success<string[]>>;
 	}
 }
 
@@ -28,7 +28,7 @@ export const readDirectory = implementFunction(
 
 			return fs.readdir(path, { recursive: params?.recursive })
 				.then(E.success)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-read-directory", value));
 		},
 	},
 );

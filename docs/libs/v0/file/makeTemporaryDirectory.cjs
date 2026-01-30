@@ -11,11 +11,11 @@ const makeTemporaryDirectory = implementor.implementFunction("makeTemporaryDirec
         const fs = await implementor.nodeFileSystem.value;
         return fs.mkdtemp(prefix)
             .then(utils.E.success)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-make-temporary-directory", value));
     },
     DENO: (prefix) => Deno.makeTempDir({ prefix })
         .then(utils.E.success)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-make-temporary-directory", value)),
 });
 
 exports.makeTemporaryDirectory = makeTemporaryDirectory;

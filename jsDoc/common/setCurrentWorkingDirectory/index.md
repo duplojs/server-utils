@@ -1,12 +1,10 @@
 Change the current working directory.
 
-Update the current directory using a string path or URL,
+Update the current directory using a string path,
 and return an Either ok/fail based on the result.
 
 ```ts
-{@include common/setCurrentWorkingDirectory/example.ts[3,7]}
+{@include common/setCurrentWorkingDirectory/example.ts[1,11]}
 ```
-
-@remarks URLs are decoded to a filesystem path.
 
 @see https://server-utils.duplojs.dev/en/v0/api/common/setCurrentWorkingDirectory

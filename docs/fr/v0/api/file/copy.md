@@ -24,9 +24,9 @@ Copie un fichier ou un dossier.
 
 ```typescript
 function copy(
-  fromPath: string | URL,
-  toPath: string | URL
-): Promise<FileSystemLeft | E.Ok>
+  fromPath: string,
+  toPath: string
+): Promise<FileSystemLeft<"copy"> | E.Ok>
 ```
 
 ## Paramètres
@@ -37,7 +37,7 @@ function copy(
 ## Valeur de retour
 
 - `E.Ok` : si la copie réussit.
-- `FileSystemLeft` : si la copie échoue.
+- `FileSystemLeft<"copy">` : si la copie échoue.
 
 ## Voir aussi
 

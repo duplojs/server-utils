@@ -5,9 +5,9 @@ import type { FileSystemLeft } from "./types";
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		copy(
-			fromPath: string | URL,
-			toPath: string | URL,
-		): Promise<FileSystemLeft | E.Ok>;
+			fromPath: string,
+			toPath: string,
+		): Promise<FileSystemLeft<"copy"> | E.Ok>;
 	}
 }
 
@@ -25,7 +25,7 @@ export const copy = implementFunction(
 				{ recursive: true },
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-copy", value));
 		},
 	},
 );

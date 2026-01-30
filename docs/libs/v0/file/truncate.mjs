@@ -9,12 +9,12 @@ const truncate = implementFunction("truncate", {
         const fs = await nodeFileSystem.value;
         return fs.truncate(path, size)
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-truncate", value));
     },
     DENO: (path, size) => pipe(path, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (stringPath) => Deno
         .truncate(stringPath, size)
         .then(E.ok)
-        .catch((value) => E.left("file-system", value))),
+        .catch((value) => E.left("file-system-truncate", value))),
 });
 
 export { truncate };

@@ -11,12 +11,12 @@ const readLink = implementor.implementFunction("readLink", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.readlink(path, { encoding: "utf-8" })
             .then(utils.E.success)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-read-link", value));
     },
     DENO: (path) => Deno
         .readLink(path)
         .then(utils.E.success)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-read-link", value)),
 });
 
 exports.readLink = readLink;

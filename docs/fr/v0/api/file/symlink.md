@@ -24,12 +24,12 @@ Crée un lien symbolique.
 
 ```typescript
 function symlink(
-  oldPath: string | URL,
-  newPath: string | URL,
+  oldPath: string,
+  newPath: string,
   params?: {
     type: "file" | "dir" | "junction";
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"symlink"> | E.Ok>
 ```
 
 ## Paramètres
@@ -41,7 +41,7 @@ function symlink(
 ## Valeur de retour
 
 - `E.Ok` : si la création réussit.
-- `FileSystemLeft` : si la création échoue.
+- `FileSystemLeft<"symlink">` : si la création échoue.
 
 ## Notes
 

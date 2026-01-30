@@ -11,7 +11,7 @@ const copy = implementor.implementFunction("copy", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.cp(fromPath, toPath, { recursive: true })
             .then(utils.E.ok)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-copy", value));
     },
 });
 

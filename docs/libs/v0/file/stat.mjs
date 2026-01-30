@@ -71,16 +71,16 @@ const stat = implementFunction("stat", {
         const fs = await nodeFileSystem.value;
         return fs.stat(path)
             .then(innerPipe(createStatInfoWithFsSource, E.success))
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-stat", value));
     },
     DENO: (path) => Deno
         .stat(path)
         .then(innerPipe(createStatInfoWithDeno, E.success))
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-stat", value)),
     BUN: (path) => Bun.file(path)
         .stat()
         .then(innerPipe(createStatInfoWithFsSource, E.success))
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-stat", value)),
 });
 
 export { stat };

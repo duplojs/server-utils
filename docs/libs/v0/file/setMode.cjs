@@ -31,12 +31,12 @@ const setMode = implementor.implementFunction("setMode", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.chmod(path, toMode(mode))
             .then(utils.E.ok)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-set-mode", value));
     },
     DENO: (path, mode) => Deno
         .chmod(path, toMode(mode))
         .then(utils.E.ok)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-set-mode", value)),
 });
 
 exports.setMode = setMode;

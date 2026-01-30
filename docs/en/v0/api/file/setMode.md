@@ -24,9 +24,9 @@ Sets permissions for a file or directory.
 
 ```typescript
 function setMode(
-  path: string | URL,
+  path: string,
   mode: ModeObject | number
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"set-mode"> | E.Ok>
 ```
 
 ### ModeObject
@@ -56,7 +56,7 @@ interface ModeObject {
 ## Return value
 
 - `E.Ok` : if the operation succeeds.
-- `FileSystemLeft` : if the operation fails.
+- `FileSystemLeft<"set-mode">` : if the operation fails.
 
 ## Notes
 

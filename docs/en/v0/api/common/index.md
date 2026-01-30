@@ -29,5 +29,8 @@ import * as SC from "@duplojs/server-utils/common";
 ### [`getCurrentWorkDirectory`](/en/v0/api/common/getCurrentWorkDirectory)
 returns the current working directory for the active runtime.
 
+### [`getCurrentWorkDirectoryOrThrow`](/en/v0/api/common/getCurrentWorkDirectoryOrThrow)
+returns the current working directory or throws.
+
 ### [`setCurrentWorkingDirectory`](/en/v0/api/common/setCurrentWorkingDirectory)
-changes the current working directory from a path or URL.
+changes the current working directory from a path.

@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        exists<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Ok>;
+        exists<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"exists"> | E.Ok>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.exists("/tmp/file.txt");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"exists">
  * 
  * const missing = await SF.exists("/tmp/missing.txt");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const exists: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Ok>;
+export declare const exists: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"exists"> | E.Ok>;

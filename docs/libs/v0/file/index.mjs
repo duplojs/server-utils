@@ -31,8 +31,7 @@ export { makeTemporaryFile } from './makeTemporaryFile.mjs';
 export { readJsonFile } from './readJsonFile.mjs';
 export { ensureFile } from './ensureFile.mjs';
 export { writeJsonFile } from './writeJsonFile.mjs';
-export { mimeType } from './mimeType/database.mjs';
-export { isSupportedExtensionFile } from './mimeType/isSupportedExtensionFile.mjs';
+export { relocate } from './relocate.mjs';
 
 /**
  * {@include file/index.md}

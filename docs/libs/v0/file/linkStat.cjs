@@ -73,12 +73,12 @@ const linkStat = implementor.implementFunction("linkStat", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.lstat(path)
             .then(utils.innerPipe(createStatInfoWithFsSource, utils.E.success))
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-link-stat", value));
     },
     DENO: (path) => Deno
         .lstat(path)
         .then(utils.innerPipe(createStatInfoWithDeno, utils.E.success))
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-link-stat", value)),
 });
 
 exports.linkStat = linkStat;

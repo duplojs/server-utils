@@ -1,29 +1,29 @@
 interface DenoMock {
 	cwd?(): string;
-	chdir?(path: string | URL): void;
-	readFile?(path: string | URL): Promise<Uint8Array>;
-	readTextFile?(path: string | URL): Promise<string>;
-	writeFile?(path: string | URL, data: Uint8Array, options?: { append?: boolean }): Promise<void>;
-	writeTextFile?(path: string | URL, data: string, options?: { append?: boolean }): Promise<void>;
-	mkdir?(path: string | URL, options?: { recursive?: boolean }): Promise<void>;
-	remove?(path: string | URL, options?: { recursive?: boolean }): Promise<void>;
-	rename?(fromPath: string | URL, toPath: string | URL): Promise<void>;
+	chdir?(path: string): void;
+	readFile?(path: string): Promise<Uint8Array>;
+	readTextFile?(path: string): Promise<string>;
+	writeFile?(path: string, data: Uint8Array, options?: { append?: boolean }): Promise<void>;
+	writeTextFile?(path: string, data: string, options?: { append?: boolean }): Promise<void>;
+	mkdir?(path: string, options?: { recursive?: boolean }): Promise<void>;
+	remove?(path: string, options?: { recursive?: boolean }): Promise<void>;
+	rename?(fromPath: string, toPath: string): Promise<void>;
 	truncate?(path: string, size?: number): Promise<void>;
-	chmod?(path: string | URL, mode: number): Promise<void>;
-	chown?(path: string | URL, userId: number, groupId: number): Promise<void>;
-	utime?(path: string | URL, accessTime: number, modifiedTime: number): Promise<void>;
-	symlink?(oldPath: string | URL, newPath: string | URL, params?: { type?: "file" | "dir" | "junction" }): Promise<void>;
-	readLink?(path: string | URL): Promise<string>;
-	link?(existingPath: string | URL, newPath: string | URL): Promise<void>;
+	chmod?(path: string, mode: number): Promise<void>;
+	chown?(path: string, userId: number, groupId: number): Promise<void>;
+	utime?(path: string, accessTime: number, modifiedTime: number): Promise<void>;
+	symlink?(oldPath: string, newPath: string, params?: { type?: "file" | "dir" | "junction" }): Promise<void>;
+	readLink?(path: string): Promise<string>;
+	link?(existingPath: string, newPath: string): Promise<void>;
 	makeTempDir?(options?: { prefix?: string }): Promise<string>;
 	makeTempFile?(options?: {
 		prefix?: string;
 		suffix?: string;
 	}): Promise<string>;
-	stat?(path: string | URL): Promise<unknown>;
-	lstat?(path: string | URL): Promise<unknown>;
-	realPath?(path: string | URL): Promise<string>;
-	open?(path: string | URL, options?: {
+	stat?(path: string): Promise<unknown>;
+	lstat?(path: string): Promise<unknown>;
+	realPath?(path: string): Promise<string>;
+	open?(path: string, options?: {
 		write?: boolean;
 		create?: boolean;
 		append?: boolean;

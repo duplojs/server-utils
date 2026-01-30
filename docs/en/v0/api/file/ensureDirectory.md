@@ -24,8 +24,8 @@ Ensures a directory exists.
 
 ```typescript
 function ensureDirectory(
-  path: string | URL
-): Promise<FileSystemLeft | E.Ok>
+  path: string
+): Promise<FileSystemLeft<"ensure-directory"> | E.Ok>
 ```
 
 ## Parameters
@@ -35,7 +35,7 @@ function ensureDirectory(
 ## Return value
 
 - `E.Ok` : if the directory exists or was created.
-- `FileSystemLeft` : if the operation fails.
+- `FileSystemLeft<"ensure-directory">` : if the operation fails.
 
 ## See also
 

@@ -9,12 +9,12 @@ const setOwner = implementFunction("setOwner", {
         const fs = await nodeFileSystem.value;
         return fs.chown(path, userId, groupId)
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-set-owner", value));
     },
     DENO: (path, { userId, groupId }) => Deno
         .chown(path, userId, groupId)
         .then(E.ok)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-set-owner", value)),
 });
 
 export { setOwner };

@@ -1,2 +1,2 @@
 import type { E } from "@duplojs/utils";
-export type FileSystemLeft = E.Left<"file-system", unknown>;
+export type FileSystemLeft<GenericName extends string> = E.Left<`file-system-${GenericName}`, unknown>;

@@ -9,10 +9,10 @@ interface WriteJsonFile {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		writeJsonFile(
-			path: string | URL,
+			path: string,
 			data: unknown,
 			params?: WriteJsonFile
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"write-json-file"> | E.Ok>;
 	}
 }
 
@@ -39,10 +39,10 @@ export const writeJsonFile = implementFunction(
 						{ encoding: "utf-8" },
 					)
 						.then(E.ok)
-						.catch((value) => E.left("file-system", value)),
+						.catch((value) => E.left("file-system-write-json-file", value)),
 				),
 				E.whenIsLeft(
-					(value) => E.left("file-system", value),
+					(value) => E.left("file-system-write-json-file", value),
 				),
 			);
 		},
@@ -60,10 +60,10 @@ export const writeJsonFile = implementFunction(
 					value,
 				)
 					.then(E.ok)
-					.catch((value) => E.left("file-system", value)),
+					.catch((value) => E.left("file-system-write-json-file", value)),
 			),
 			E.whenIsLeft(
-				(value) => E.left("file-system", value),
+				(value) => E.left("file-system-write-json-file", value),
 			),
 		),
 		BUN: (path, data, params) => asyncPipe(
@@ -78,10 +78,10 @@ export const writeJsonFile = implementFunction(
 				(value) => Bun.file(path)
 					.write(value)
 					.then(E.ok)
-					.catch((value) => E.left("file-system", value)),
+					.catch((value) => E.left("file-system-write-json-file", value)),
 			),
 			E.whenIsLeft(
-				(value) => E.left("file-system", value),
+				(value) => E.left("file-system-write-json-file", value),
 			),
 		),
 	},

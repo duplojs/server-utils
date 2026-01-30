@@ -1,25 +1,28 @@
-import { pipe, when, instanceOf, S, A, isType, justReturn } from '@duplojs/utils';
+import { Path } from '@duplojs/utils';
 import { createDuplojsServerUtilsKind } from '../kind.mjs';
 import { stat } from './stat.mjs';
 import { exists } from './exists.mjs';
 
 const unknownInterfaceKind = createDuplojsServerUtilsKind("unknownInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
+/**
+ * {@include file/createUnknownInterface/index.md}
+ */
 function createUnknownInterface(path) {
-    const localPath = pipe(path, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), when(S.endsWith("/"), S.slice(0, -1)));
-    const name = pipe(localPath, S.split("/"), A.last, when(isType("undefined"), justReturn("")));
+    function getName() {
+        return Path.getBaseName(path);
+    }
     function getParentPath() {
-        return S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+        return Path.getParentFolderPath(path);
     }
     function localStat() {
-        return stat(localPath);
+        return stat(path);
     }
     function exist() {
-        return exists(localPath);
+        return exists(path);
     }
     return unknownInterfaceKind.addTo({
-        path: localPath,
-        name,
+        path,
+        getName,
         getParentPath,
         stat: localStat,
         exist,

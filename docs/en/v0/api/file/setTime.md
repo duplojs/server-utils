@@ -24,12 +24,12 @@ Updates access and modification timestamps.
 
 ```typescript
 function setTime(
-  path: string | URL,
+  path: string,
   params: {
     accessTime: D.TheDate;
     modifiedTime: D.TheDate;
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"set-time"> | E.Ok>
 ```
 
 ## Parameters
@@ -41,7 +41,7 @@ function setTime(
 ## Return value
 
 - `E.Ok` : if the operation succeeds.
-- `FileSystemLeft` : if the operation fails.
+- `FileSystemLeft<"set-time">` : if the operation fails.
 
 ## Notes
 

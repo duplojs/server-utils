@@ -24,11 +24,11 @@ Crée un dossier.
 
 ```typescript
 function makeDirectory(
-  path: string | URL,
+  path: string,
   params?: {
     recursive?: boolean
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"make-directory"> | E.Ok>
 ```
 
 ## Paramètres
@@ -39,7 +39,7 @@ function makeDirectory(
 ## Valeur de retour
 
 - `E.Ok` : si la création réussit.
-- `FileSystemLeft` : si la création échoue.
+- `FileSystemLeft<"make-directory">` : si la création échoue.
 
 ## Voir aussi
 

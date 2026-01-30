@@ -36,15 +36,15 @@ describe("walkDirectory", () => {
 
 		expect(E.isRight(result)).toBe(true);
 		expect(fs.readdir).toHaveBeenCalledWith("/tmp/demo", {
-			recursive: true,
+			recursive: false,
 			withFileTypes: true,
 		});
 		if (E.isRight(result)) {
 			const items = A.from(unwrap(result));
-			expect(items[0]?.name).toBe("file.json");
-			expect((items[0] as DServerFile.FileInterface).mimeType).toBe("application/json");
-			expect(items[1]?.name).toBe("sub");
-			expect(items[2]?.name).toBe("other.zzz");
+			expect(items[0]?.getName()).toBe("file.json");
+			expect((items[0] as DServerFile.FileInterface).getMimeType()).toBe("application/json");
+			expect(items[1]?.getName()).toBe("sub");
+			expect(items[2]?.getName()).toBe("other.zzz");
 		}
 	});
 

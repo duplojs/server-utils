@@ -20,8 +20,8 @@
     "test:integration:bun": "bun test integration/bun",
     "test:integration:deno": "deno test -P -c integration/deno/deno.json integration/deno",
     "test:types": "tsc -p tsconfig.test.json",
-    "test:lint": "eslint",
-    "test:lint:fix": "eslint --fix",
+    "test:lint": "eslint --quiet",
+    "test:lint:fix": "eslint --fix --quiet",
     "docs:dev": "npm -w docs run docs:dev",
     "docs:build": "npm -w docs run docs:build",
     "docs:preview": "npm -w docs run docs:preview",
@@ -72,7 +72,7 @@
     "@duplojs/dev-tools": "0.2.0"
   },
   "peerDependencies": {
-    "@duplojs/utils": ">=1.4.45 <2.0.0"
+    "@duplojs/utils": ">=1.4.52 <2.0.0"
   },
   "workspaces": [
     "integration", 

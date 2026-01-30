@@ -1,4 +1,4 @@
-import { A, asyncPipe, E, instanceOf, isType, justReturn, pipe, S, when, type Kind } from "@duplojs/utils";
+import { asyncPipe, E, innerPipe, Path, type Kind } from "@duplojs/utils";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import { move } from "./move";
 import { exists } from "./exists";
@@ -10,68 +10,43 @@ import { walkDirectory } from "./walkDirectory";
 import type { FileInterface } from "./fileInterface";
 import type { UnknownInterface } from "./unknownInterface";
 import type { FileSystemLeft } from "./types";
+import { relocate } from "./relocate";
 
 const folderInterfaceKind = createDuplojsServerUtilsKind("folderInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
 
 export interface FolderInterface extends Kind<
 	typeof folderInterfaceKind.definition
 > {
-	name: string;
 	path: string;
-	getParentPath(): string;
-	rename(newName: string): Promise<FileSystemLeft | E.Success<FolderInterface>>;
-	exist(): Promise<FileSystemLeft | E.Ok>;
-	relocate(parentPath: string | URL): Promise<FileSystemLeft | E.Success<FolderInterface>>;
-	remove(): Promise<FileSystemLeft | E.Ok>;
-	getChildren(): Promise<FileSystemLeft | E.Success<string[]>>;
-	stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
-	walk(): Promise<FileSystemLeft | E.Success<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
+	getName(): string | null;
+	getParentPath(): string | null;
+	rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FolderInterface>>;
+	exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
+	relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FolderInterface>>;
+	move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FolderInterface>>;
+	remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
+	getChildren(): Promise<FileSystemLeft<"read-directory"> | E.Success<string[]>>;
+	stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+	walk(): Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
 }
 
 /**
  * {@include file/createFolderInterface/index.md}
  */
-export function createFolderInterface<
-	GenericPath extends string | URL,
->(
-	path: GenericPath,
-): FolderInterface;
-
-export function createFolderInterface(path: string | URL) {
-	const localPath = pipe(
-		path,
-		when(
-			instanceOf(URL),
-			({ pathname }) => decodeURIComponent(pathname),
-		),
-		when(
-			S.endsWith("/"),
-			S.slice(0, -1),
-		),
-	);
-
-	const name = pipe(
-		localPath,
-		S.split("/"),
-		A.last,
-		when(
-			isType("undefined"),
-			justReturn(""),
-		),
-	);
+export function createFolderInterface(path: string): FolderInterface {
+	function getName() {
+		return Path.getBaseName(path);
+	}
 
 	function getParentPath() {
-		return S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+		return Path.getParentFolderPath(path);
 	}
 
 	function localRename(newName: string) {
 		return asyncPipe(
-			rename(localPath, newName),
+			rename(path, newName),
 			E.whenIsRight(
-				() => pipe(
-					getParentPath(),
-					(parentPath) => `${parentPath}/${newName}`,
+				innerPipe(
 					createFolderInterface,
 					E.success,
 				),
@@ -79,56 +54,57 @@ export function createFolderInterface(path: string | URL) {
 		);
 	}
 
-	function exist() {
-		return exists(localPath);
-	}
-
-	function relocate(parentPath: string | URL) {
-		const newPath = pipe(
-			localPath,
-			getParentPath,
-			(localParentPath) => `${localParentPath}/${name}`,
-		);
+	function localRelocate(newParentPath: string) {
 		return asyncPipe(
-			parentPath,
-			when(
-				instanceOf(URL),
-				({ pathname }) => decodeURIComponent(pathname),
-			),
-			(parentPath) => move(parentPath, newPath),
+			relocate(path, newParentPath),
 			E.whenIsRight(
-				() => pipe(
-					newPath,
+				innerPipe(
 					createFolderInterface,
 					E.success,
 				),
 			),
 		);
+	}
+
+	function localMove(newPath: string) {
+		return asyncPipe(
+			move(path, newPath),
+			E.whenIsRight(
+				() => E.success(
+					createFolderInterface(newPath),
+				),
+			),
+		);
+	}
+
+	function localExists() {
+		return exists(path);
 	}
 
 	function localRemove() {
-		return remove(localPath, { recursive: true });
-	}
-
-	function getChildren() {
-		return readDirectory(localPath);
+		return remove(path);
 	}
 
 	function localStat() {
-		return stat(localPath);
+		return stat(path);
+	}
+
+	function getChildren() {
+		return readDirectory(path);
 	}
 
 	function walk() {
-		return walkDirectory(localPath);
+		return walkDirectory(path);
 	}
 
 	return folderInterfaceKind.addTo({
-		path: localPath,
-		name,
+		path,
+		getName,
 		getParentPath,
+		move: localMove,
 		rename: localRename,
-		exist,
-		relocate,
+		exists: localExists,
+		relocate: localRelocate,
 		remove: localRemove,
 		getChildren,
 		stat: localStat,

@@ -11,11 +11,11 @@ const move = implementor.implementFunction("move", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.rename(fromPath, toPath)
             .then(utils.E.ok)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-move", value));
     },
     DENO: (fromPath, toPath) => Deno.rename(fromPath, toPath)
         .then(utils.E.ok)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-move", value)),
 });
 
 exports.move = move;

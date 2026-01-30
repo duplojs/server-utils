@@ -7,47 +7,58 @@ var exists = require('./exists.cjs');
 var move = require('./move.cjs');
 var remove = require('./remove.cjs');
 var stat = require('./stat.cjs');
-var isSupportedExtensionFile = require('./mimeType/isSupportedExtensionFile.cjs');
-var database = require('./mimeType/database.cjs');
+var relocate = require('./relocate.cjs');
 
 const fileInterfaceKind = kind.createDuplojsServerUtilsKind("fileInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
+/**
+ * {@include file/createFileInterface/index.md}
+ */
 function createFileInterface(path) {
-    const localPath = utils.pipe(path, utils.when(utils.instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)));
-    const name = utils.pipe(localPath, utils.S.split("/"), utils.A.last, utils.when(utils.isType("undefined"), utils.justReturn("")));
-    const extension = utils.pipe(name, utils.S.split("."), utils.A.last, utils.P.when(utils.isType("string"), utils.whenElse(isSupportedExtensionFile.isSupportedExtensionFile, utils.forward, utils.justReturn(null))), utils.P.otherwise(utils.justReturn(null)));
-    const mimeType = extension
-        ? database.mimeType.get(extension)
-        : null;
+    function getName() {
+        return utils.Path.getBaseName(path);
+    }
+    function getExtension() {
+        return utils.Path.getExtensionName(path);
+    }
+    function getMimeType() {
+        const extension = getExtension();
+        if (!extension) {
+            return null;
+        }
+        return utils.mimeType.get(extension) ?? null;
+    }
     function getParentPath() {
-        return utils.S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+        return utils.Path.getParentFolderPath(path);
+    }
+    function localExists() {
+        return exists.exists(path);
     }
     function localRename(newName) {
-        return utils.asyncPipe(rename.rename(localPath, newName), utils.E.whenIsRight(() => utils.pipe(getParentPath(), (parentPath) => createFileInterface(`${parentPath}/${newName}`), utils.E.success)));
+        return utils.asyncPipe(rename.rename(path, newName), utils.E.whenIsRight(utils.innerPipe(createFileInterface, utils.E.success)));
     }
-    function exist() {
-        return exists.exists(localPath);
+    function localRelocate(newParentPath) {
+        return utils.asyncPipe(relocate.relocate(path, newParentPath), utils.E.whenIsRight(utils.innerPipe(createFileInterface, utils.E.success)));
     }
-    function relocate(parentPath) {
-        const newPath = utils.pipe(localPath, getParentPath, (localParentPath) => `${localParentPath}/${name}`);
-        return utils.asyncPipe(parentPath, utils.when(utils.instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (parentPath) => move.move(parentPath, newPath), utils.E.whenIsRight(() => utils.pipe(newPath, createFileInterface, utils.E.success)));
+    function localMove(newPath) {
+        return utils.asyncPipe(move.move(path, newPath), utils.E.whenIsRight(() => utils.E.success(createFileInterface(newPath))));
     }
     function localRemove() {
-        return remove.remove(localPath);
+        return remove.remove(path);
     }
     function localStat() {
-        return stat.stat(localPath);
+        return stat.stat(path);
     }
     return fileInterfaceKind.addTo({
-        extension,
-        name,
-        path: localPath,
-        mimeType,
+        path,
+        getName,
+        getExtension,
+        getMimeType,
         getParentPath,
         rename: localRename,
-        exist,
-        relocate,
+        exists: localExists,
+        relocate: localRelocate,
         remove: localRemove,
+        move: localMove,
         stat: localStat,
     });
 }

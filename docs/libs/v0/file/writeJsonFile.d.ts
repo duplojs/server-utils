@@ -5,7 +5,7 @@ interface WriteJsonFile {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        writeJsonFile(path: string | URL, data: unknown, params?: WriteJsonFile): Promise<FileSystemLeft | E.Ok>;
+        writeJsonFile(path: string, data: unknown, params?: WriteJsonFile): Promise<FileSystemLeft<"write-json-file"> | E.Ok>;
     }
 }
 /**
@@ -15,7 +15,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.writeJsonFile("/tmp/config.json", { enabled: true });
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"write-json-file">
  * 
  * await SF.writeJsonFile("/tmp/config.json", { enabled: true }, { space: 2 });
  * ```
@@ -26,5 +26,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const writeJsonFile: (path: string | URL, data: unknown, params?: WriteJsonFile) => Promise<FileSystemLeft | E.Ok>;
+export declare const writeJsonFile: (path: string, data: unknown, params?: WriteJsonFile) => Promise<FileSystemLeft<"write-json-file"> | E.Ok>;
 export {};

@@ -1,8 +1,8 @@
 ---
 outline: [2, 3]
 prev:
-  text: "mimeType"
-  link: "/en/v0/api/file/mimeType"
+  text: "ensureFile"
+  link: "/en/v0/api/file/ensureFile"
 next:
   text: "folderInterface"
   link: "/en/v0/api/file/folderInterface"
@@ -28,7 +28,7 @@ The `FileInterface` object does not guarantee that the file actually exists. It 
 
 ```typescript
 function createFileInterface(
-  path: string | URL
+  path: string
 ): FileInterface
 ```
 
@@ -42,16 +42,17 @@ function isFileInterface(
 
 ```typescript
 interface FileInterface {
-  name: string;
   path: string;
-  mimeType: SupportedMimeType | null;
-  extension: SupportedExtensionFile | null;
-  getParentPath(): string;
-  rename(newName: string): Promise<FileSystemLeft | E.Success<FileInterface>>;
-  exist(): Promise<FileSystemLeft | E.Ok>;
-  relocate(parentPath: string | URL): Promise<FileSystemLeft | E.Success<FileInterface>>;
-  remove(): Promise<FileSystemLeft | E.Ok>;
-  stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
+  getName(): string | null;
+  getMimeType(): string | null;
+  getExtension(): string | null;
+  getParentPath(): string | null;
+  rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
+  relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;
+  move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FileInterface>>;
+  exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
+  remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
+  stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
 }
 ```
 
@@ -61,7 +62,7 @@ interface FileInterface {
 
 ## Return value
 
-- `FileInterface` : interface with `name`, `extension`, `mimeType`, `path`, and methods like `rename(newName)`, `exist()`, `relocate(parentPath)`, `remove()`, `stat()`, and `getParentPath()`.
+- `FileInterface` : interface with `path`, getters (`getName`, `getExtension`, `getMimeType`, `getParentPath`) and helper methods like `rename(newName)`, `exists()`, `relocate(parentPath)`, `move(newPath)`, `remove()`, and `stat()`.
 
 ## See also
 

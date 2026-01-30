@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        realPath<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Success<string>>;
+        realPath<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"real-path"> | E.Success<string>>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const resolved = await SF.realPath("/tmp/./file.txt");
- * // resolved: E.Success<string> | SF.FileSystemLeft
+ * // resolved: E.Success<string> | SF.FileSystemLeft<"real-path">
  * 
  * const other = await SF.realPath("/tmp/../tmp/file.txt");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const realPath: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Success<string>>;
+export declare const realPath: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"real-path"> | E.Success<string>>;

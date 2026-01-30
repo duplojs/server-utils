@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        link(existingPath: string | URL, newPath: string | URL): Promise<FileSystemLeft | E.Ok>;
+        link(existingPath: string, newPath: string): Promise<FileSystemLeft<"link"> | E.Ok>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.link("/tmp/original", "/tmp/hardlink");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"link">
  * 
  * await SF.link("/tmp/data.bin", "/tmp/data-copy.bin");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const link: (existingPath: string | URL, newPath: string | URL) => Promise<FileSystemLeft | E.Ok>;
+export declare const link: (existingPath: string, newPath: string) => Promise<FileSystemLeft<"link"> | E.Ok>;

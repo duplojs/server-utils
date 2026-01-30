@@ -6,3 +6,6 @@ const cwd = getCurrentWorkDirectory();
 setCurrentWorkingDirectory("/tmp");
 const after = getCurrentWorkDirectory();
 // after is an Either with the new path.
+
+const current = getCurrentWorkDirectory();
+// current is an Either with the current path.

@@ -6,10 +6,10 @@ declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		readJsonFile<
 			GenericOutput extends unknown,
-			GenericPath extends string | URL = string | URL,
+			GenericPath extends string = string,
 		>(
 			path: GenericPath,
-		): Promise<FileSystemLeft | E.Success<GenericOutput>>;
+		): Promise<FileSystemLeft<"read-json-file"> | E.Success<GenericOutput>>;
 	}
 }
 
@@ -24,18 +24,18 @@ export const readJsonFile = implementFunction(
 			return fs.readFile(path, { encoding: "utf-8" })
 				.then(JSON.parse)
 				.then(E.success)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-read-json-file", value));
 		},
 
 		DENO: (path) => Deno.readTextFile(path)
 			.then(JSON.parse)
 			.then(E.success)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-read-json-file", value)),
 
 		BUN: (path) => Bun.file(path)
 			.text()
 			.then(JSON.parse)
 			.then(E.success)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-read-json-file", value)),
 	},
 );

@@ -4,8 +4,8 @@ prev:
   text: "makeTemporaryFile"
   link: "/fr/v0/api/file/makeTemporaryFile/"
 next:
-  text: "mimeType"
-  link: "/fr/v0/api/file/mimeType/"
+  text: "fileInterface"
+  link: "/fr/v0/api/file/fileInterface/"
 description: "S'assure qu'un fichier existe."
 ---
 
@@ -24,8 +24,8 @@ S'assure qu'un fichier existe.
 
 ```typescript
 function ensureFile(
-  path: string | URL
-): Promise<FileSystemLeft | E.Ok>
+  path: string
+): Promise<FileSystemLeft<"ensure-file"> | E.Ok>
 ```
 
 ## Paramètres
@@ -35,7 +35,7 @@ function ensureFile(
 ## Valeur de retour
 
 - `E.Ok` : si le fichier existe ou a ete crée.
-- `FileSystemLeft` : si l'opération échoue.
+- `FileSystemLeft<"ensure-file">` : si l'opération échoue.
 
 ## Voir aussi
 

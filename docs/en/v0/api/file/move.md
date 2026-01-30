@@ -4,8 +4,8 @@ prev:
   text: "copy"
   link: "/en/v0/api/file/copy/"
 next:
-  text: "rename"
-  link: "/en/v0/api/file/rename/"
+  text: "relocate"
+  link: "/en/v0/api/file/relocate/"
 description: "Moves a file or directory."
 ---
 
@@ -24,9 +24,9 @@ Moves a file or directory.
 
 ```typescript
 function move(
-  fromPath: string | URL,
-  toPath: string | URL
-): Promise<FileSystemLeft | E.Ok>
+  fromPath: string,
+  toPath: string
+): Promise<FileSystemLeft<"move"> | E.Ok>
 ```
 
 ## Parameters
@@ -37,7 +37,7 @@ function move(
 ## Return value
 
 - `E.Ok` : if the move succeeds.
-- `FileSystemLeft` : if the move fails.
+- `FileSystemLeft<"move">` : if the move fails.
 
 ## See also
 

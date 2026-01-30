@@ -45,26 +45,19 @@ describe("folderInterface", () => {
 		expect(DServerFile.isFolderInterface({})).toBe(false);
 	});
 
-	it("creates interface and trims trailing slash", () => {
-		const folder = DServerFile.createFolderInterface("/tmp/demo/");
+	it("creates interface with name and parent path", () => {
+		const folder = DServerFile.createFolderInterface("/tmp/demo");
 
-		expect(folder.name).toBe("demo");
+		expect(folder.getName()).toBe("demo");
 		expect(folder.path).toBe("/tmp/demo");
 		expect(folder.getParentPath()).toBe("/tmp");
 	});
 
-	it("creates interface from URL", () => {
-		const folder = DServerFile.createFolderInterface(new URL("file:///tmp/url%20demo/"));
-
-		expect(folder.name).toBe("url demo");
-		expect(folder.path).toBe("/tmp/url demo");
-	});
-
-	it("returns empty parent path when no separator is present", () => {
+	it("returns null parent path when no separator is present", () => {
 		const folder = DServerFile.createFolderInterface("folder");
 
-		expect(folder.name).toBe("folder");
-		expect(folder.getParentPath()).toBe("");
+		expect(folder.getName()).toBe("folder");
+		expect(folder.getParentPath()).toBe(null);
 	});
 
 	it("renames folder and returns new interface", async() => {
@@ -93,25 +86,25 @@ describe("folderInterface", () => {
 		const result = await folder.relocate("/new/parent");
 
 		expect(E.isRight(result)).toBe(true);
-		expect(fs.rename).toHaveBeenCalledWith("/new/parent", "/tmp/demo");
+		expect(fs.rename).toHaveBeenCalledWith("/tmp/demo", "/new/parent/demo");
 		if (E.isRight(result)) {
-			expect(unwrap(result).path).toBe("/tmp/demo");
+			expect(unwrap(result).path).toBe("/new/parent/demo");
 		}
 	});
 
-	it("relocates folder using move with URL parent path", async() => {
+	it("moves folder to new path", async() => {
 		setEnvironment("NODE");
 		const fs = setFsPromisesMock({
 			rename: vi.fn().mockResolvedValue(undefined),
 		});
 		const folder = DServerFile.createFolderInterface("/tmp/demo");
 
-		const result = await folder.relocate(new URL("file:///new/parent%20path/"));
+		const result = await folder.move("/new/path/demo");
 
 		expect(E.isRight(result)).toBe(true);
-		expect(fs.rename).toHaveBeenCalledWith("/new/parent path/", "/tmp/demo");
+		expect(fs.rename).toHaveBeenCalledWith("/tmp/demo", "/new/path/demo");
 		if (E.isRight(result)) {
-			expect(unwrap(result).path).toBe("/tmp/demo");
+			expect(unwrap(result).path).toBe("/new/path/demo");
 		}
 	});
 
@@ -122,13 +115,13 @@ describe("folderInterface", () => {
 		});
 		const folder = DServerFile.createFolderInterface("/tmp/demo");
 
-		const result = await folder.exist();
+		const result = await folder.exists();
 
 		expect(E.isRight(result)).toBe(true);
 		expect(fs.access).toHaveBeenCalledWith("/tmp/demo");
 	});
 
-	it("removes folder recursively", async() => {
+	it("removes folder", async() => {
 		setEnvironment("NODE");
 		const fs = setFsPromisesMock({
 			rm: vi.fn().mockResolvedValue(undefined),
@@ -139,7 +132,7 @@ describe("folderInterface", () => {
 
 		expect(E.isRight(result)).toBe(true);
 		expect(fs.rm).toHaveBeenCalledWith("/tmp/demo", {
-			recursive: true,
+			recursive: false,
 			force: true,
 		});
 	});
@@ -194,12 +187,12 @@ describe("folderInterface", () => {
 
 		expect(E.isRight(result)).toBe(true);
 		expect(fs.readdir).toHaveBeenCalledWith("/tmp/demo", {
-			recursive: true,
+			recursive: false,
 			withFileTypes: true,
 		});
 		if (E.isRight(result)) {
 			const items = Array.from(unwrap(result));
-			expect(items[0]?.name).toBe("file.json");
+			expect(items[0]?.getName()).toBe("file.json");
 		}
 	});
 });

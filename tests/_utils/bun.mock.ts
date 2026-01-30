@@ -7,7 +7,7 @@ interface BunFileMock {
 }
 
 interface BunMock {
-	file(path: string | URL): BunFileMock;
+	file(path: string): BunFileMock;
 }
 
 const globalWithBun = globalThis as unknown as { Bun?: BunMock };

@@ -24,8 +24,8 @@ Lit un fichier et retourne son contenu binaire.
 
 ```typescript
 function readFile(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<Uint8Array>>
+  path: string
+): Promise<FileSystemLeft<"read-file"> | E.Success<Uint8Array>>
 ```
 
 ## Paramètres
@@ -35,7 +35,7 @@ function readFile(
 ## Valeur de retour
 
 - `E.Success<Uint8Array>` : le contenu du fichier.
-- `FileSystemLeft` : si la lecture échoue.
+- `FileSystemLeft<"read-file">` : si la lecture échoue.
 
 ## Voir aussi
 

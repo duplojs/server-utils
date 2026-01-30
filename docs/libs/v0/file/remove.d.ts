@@ -5,7 +5,7 @@ interface RemoveDirectoryParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        remove<GenericPath extends string | URL>(path: GenericPath, params?: RemoveDirectoryParams): Promise<FileSystemLeft | E.Ok>;
+        remove<GenericPath extends string>(path: GenericPath, params?: RemoveDirectoryParams): Promise<FileSystemLeft<"remove"> | E.Ok>;
     }
 }
 /**
@@ -15,7 +15,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.remove("/tmp/file.txt");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"remove">
  * 
  * await SF.remove("/tmp/project", { recursive: true });
  * ```
@@ -24,5 +24,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const remove: <GenericPath extends string | URL>(path: GenericPath, params?: RemoveDirectoryParams) => Promise<FileSystemLeft | E.Ok>;
+export declare const remove: <GenericPath extends string>(path: GenericPath, params?: RemoveDirectoryParams) => Promise<FileSystemLeft<"remove"> | E.Ok>;
 export {};

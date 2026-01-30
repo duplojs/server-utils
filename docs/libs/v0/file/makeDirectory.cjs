@@ -13,13 +13,13 @@ const makeDirectory = implementor.implementFunction("makeDirectory", {
             recursive: params?.recursive,
         })
             .then(utils.E.ok)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-make-directory", value));
     },
     DENO: (path, params) => Deno.mkdir(path, {
         recursive: params?.recursive,
     })
         .then(utils.E.ok)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-make-directory", value)),
 });
 
 exports.makeDirectory = makeDirectory;

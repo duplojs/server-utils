@@ -24,8 +24,8 @@ Checks that a path exists.
 
 ```typescript
 function exists(
-  path: string | URL
-): Promise<FileSystemLeft | E.Ok>
+  path: string
+): Promise<FileSystemLeft<"exists"> | E.Ok>
 ```
 
 ## Parameters
@@ -35,7 +35,7 @@ function exists(
 ## Return value
 
 - `E.Ok` : if the path exists.
-- `FileSystemLeft` : if the path does not exist or if the check fails.
+- `FileSystemLeft<"exists">` : if the path does not exist or if the check fails.
 
 ## See also
 

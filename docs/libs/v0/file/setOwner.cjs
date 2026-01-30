@@ -11,12 +11,12 @@ const setOwner = implementor.implementFunction("setOwner", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.chown(path, userId, groupId)
             .then(utils.E.ok)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-set-owner", value));
     },
     DENO: (path, { userId, groupId }) => Deno
         .chown(path, userId, groupId)
         .then(utils.E.ok)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-set-owner", value)),
 });
 
 exports.setOwner = setOwner;

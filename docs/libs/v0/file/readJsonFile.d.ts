@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        readJsonFile<GenericOutput extends unknown, GenericPath extends string | URL = string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Success<GenericOutput>>;
+        readJsonFile<GenericOutput extends unknown, GenericPath extends string = string>(path: GenericPath): Promise<FileSystemLeft<"read-json-file"> | E.Success<GenericOutput>>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const config = await SF.readJsonFile("/tmp/config.json");
- * // config: E.Success<unknown> | SF.FileSystemLeft
+ * // config: E.Success<unknown> | SF.FileSystemLeft<"read-json-file">
  * 
  * const data = await SF.readJsonFile("/tmp/data.json");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const readJsonFile: <GenericOutput extends unknown, GenericPath extends string | URL = string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Success<GenericOutput>>;
+export declare const readJsonFile: <GenericOutput extends unknown, GenericPath extends string = string>(path: GenericPath) => Promise<FileSystemLeft<"read-json-file"> | E.Success<GenericOutput>>;

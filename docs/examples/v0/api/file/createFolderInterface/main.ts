@@ -2,8 +2,11 @@ import { SF } from "@duplojs/server-utils";
 import { E, type ExpectType, G, unwrap } from "@duplojs/utils";
 
 const folder = SF.createFolderInterface("/tmp/project");
+const name = folder.getName();
+// name: string | null
+
 const parentPath = folder.getParentPath();
-// parentPath: string
+// parentPath: string | null
 
 const result = await folder.getChildren();
 

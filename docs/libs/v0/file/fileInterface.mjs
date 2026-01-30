@@ -1,51 +1,62 @@
 import { createDuplojsServerUtilsKind } from '../kind.mjs';
-import { pipe, when, instanceOf, S, A, isType, justReturn, P, whenElse, forward, asyncPipe, E } from '@duplojs/utils';
+import { asyncPipe, E, innerPipe, Path, mimeType } from '@duplojs/utils';
 import { rename } from './rename.mjs';
 import { exists } from './exists.mjs';
 import { move } from './move.mjs';
 import { remove } from './remove.mjs';
 import { stat } from './stat.mjs';
-import { isSupportedExtensionFile } from './mimeType/isSupportedExtensionFile.mjs';
-import { mimeType } from './mimeType/database.mjs';
+import { relocate } from './relocate.mjs';
 
 const fileInterfaceKind = createDuplojsServerUtilsKind("fileInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
+/**
+ * {@include file/createFileInterface/index.md}
+ */
 function createFileInterface(path) {
-    const localPath = pipe(path, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)));
-    const name = pipe(localPath, S.split("/"), A.last, when(isType("undefined"), justReturn("")));
-    const extension = pipe(name, S.split("."), A.last, P.when(isType("string"), whenElse(isSupportedExtensionFile, forward, justReturn(null))), P.otherwise(justReturn(null)));
-    const mimeType$1 = extension
-        ? mimeType.get(extension)
-        : null;
+    function getName() {
+        return Path.getBaseName(path);
+    }
+    function getExtension() {
+        return Path.getExtensionName(path);
+    }
+    function getMimeType() {
+        const extension = getExtension();
+        if (!extension) {
+            return null;
+        }
+        return mimeType.get(extension) ?? null;
+    }
     function getParentPath() {
-        return S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+        return Path.getParentFolderPath(path);
+    }
+    function localExists() {
+        return exists(path);
     }
     function localRename(newName) {
-        return asyncPipe(rename(localPath, newName), E.whenIsRight(() => pipe(getParentPath(), (parentPath) => createFileInterface(`${parentPath}/${newName}`), E.success)));
+        return asyncPipe(rename(path, newName), E.whenIsRight(innerPipe(createFileInterface, E.success)));
     }
-    function exist() {
-        return exists(localPath);
+    function localRelocate(newParentPath) {
+        return asyncPipe(relocate(path, newParentPath), E.whenIsRight(innerPipe(createFileInterface, E.success)));
     }
-    function relocate(parentPath) {
-        const newPath = pipe(localPath, getParentPath, (localParentPath) => `${localParentPath}/${name}`);
-        return asyncPipe(parentPath, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (parentPath) => move(parentPath, newPath), E.whenIsRight(() => pipe(newPath, createFileInterface, E.success)));
+    function localMove(newPath) {
+        return asyncPipe(move(path, newPath), E.whenIsRight(() => E.success(createFileInterface(newPath))));
     }
     function localRemove() {
-        return remove(localPath);
+        return remove(path);
     }
     function localStat() {
-        return stat(localPath);
+        return stat(path);
     }
     return fileInterfaceKind.addTo({
-        extension,
-        name,
-        path: localPath,
-        mimeType: mimeType$1,
+        path,
+        getName,
+        getExtension,
+        getMimeType,
         getParentPath,
         rename: localRename,
-        exist,
-        relocate,
+        exists: localExists,
+        relocate: localRelocate,
         remove: localRemove,
+        move: localMove,
         stat: localStat,
     });
 }

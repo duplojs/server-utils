@@ -24,8 +24,8 @@ Récupère les informations d'un chemin.
 
 ```typescript
 function stat(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<StatInfo>>
+  path: string
+): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>
 ```
 
 ### Interface StatInfo
@@ -63,7 +63,7 @@ interface StatInfo {
 ## Valeur de retour
 
 - `E.Success<StatInfo>` : informations sur le chemin (type, taille, dates, etc.).
-- `FileSystemLeft` : si la lecture échoue.
+- `FileSystemLeft<"stat">` : si la lecture échoue.
 
 ## Notes
 

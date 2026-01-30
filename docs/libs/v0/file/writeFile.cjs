@@ -11,17 +11,17 @@ const writeFile = implementor.implementFunction("writeFile", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.writeFile(path, data)
             .then(utils.E.ok)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-write-file", value));
     },
     DENO: (path, data) => Deno
         .writeFile(path, data)
         .then(utils.E.ok)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-write-file", value)),
     BUN: (path, data) => Bun
         .file(path)
         .write(data)
         .then(utils.E.ok)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-write-file", value)),
 });
 
 exports.writeFile = writeFile;

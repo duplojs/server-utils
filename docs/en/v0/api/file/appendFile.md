@@ -24,9 +24,9 @@ Appends binary content to the end of a file.
 
 ```typescript
 function appendFile(
-  path: string | URL,
+  path: string,
   data: Uint8Array
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"append-file"> | E.Ok>
 ```
 
 ## Parameters
@@ -37,7 +37,7 @@ function appendFile(
 ## Return value
 
 - `E.Ok` : if the operation succeeds.
-- `FileSystemLeft` : if the operation fails.
+- `FileSystemLeft<"append-file">` : if the operation fails.
 
 ## See also
 

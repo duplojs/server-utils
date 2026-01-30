@@ -1,4 +1,4 @@
-export { getCurrentWorkDirectory } from './getCurrentWorkDirectory.mjs';
+export { getCurrentWorkDirectory, getCurrentWorkDirectoryOrThrow } from './getCurrentWorkDirectory.mjs';
 export { setCurrentWorkingDirectory } from './setCurrentWorkingDirectory.mjs';
 
 /**

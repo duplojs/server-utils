@@ -31,12 +31,24 @@ describe("truncate", () => {
 		expect(E.isLeft(result)).toBe(true);
 	});
 
-	it("truncates file in DENO env with URL", async() => {
+	it("truncates file in DENO env", async() => {
 		setEnvironment("DENO");
 		const truncate = vi.fn().mockResolvedValue(undefined);
 		setDenoMock({ truncate });
 
-		const result = await DServerFile.truncate(new URL("file:///tmp/mock%20file"), 5);
+		const result = await DServerFile.truncate("/tmp/mock file", 5);
+
+		expect(E.isRight(result)).toBe(true);
+		expect(truncate).toHaveBeenCalledWith("/tmp/mock file", 5);
+	});
+
+	it("decodes URL in DENO env", async() => {
+		setEnvironment("DENO");
+		const truncate = vi.fn().mockResolvedValue(undefined);
+		setDenoMock({ truncate });
+		const url = new URL("file:///tmp/mock%20file");
+
+		const result = await DServerFile.truncate(url as unknown as string, 5);
 
 		expect(E.isRight(result)).toBe(true);
 		expect(truncate).toHaveBeenCalledWith("/tmp/mock file", 5);

@@ -24,9 +24,9 @@ Writes text content to a file.
 
 ```typescript
 function writeTextFile(
-  path: string | URL,
+  path: string,
   data: string
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"write-text-file"> | E.Ok>
 ```
 
 ## Parameters
@@ -37,7 +37,7 @@ function writeTextFile(
 ## Return value
 
 - `E.Ok` : if the write succeeds.
-- `FileSystemLeft` : if the write fails.
+- `FileSystemLeft<"write-text-file">` : if the write fails.
 
 ## See also
 

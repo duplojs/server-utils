@@ -71,10 +71,10 @@ function createStatInfoWithDeno(source: Deno.FileInfo): StatInfo {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		linkStat<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath,
-		): Promise<FileSystemLeft | E.Success<StatInfo>>;
+		): Promise<FileSystemLeft<"link-stat"> | E.Success<StatInfo>>;
 	}
 }
 
@@ -93,7 +93,7 @@ export const linkStat = implementFunction(
 						E.success,
 					),
 				)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-link-stat", value));
 		},
 		DENO: (path) => Deno
 			.lstat(path)
@@ -103,6 +103,6 @@ export const linkStat = implementFunction(
 					E.success,
 				),
 			)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-link-stat", value)),
 	},
 );

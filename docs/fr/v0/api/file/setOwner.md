@@ -24,12 +24,12 @@ Definit le propriétaire d'un fichier ou dossier.
 
 ```typescript
 function setOwner(
-  path: string | URL,
+  path: string,
   params: {
     userId: number;
     groupId: number;
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"set-owner"> | E.Ok>
 ```
 
 ## Paramètres
@@ -41,7 +41,7 @@ function setOwner(
 ## Valeur de retour
 
 - `E.Ok` : si l'opération réussit.
-- `FileSystemLeft` : si l'opération échoue.
+- `FileSystemLeft<"set-owner">` : si l'opération échoue.
 
 ## Voir aussi
 

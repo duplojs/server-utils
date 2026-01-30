@@ -9,11 +9,11 @@ interface RemoveDirectoryParams {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		remove<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath,
 			params?: RemoveDirectoryParams
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"remove"> | E.Ok>;
 	}
 }
 
@@ -33,7 +33,7 @@ export const remove = implementFunction(
 				},
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-remove", value));
 		},
 		DENO: (path, params) => Deno.remove(
 			path,
@@ -42,6 +42,6 @@ export const remove = implementFunction(
 			},
 		)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-remove", value)),
 	},
 );

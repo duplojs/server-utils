@@ -1,5 +1,5 @@
 import { E, unwrap } from "@duplojs/utils";
-import { setEnvironment, getCurrentWorkDirectory } from "@scripts";
+import { setEnvironment, getCurrentWorkDirectory, getCurrentWorkDirectoryOrThrow } from "@scripts";
 import { setDenoMock } from "tests/_utils/deno.mock";
 import { setProcessMock } from "tests/_utils/process.mock";
 
@@ -63,5 +63,29 @@ describe("getCurrentWorkDirectory", () => {
 		const result = getCurrentWorkDirectory();
 
 		expect(E.isLeft(result)).toBe(true);
+	});
+
+	it("getCurrentWorkDirectoryOrThrow node", () => {
+		setEnvironment("NODE");
+
+		setProcessMock({
+			cwd: () => "/node",
+		});
+
+		const result = getCurrentWorkDirectoryOrThrow();
+
+		expect(result).toBe("/node");
+	});
+
+	it("getCurrentWorkDirectoryOrThrow deno", () => {
+		setEnvironment("DENO");
+
+		setDenoMock({
+			cwd: () => "/deno",
+		});
+
+		const result = getCurrentWorkDirectoryOrThrow();
+
+		expect(result).toBe("/deno");
 	});
 });

@@ -24,11 +24,11 @@ Removes a file or directory.
 
 ```typescript
 function remove(
-  path: string | URL,
+  path: string,
   params?: {
     recursive?: boolean
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"remove"> | E.Ok>
 ```
 
 ## Parameters
@@ -39,7 +39,7 @@ function remove(
 ## Return value
 
 - `E.Ok` : if removal succeeds.
-- `FileSystemLeft` : if removal fails.
+- `FileSystemLeft<"remove">` : if removal fails.
 
 ## See also
 

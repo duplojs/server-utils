@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        makeTemporaryFile(prefix: string, suffix?: string): Promise<FileSystemLeft | E.Success<string>>;
+        makeTemporaryFile(prefix: string, suffix?: string): Promise<FileSystemLeft<"make-temporary-file"> | E.Success<string>>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const tmpFile = await SF.makeTemporaryFile("tmp-", ".log");
- * // tmpFile: E.Success<string> | SF.FileSystemLeft
+ * // tmpFile: E.Success<string> | SF.FileSystemLeft<"make-temporary-file">
  * 
  * const report = await SF.makeTemporaryFile("report-");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const makeTemporaryFile: (prefix: string, suffix?: string) => Promise<FileSystemLeft | E.Success<string>>;
+export declare const makeTemporaryFile: (prefix: string, suffix?: string) => Promise<FileSystemLeft<"make-temporary-file"> | E.Success<string>>;

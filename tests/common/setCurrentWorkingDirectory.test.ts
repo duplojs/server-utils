@@ -19,12 +19,24 @@ describe("setCurrentWorkingDirectory", () => {
 		expect(chdirSpy).toHaveBeenCalledWith("/tmp/mock-cwd");
 	});
 
-	it("decodes URL in NODE env", () => {
+	it("accepts a path with spaces in NODE env", () => {
 		setEnvironment("NODE");
 		const chdirSpy = vi.fn();
 		setProcessMock({ chdir: chdirSpy });
 
-		const result = setCurrentWorkingDirectory(new URL("file:///tmp/mock%20cwd"));
+		const result = setCurrentWorkingDirectory("/tmp/mock cwd");
+
+		expect(E.isRight(result)).toBe(true);
+		expect(chdirSpy).toHaveBeenCalledWith("/tmp/mock cwd");
+	});
+
+	it("decodes URL in NODE env", () => {
+		setEnvironment("NODE");
+		const chdirSpy = vi.fn();
+		setProcessMock({ chdir: chdirSpy });
+		const url = new URL("file:///tmp/mock%20cwd");
+
+		const result = setCurrentWorkingDirectory(url as unknown as string);
 
 		expect(E.isRight(result)).toBe(true);
 		expect(chdirSpy).toHaveBeenCalledWith("/tmp/mock cwd");
@@ -56,14 +68,28 @@ describe("setCurrentWorkingDirectory", () => {
 		expect(chdirSpy).toHaveBeenCalledWith("/tmp/mock-deno-cwd");
 	});
 
-	it("decodes URL in DENO env", () => {
+	it("accepts a path with spaces in DENO env", () => {
 		setEnvironment("DENO");
 		const chdirSpy = vi.fn();
 		setDenoMock({
 			chdir: chdirSpy,
 		});
 
-		const result = setCurrentWorkingDirectory(new URL("file:///tmp/mock%20deno%20cwd"));
+		const result = setCurrentWorkingDirectory("/tmp/mock deno cwd");
+
+		expect(E.isRight(result)).toBe(true);
+		expect(chdirSpy).toHaveBeenCalledWith("/tmp/mock deno cwd");
+	});
+
+	it("decodes URL in DENO env", () => {
+		setEnvironment("DENO");
+		const chdirSpy = vi.fn();
+		setDenoMock({
+			chdir: chdirSpy,
+		});
+		const url = new URL("file:///tmp/mock%20deno%20cwd");
+
+		const result = setCurrentWorkingDirectory(url as unknown as string);
 
 		expect(E.isRight(result)).toBe(true);
 		expect(chdirSpy).toHaveBeenCalledWith("/tmp/mock deno cwd");

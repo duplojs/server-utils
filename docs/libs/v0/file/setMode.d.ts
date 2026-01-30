@@ -16,7 +16,7 @@ interface ModeObject {
 type SetMode = ModeObject | number;
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        setMode(path: string | URL, mode: SetMode): Promise<FileSystemLeft | E.Ok>;
+        setMode(path: string, mode: SetMode): Promise<FileSystemLeft<"set-mode"> | E.Ok>;
     }
 }
 /**
@@ -26,7 +26,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.setMode("/tmp/file.txt", 0o644);
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"set-mode">
  * 
  * await SF.setMode("/tmp/file.txt", {
  * 	user: {
@@ -42,5 +42,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const setMode: (path: string | URL, mode: SetMode) => Promise<FileSystemLeft | E.Ok>;
+export declare const setMode: (path: string, mode: SetMode) => Promise<FileSystemLeft<"set-mode"> | E.Ok>;
 export {};

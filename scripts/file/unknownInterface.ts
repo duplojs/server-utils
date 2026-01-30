@@ -1,69 +1,44 @@
-import { A, instanceOf, isType, justReturn, pipe, S, when, type E, type Kind } from "@duplojs/utils";
+import { Path, type E, type Kind } from "@duplojs/utils";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import { stat, type StatInfo } from "./stat";
 import { exists } from "./exists";
 import type { FileSystemLeft } from "./types";
 
 const unknownInterfaceKind = createDuplojsServerUtilsKind("unknownInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
 
 export interface UnknownInterface extends Kind<
 	typeof unknownInterfaceKind.definition
 > {
-	name: string;
 	path: string;
-	getParentPath(): string;
-	stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
-	exist(): Promise<FileSystemLeft | E.Ok>;
+	getName(): string | null;
+	getParentPath(): string | null;
+	stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+	exist(): Promise<FileSystemLeft<"exists"> | E.Ok>;
 }
 
 /**
  * {@include file/createUnknownInterface/index.md}
  */
-export function createUnknownInterface<
-	GenericPath extends string | URL,
->(
-	path: GenericPath,
-): UnknownInterface;
-
-export function createUnknownInterface(path: string | URL) {
-	const localPath = pipe(
-		path,
-		when(
-			instanceOf(URL),
-			({ pathname }) => decodeURIComponent(pathname),
-		),
-		when(
-			S.endsWith("/"),
-			S.slice(0, -1),
-		),
-	);
-
-	const name = pipe(
-		localPath,
-		S.split("/"),
-		A.last,
-		when(
-			isType("undefined"),
-			justReturn(""),
-		),
-	);
+export function createUnknownInterface(path: string): UnknownInterface {
+	function getName() {
+		return Path.getBaseName(path);
+	}
 
 	function getParentPath() {
-		return S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+		return Path.getParentFolderPath(path);
 	}
 
 	function localStat() {
-		return stat(localPath);
+		return stat(path);
 	}
 
 	function exist() {
-		return exists(localPath);
+		return exists(path);
 	}
 
 	return unknownInterfaceKind.addTo({
-		path: localPath,
-		name,
+		path,
+		getName,
 		getParentPath,
 		stat: localStat,
 		exist,

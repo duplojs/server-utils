@@ -24,11 +24,11 @@ Creates a directory.
 
 ```typescript
 function makeDirectory(
-  path: string | URL,
+  path: string,
   params?: {
     recursive?: boolean
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"make-directory"> | E.Ok>
 ```
 
 ## Parameters
@@ -39,7 +39,7 @@ function makeDirectory(
 ## Return value
 
 - `E.Ok` : if creation succeeds.
-- `FileSystemLeft` : if creation fails.
+- `FileSystemLeft<"make-directory">` : if creation fails.
 
 ## See also
 

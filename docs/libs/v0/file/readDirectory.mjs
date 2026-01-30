@@ -9,7 +9,7 @@ const readDirectory = implementFunction("readDirectory", {
         const fs = await nodeFileSystem.value;
         return fs.readdir(path, { recursive: params?.recursive })
             .then(E.success)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-read-directory", value));
     },
 });
 

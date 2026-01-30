@@ -46,10 +46,10 @@ export interface StatInfo {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		stat<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath,
-		): Promise<FileSystemLeft | E.Success<StatInfo>>;
+		): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
 	}
 }
 
@@ -132,7 +132,7 @@ export const stat = implementFunction(
 						E.success,
 					),
 				)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-stat", value));
 		},
 		DENO: (path) => Deno
 			.stat(path)
@@ -142,7 +142,7 @@ export const stat = implementFunction(
 					E.success,
 				),
 			)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-stat", value)),
 		BUN: (path) => Bun.file(path)
 			.stat()
 			.then(
@@ -151,6 +151,6 @@ export const stat = implementFunction(
 					E.success,
 				),
 			)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-stat", value)),
 	},
 );

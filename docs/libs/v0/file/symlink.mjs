@@ -9,12 +9,12 @@ const symlink = implementFunction("symlink", {
         const fs = await nodeFileSystem.value;
         return fs.symlink(oldPath, newPath, params?.type)
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-symlink", value));
     },
     DENO: (oldPath, newPath, params) => Deno
         .symlink(oldPath, newPath, params)
         .then(E.ok)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-symlink", value)),
 });
 
 export { symlink };

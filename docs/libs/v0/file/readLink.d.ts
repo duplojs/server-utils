@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        readLink<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Success<string>>;
+        readLink<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"read-link"> | E.Success<string>>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const target = await SF.readLink("/tmp/link");
- * // target: E.Success<string> | SF.FileSystemLeft
+ * // target: E.Success<string> | SF.FileSystemLeft<"read-link">
  * 
  * const other = await SF.readLink("/tmp/other-link");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const readLink: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Success<string>>;
+export declare const readLink: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"read-link"> | E.Success<string>>;

@@ -9,11 +9,11 @@ interface MakeDirectoryParams {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		makeDirectory<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath,
 			params?: MakeDirectoryParams
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"make-directory"> | E.Ok>;
 	}
 }
 
@@ -32,7 +32,7 @@ export const makeDirectory = implementFunction(
 				},
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-make-directory", value));
 		},
 		DENO: (path, params) => Deno.mkdir(
 			path,
@@ -41,6 +41,6 @@ export const makeDirectory = implementFunction(
 			},
 		)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-make-directory", value)),
 	},
 );

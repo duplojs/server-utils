@@ -4,7 +4,7 @@ import { implementFunction } from "@scripts/implementor";
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		setCurrentWorkingDirectory<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(path: GenericPath): E.Fail | E.Ok;
 	}
 }
@@ -15,7 +15,7 @@ declare module "@scripts/implementor" {
 export const setCurrentWorkingDirectory = implementFunction(
 	"setCurrentWorkingDirectory",
 	{
-		NODE: (path: string | URL) => pipe(
+		NODE: (path: string) => pipe(
 			path,
 			when(
 				instanceOf(URL),
@@ -28,7 +28,7 @@ export const setCurrentWorkingDirectory = implementFunction(
 			),
 			P.otherwise(E.ok),
 		),
-		DENO: (path: string | URL) => pipe(
+		DENO: (path: string) => pipe(
 			path,
 			when(
 				instanceOf(URL),

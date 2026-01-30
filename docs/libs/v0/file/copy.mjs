@@ -9,7 +9,7 @@ const copy = implementFunction("copy", {
         const fs = await nodeFileSystem.value;
         return fs.cp(fromPath, toPath, { recursive: true })
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-copy", value));
     },
 });
 

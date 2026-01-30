@@ -8,4 +8,5 @@ var setCurrentWorkingDirectory = require('./setCurrentWorkingDirectory.cjs');
  */
 
 exports.getCurrentWorkDirectory = getCurrentWorkDirectory.getCurrentWorkDirectory;
+exports.getCurrentWorkDirectoryOrThrow = getCurrentWorkDirectory.getCurrentWorkDirectoryOrThrow;
 exports.setCurrentWorkingDirectory = setCurrentWorkingDirectory.setCurrentWorkingDirectory;

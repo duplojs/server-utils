@@ -24,8 +24,8 @@ Résout un chemin vers sa forme canonique.
 
 ```typescript
 function realPath(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<string>>
+  path: string
+): Promise<FileSystemLeft<"real-path"> | E.Success<string>>
 ```
 
 ## Paramètres
@@ -35,7 +35,7 @@ function realPath(
 ## Valeur de retour
 
 - `E.Success<string>` : chemin résolu.
-- `FileSystemLeft` : si la résolution échoue.
+- `FileSystemLeft<"real-path">` : si la résolution échoue.
 
 ## Voir aussi
 

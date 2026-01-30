@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        ensureFile<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Ok>;
+        ensureFile<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"ensure-file"> | E.Ok>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.ensureFile("/tmp/empty.txt");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"ensure-file">
  * 
  * await SF.ensureFile("/tmp/cache.json");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const ensureFile: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Ok>;
+export declare const ensureFile: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"ensure-file"> | E.Ok>;

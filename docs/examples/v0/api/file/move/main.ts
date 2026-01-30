@@ -2,7 +2,7 @@ import { SF } from "@duplojs/server-utils";
 import { E } from "@duplojs/utils";
 
 const result = await SF.move("/tmp/src", "/tmp/dest");
-// result: E.Ok | SF.FileSystemLeft
+// result: E.Ok | SF.FileSystemLeft<"move">
 
 if (E.isRight(result)) {
 	// element move with success

@@ -3,9 +3,12 @@ import { type FileInterface } from "./fileInterface";
 import { type FolderInterface } from "./folderInterface";
 import { type UnknownInterface } from "./unknownInterface";
 import type { FileSystemLeft } from "./types";
+interface WalkDirectoryParams {
+    recursive?: boolean;
+}
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        walkDirectory<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
+        walkDirectory<GenericPath extends string>(path: GenericPath, params?: WalkDirectoryParams): Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
     }
 }
 /**
@@ -15,7 +18,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.walkDirectory("/tmp/project");
- * // result: E.Success<Generator<...>> | SF.FileSystemLeft
+ * // result: E.Success<Generator<...>> | SF.FileSystemLeft<"walk-directory">
  * 
  * const other = await SF.walkDirectory("/tmp/other");
  * ```
@@ -24,4 +27,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const walkDirectory: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
+export declare const walkDirectory: <GenericPath extends string>(path: GenericPath, params?: WalkDirectoryParams) => Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
+export {};

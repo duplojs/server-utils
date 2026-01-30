@@ -31,15 +31,12 @@ describe("link", () => {
 		expect(E.isLeft(result)).toBe(true);
 	});
 
-	it("creates hard link in DENO env with URL", async() => {
+	it("creates hard link in DENO env", async() => {
 		setEnvironment("DENO");
 		const link = vi.fn().mockResolvedValue(undefined);
 		setDenoMock({ link });
 
-		const result = await DServerFile.link(
-			new URL("file:///tmp/existing%20file"),
-			new URL("file:///tmp/new%20file"),
-		);
+		const result = await DServerFile.link("/tmp/existing file", "/tmp/new file");
 
 		expect(E.isRight(result)).toBe(true);
 		expect(link).toHaveBeenCalledWith("/tmp/existing file", "/tmp/new file");

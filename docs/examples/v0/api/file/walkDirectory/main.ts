@@ -2,7 +2,7 @@ import { SF } from "@duplojs/server-utils";
 import { E, type ExpectType, G } from "@duplojs/utils";
 
 const result = await SF.walkDirectory("/tmp/project");
-// result: E.Success<Generator<...>> | SF.FileSystemLeft
+// result: E.Success<Generator<...>> | SF.FileSystemLeft<"walk-directory">
 
 const process = E.rightAsyncPipe(
 	"/tmp/other",

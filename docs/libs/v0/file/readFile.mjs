@@ -9,16 +9,16 @@ const readFile = implementFunction("readFile", {
         const fs = await nodeFileSystem.value;
         return fs.readFile(path)
             .then(E.success)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-read-file", value));
     },
     DENO: (path) => Deno
         .readFile(path)
         .then(E.success)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-read-file", value)),
     BUN: (path) => Bun.file(path)
         .bytes()
         .then(E.success)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-read-file", value)),
 });
 
 export { readFile };

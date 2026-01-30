@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        truncate<GenericPath extends string | URL>(path: GenericPath, size?: number): Promise<FileSystemLeft | E.Ok>;
+        truncate<GenericPath extends string>(path: GenericPath, size?: number): Promise<FileSystemLeft<"truncate"> | E.Ok>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const cleared = await SF.truncate("/tmp/file.bin", 0);
- * // cleared: E.Ok | SF.FileSystemLeft
+ * // cleared: E.Ok | SF.FileSystemLeft<"truncate">
  * 
  * await SF.truncate("/tmp/file.bin", 128);
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const truncate: <GenericPath extends string | URL>(path: GenericPath, size?: number) => Promise<FileSystemLeft | E.Ok>;
+export declare const truncate: <GenericPath extends string>(path: GenericPath, size?: number) => Promise<FileSystemLeft<"truncate"> | E.Ok>;

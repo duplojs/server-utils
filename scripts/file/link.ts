@@ -1,13 +1,13 @@
-import { E, instanceOf } from "@duplojs/utils";
+import { E } from "@duplojs/utils";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		link(
-			existingPath: string | URL,
-			newPath: string | URL,
-		): Promise<FileSystemLeft | E.Ok>;
+			existingPath: string,
+			newPath: string,
+		): Promise<FileSystemLeft<"link"> | E.Ok>;
 	}
 }
 
@@ -24,18 +24,14 @@ export const link = implementFunction(
 				newPath,
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-link", value));
 		},
 		DENO: (existingPath, newPath) => Deno
 			.link(
-				instanceOf(existingPath, URL)
-					? decodeURIComponent(existingPath.pathname)
-					: existingPath,
-				instanceOf(newPath, URL)
-					? decodeURIComponent(newPath.pathname)
-					: newPath,
+				existingPath,
+				newPath,
 			)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-link", value)),
 	},
 );

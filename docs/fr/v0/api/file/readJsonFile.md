@@ -24,8 +24,8 @@ Lit et parse un fichier JSON.
 
 ```typescript
 function readJsonFile<GenericOutput>(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<GenericOutput>>
+  path: string
+): Promise<FileSystemLeft<"read-json-file"> | E.Success<GenericOutput>>
 ```
 
 ## Paramètres
@@ -35,7 +35,7 @@ function readJsonFile<GenericOutput>(
 ## Valeur de retour
 
 - `E.Success<GenericOutput>` : contenu JSON parse.
-- `FileSystemLeft` : si la lecture ou le parse échoue.
+- `FileSystemLeft<"read-json-file">` : si la lecture ou le parse échoue.
 
 ## Voir aussi
 

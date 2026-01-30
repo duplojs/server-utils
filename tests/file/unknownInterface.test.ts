@@ -45,19 +45,19 @@ describe("unknownInterface", () => {
 		expect(DServerFile.isUnknownInterface({})).toBe(false);
 	});
 
-	it("creates interface with decoded path", () => {
-		const unknown = DServerFile.createUnknownInterface(new URL("file:///tmp/unknown%20path/"));
+	it("creates interface with name and parent path", () => {
+		const unknown = DServerFile.createUnknownInterface("/tmp/unknown path");
 
-		expect(unknown.name).toBe("unknown path");
+		expect(unknown.getName()).toBe("unknown path");
 		expect(unknown.path).toBe("/tmp/unknown path");
 		expect(unknown.getParentPath()).toBe("/tmp");
 	});
 
-	it("returns empty parent path when no separator is present", () => {
+	it("returns null parent path when no separator is present", () => {
 		const unknown = DServerFile.createUnknownInterface("file");
 
-		expect(unknown.name).toBe("file");
-		expect(unknown.getParentPath()).toBe("");
+		expect(unknown.getName()).toBe("file");
+		expect(unknown.getParentPath()).toBe(null);
 	});
 
 	it("checks existence via fs access", async() => {

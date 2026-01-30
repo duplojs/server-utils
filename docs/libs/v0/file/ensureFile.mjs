@@ -10,7 +10,7 @@ const ensureFile = implementFunction("ensureFile", {
         return fs.open(path, "a")
             .then((fh) => fh.close())
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-ensure-file", value));
     },
     DENO: (path) => Deno.open(path, {
         write: true,
@@ -19,7 +19,7 @@ const ensureFile = implementFunction("ensureFile", {
     })
         .then((fh) => void fh.close())
         .then(E.ok)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-ensure-file", value)),
 });
 
 export { ensureFile };

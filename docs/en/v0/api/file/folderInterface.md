@@ -28,7 +28,7 @@ The `FolderInterface` object does not guarantee that the directory actually exis
 
 ```typescript
 function createFolderInterface(
-  path: string | URL
+  path: string
 ): FolderInterface
 ```
 
@@ -42,16 +42,17 @@ function isFolderInterface(
 
 ```typescript
 interface FolderInterface {
-  name: string;
   path: string;
-  getParentPath(): string;
-  rename(newName: string): Promise<FileSystemLeft | E.Success<FolderInterface>>;
-  exist(): Promise<FileSystemLeft | E.Ok>;
-  relocate(parentPath: string | URL): Promise<FileSystemLeft | E.Success<FolderInterface>>;
-  remove(): Promise<FileSystemLeft | E.Ok>;
-  getChildren(): Promise<FileSystemLeft | E.Success<string[]>>;
-  stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
-  walk(): Promise<FileSystemLeft | E.Success<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
+  getName(): string | null;
+  getParentPath(): string | null;
+  rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FolderInterface>>;
+  relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FolderInterface>>;
+  move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FolderInterface>>;
+  exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
+  remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
+  getChildren(): Promise<FileSystemLeft<"read-directory"> | E.Success<string[]>>;
+  stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+  walk(): Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
 }
 ```
 
@@ -61,7 +62,7 @@ interface FolderInterface {
 
 ## Return value
 
-- `FolderInterface` : interface with utility methods (`rename(newName)`, `exist()`, `relocate(parentPath)`, `remove()`, `getChildren()`, `stat()`, `walk()`, `getParentPath()`).
+- `FolderInterface` : interface with getters (`getName`, `getParentPath`) and helper methods (`rename(newName)`, `exists()`, `relocate(parentPath)`, `move(newPath)`, `remove()`, `getChildren()`, `stat()`, `walk()`).
 
 ## See also
 

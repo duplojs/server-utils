@@ -1,8 +1,8 @@
 import { SF } from "@duplojs/server-utils";
 
 const entry = SF.createUnknownInterface("/tmp/entry");
-const name = entry.name;
-// name: string
+const name = entry.getName();
+// name: string | null
 
 await entry.exist();
 await entry.stat();

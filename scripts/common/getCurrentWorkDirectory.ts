@@ -1,9 +1,10 @@
-import { E, P, pipe, unwrap } from "@duplojs/utils";
+import { E, pipe } from "@duplojs/utils";
 import { implementFunction } from "@scripts/implementor";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
-		getCurrentWorkDirectory(): E.Fail | E.Success<string>;
+		getCurrentWorkDirectory(): E.Error<unknown> | E.Success<string>;
+		getCurrentWorkDirectoryOrThrow(): string;
 	}
 }
 
@@ -14,20 +15,23 @@ export const getCurrentWorkDirectory = implementFunction(
 	"getCurrentWorkDirectory",
 	{
 		NODE: () => pipe(
-			E.safeCallback(() => process.cwd()),
-			P.when(
-				E.isLeft,
-				E.fail,
-			),
-			P.otherwise((result) => E.success(unwrap(result))),
+			E.safeCallback(() => E.success(process.cwd())),
+			E.whenIsLeft(E.error),
 		),
 		DENO: () => pipe(
-			E.safeCallback(() => Deno.cwd()),
-			P.when(
-				E.isLeft,
-				E.fail,
-			),
-			P.otherwise((result) => E.success(unwrap(result))),
+			E.safeCallback(() => E.success(Deno.cwd())),
+			E.whenIsLeft(E.error),
 		),
+	},
+);
+
+/**
+ * {@include common/getCurrentWorkDirectoryOrThrow/index.md}
+ */
+export const getCurrentWorkDirectoryOrThrow = implementFunction(
+	"getCurrentWorkDirectoryOrThrow",
+	{
+		NODE: () => process.cwd(),
+		DENO: () => Deno.cwd(),
 	},
 );

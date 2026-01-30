@@ -11,7 +11,7 @@ const readDirectory = implementor.implementFunction("readDirectory", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.readdir(path, { recursive: params?.recursive })
             .then(utils.E.success)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-read-directory", value));
     },
 });
 

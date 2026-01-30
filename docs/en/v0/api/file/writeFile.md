@@ -24,9 +24,9 @@ Writes binary content to a file.
 
 ```typescript
 function writeFile(
-  path: string | URL,
+  path: string,
   data: Uint8Array
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"write-file"> | E.Ok>
 ```
 
 ## Parameters
@@ -37,7 +37,7 @@ function writeFile(
 ## Return value
 
 - `E.Ok` : if the write succeeds.
-- `FileSystemLeft` : if the write fails.
+- `FileSystemLeft<"write-file">` : if the write fails.
 
 ## See also
 

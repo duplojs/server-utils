@@ -5,10 +5,10 @@ import type { FileSystemLeft } from "./types";
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		readLink<
-			GenericPath extends string | URL,
+			GenericPath extends string,
 		>(
 			path: GenericPath
-		): Promise<FileSystemLeft | E.Success<string>>;
+		): Promise<FileSystemLeft<"read-link"> | E.Success<string>>;
 	}
 }
 
@@ -25,11 +25,11 @@ export const readLink = implementFunction(
 				{ encoding: "utf-8" },
 			)
 				.then(E.success)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-read-link", value));
 		},
 		DENO: (path) => Deno
 			.readLink(path)
 			.then(E.success)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-read-link", value)),
 	},
 );

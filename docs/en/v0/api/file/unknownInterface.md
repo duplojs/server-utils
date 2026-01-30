@@ -28,7 +28,7 @@ The `UnknownInterface` object does not guarantee that the path actually exists. 
 
 ```typescript
 function createUnknownInterface(
-  path: string | URL
+  path: string
 ): UnknownInterface
 ```
 
@@ -42,11 +42,11 @@ function isUnknownInterface(
 
 ```typescript
 interface UnknownInterface {
-  name: string;
   path: string;
-  getParentPath(): string;
-  stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
-  exist(): Promise<FileSystemLeft | E.Ok>;
+  getName(): string | null;
+  getParentPath(): string | null;
+  stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+  exist(): Promise<FileSystemLeft<"exists"> | E.Ok>;
 }
 ```
 
@@ -56,7 +56,7 @@ interface UnknownInterface {
 
 ## Return value
 
-- `UnknownInterface` : interface with utility methods (`exist`, `stat`, `getParentPath`).
+- `UnknownInterface` : interface with getters (`getName`, `getParentPath`) and utility methods (`exist`, `stat`).
 
 ## See also
 

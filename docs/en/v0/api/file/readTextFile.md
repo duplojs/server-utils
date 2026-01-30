@@ -24,8 +24,8 @@ Reads a text file and returns its content.
 
 ```typescript
 function readTextFile(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<string>>
+  path: string
+): Promise<FileSystemLeft<"read-text-file"> | E.Success<string>>
 ```
 
 ## Parameters
@@ -35,7 +35,7 @@ function readTextFile(
 ## Return value
 
 - `E.Success<string>` : the file content.
-- `FileSystemLeft` : if the read fails.
+- `FileSystemLeft<"read-text-file">` : if the read fails.
 
 ## See also
 

@@ -5,8 +5,8 @@ prev:
   text: "Common"
   link: "/en/v0/api/common/"
 next:
-  text: "setCurrentWorkingDirectory"
-  link: "/en/v0/api/common/setCurrentWorkingDirectory"
+  text: "getCurrentWorkDirectoryOrThrow"
+  link: "/en/v0/api/common/getCurrentWorkDirectoryOrThrow"
 ---
 
 # getCurrentWorkDirectory
@@ -23,7 +23,7 @@ Returns the current working directory.
 ## Syntax
 
 ```typescript
-function getCurrentWorkDirectory(): E.Fail | E.Success<string>
+function getCurrentWorkDirectory(): E.Error<unknown> | E.Success<string>
 ```
 
 ## Parameters
@@ -33,8 +33,9 @@ This function takes no parameters.
 ## Return value
 
 - `E.Success<string>` : the absolute path of the current directory.
-- `E.Fail` : if reading the current directory fails.
+- `E.Error<unknown>` : if reading the current directory fails.
 
 ## See also
 
+- [`getCurrentWorkDirectoryOrThrow`](/en/v0/api/common/getCurrentWorkDirectoryOrThrow) - Returns the current working directory or throws.
 - [`setCurrentWorkingDirectory`](/en/v0/api/common/setCurrentWorkingDirectory) - Changes the current working directory.

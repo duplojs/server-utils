@@ -24,9 +24,9 @@ Creates a hard link.
 
 ```typescript
 function link(
-  existingPath: string | URL,
-  newPath: string | URL
-): Promise<FileSystemLeft | E.Ok>
+  existingPath: string,
+  newPath: string
+): Promise<FileSystemLeft<"link"> | E.Ok>
 ```
 
 ## Parameters
@@ -37,7 +37,7 @@ function link(
 ## Return value
 
 - `E.Ok` : if creation succeeds.
-- `FileSystemLeft` : if creation fails.
+- `FileSystemLeft<"link">` : if creation fails.
 
 ## See also
 

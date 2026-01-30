@@ -1,115 +1,66 @@
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
-import { mimeType as mimeTypeMap, type SupportedMimeType, isSupportedExtensionFile, type SupportedExtensionFile } from "./mimeType";
-import { A, asyncPipe, forward, instanceOf, isType, justReturn, type Kind, P, pipe, S, when, whenElse, E } from "@duplojs/utils";
+import { asyncPipe, type Kind, E, mimeType, Path, innerPipe } from "@duplojs/utils";
 import { rename } from "./rename";
 import { exists } from "./exists";
 import { move } from "./move";
 import { remove } from "./remove";
 import { type StatInfo, stat } from "./stat";
 import type { FileSystemLeft } from "./types";
+import { relocate } from "./relocate";
 
 const fileInterfaceKind = createDuplojsServerUtilsKind("fileInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
 
 export interface FileInterface extends Kind<
 	typeof fileInterfaceKind.definition
 > {
-	name: string;
 	path: string;
-	mimeType: SupportedMimeType | null;
-	extension: SupportedExtensionFile | null;
-	getParentPath(): string;
-	rename(newName: string): Promise<FileSystemLeft | E.Success<FileInterface>>;
-	exist(): Promise<FileSystemLeft | E.Ok>;
-	relocate(parentPath: string | URL): Promise<FileSystemLeft | E.Success<FileInterface>>;
-	remove(): Promise<FileSystemLeft | E.Ok>;
-	stat(): Promise<FileSystemLeft | E.Success<StatInfo>>;
+	getName(): string | null;
+	getMimeType(): string | null;
+	getExtension(): string | null;
+	getParentPath(): string | null;
+	rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
+	relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;
+	move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FileInterface>>;
+	exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
+	remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
+	stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
 }
 
 /**
  * {@include file/createFileInterface/index.md}
  */
-export function createFileInterface<
-	GenericPath extends string | URL,
->(
-	path: GenericPath,
-): FileInterface;
+export function createFileInterface(path: string): FileInterface {
+	function getName() {
+		return Path.getBaseName(path);
+	}
 
-export function createFileInterface(path: string | URL) {
-	const localPath = pipe(
-		path,
-		when(
-			instanceOf(URL),
-			({ pathname }) => decodeURIComponent(pathname),
-		),
-	);
+	function getExtension() {
+		return Path.getExtensionName(path);
+	}
 
-	const name = pipe(
-		localPath,
-		S.split("/"),
-		A.last,
-		when(
-			isType("undefined"),
-			justReturn(""),
-		),
-	);
+	function getMimeType() {
+		const extension = getExtension();
 
-	const extension = pipe(
-		name,
-		S.split("."),
-		A.last,
-		P.when(
-			isType("string"),
-			whenElse(
-				isSupportedExtensionFile,
-				forward,
-				justReturn(null),
-			),
-		),
-		P.otherwise(justReturn(null)),
-	);
+		if (!extension) {
+			return null;
+		}
 
-	const mimeType = extension
-		? mimeTypeMap.get(extension)
-		: null;
+		return mimeType.get(extension) ?? null;
+	}
 
 	function getParentPath() {
-		return S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+		return Path.getParentFolderPath(path);
+	}
+
+	function localExists() {
+		return exists(path);
 	}
 
 	function localRename(newName: string) {
 		return asyncPipe(
-			rename(localPath, newName),
+			rename(path, newName),
 			E.whenIsRight(
-				() => pipe(
-					getParentPath(),
-					(parentPath) => createFileInterface(`${parentPath}/${newName}`),
-					E.success,
-				),
-			),
-		);
-	}
-
-	function exist() {
-		return exists(localPath);
-	}
-
-	function relocate(parentPath: string | URL) {
-		const newPath = pipe(
-			localPath,
-			getParentPath,
-			(localParentPath) => `${localParentPath}/${name}`,
-		);
-		return asyncPipe(
-			parentPath,
-			when(
-				instanceOf(URL),
-				({ pathname }) => decodeURIComponent(pathname),
-			),
-			(parentPath) => move(parentPath, newPath),
-			E.whenIsRight(
-				() => pipe(
-					newPath,
+				innerPipe(
 					createFileInterface,
 					E.success,
 				),
@@ -117,24 +68,48 @@ export function createFileInterface(path: string | URL) {
 		);
 	}
 
+	function localRelocate(newParentPath: string) {
+		return asyncPipe(
+			relocate(path, newParentPath),
+			E.whenIsRight(
+				innerPipe(
+					createFileInterface,
+					E.success,
+				),
+			),
+		);
+	}
+
+	function localMove(newPath: string) {
+		return asyncPipe(
+			move(path, newPath),
+			E.whenIsRight(
+				() => E.success(
+					createFileInterface(newPath),
+				),
+			),
+		);
+	}
+
 	function localRemove() {
-		return remove(localPath);
+		return remove(path);
 	}
 
 	function localStat() {
-		return stat(localPath);
+		return stat(path);
 	}
 
 	return fileInterfaceKind.addTo({
-		extension,
-		name,
-		path: localPath,
-		mimeType,
+		path,
+		getName,
+		getExtension,
+		getMimeType,
 		getParentPath,
 		rename: localRename,
-		exist,
-		relocate,
+		exists: localExists,
+		relocate: localRelocate,
 		remove: localRemove,
+		move: localMove,
 		stat: localStat,
 	});
 }

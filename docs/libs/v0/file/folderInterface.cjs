@@ -9,44 +9,51 @@ var remove = require('./remove.cjs');
 var readDirectory = require('./readDirectory.cjs');
 var stat = require('./stat.cjs');
 var walkDirectory = require('./walkDirectory.cjs');
+var relocate = require('./relocate.cjs');
 
 const folderInterfaceKind = kind.createDuplojsServerUtilsKind("folderInterface");
-const parentPathRegex = /^(.*?)\/+[^/]+\/*$/;
+/**
+ * {@include file/createFolderInterface/index.md}
+ */
 function createFolderInterface(path) {
-    const localPath = utils.pipe(path, utils.when(utils.instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), utils.when(utils.S.endsWith("/"), utils.S.slice(0, -1)));
-    const name = utils.pipe(localPath, utils.S.split("/"), utils.A.last, utils.when(utils.isType("undefined"), utils.justReturn("")));
+    function getName() {
+        return utils.Path.getBaseName(path);
+    }
     function getParentPath() {
-        return utils.S.extract(localPath, parentPathRegex)?.groups.at(0) ?? "";
+        return utils.Path.getParentFolderPath(path);
     }
     function localRename(newName) {
-        return utils.asyncPipe(rename.rename(localPath, newName), utils.E.whenIsRight(() => utils.pipe(getParentPath(), (parentPath) => `${parentPath}/${newName}`, createFolderInterface, utils.E.success)));
+        return utils.asyncPipe(rename.rename(path, newName), utils.E.whenIsRight(utils.innerPipe(createFolderInterface, utils.E.success)));
     }
-    function exist() {
-        return exists.exists(localPath);
+    function localRelocate(newParentPath) {
+        return utils.asyncPipe(relocate.relocate(path, newParentPath), utils.E.whenIsRight(utils.innerPipe(createFolderInterface, utils.E.success)));
     }
-    function relocate(parentPath) {
-        const newPath = utils.pipe(localPath, getParentPath, (localParentPath) => `${localParentPath}/${name}`);
-        return utils.asyncPipe(parentPath, utils.when(utils.instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (parentPath) => move.move(parentPath, newPath), utils.E.whenIsRight(() => utils.pipe(newPath, createFolderInterface, utils.E.success)));
+    function localMove(newPath) {
+        return utils.asyncPipe(move.move(path, newPath), utils.E.whenIsRight(() => utils.E.success(createFolderInterface(newPath))));
+    }
+    function localExists() {
+        return exists.exists(path);
     }
     function localRemove() {
-        return remove.remove(localPath, { recursive: true });
-    }
-    function getChildren() {
-        return readDirectory.readDirectory(localPath);
+        return remove.remove(path);
     }
     function localStat() {
-        return stat.stat(localPath);
+        return stat.stat(path);
+    }
+    function getChildren() {
+        return readDirectory.readDirectory(path);
     }
     function walk() {
-        return walkDirectory.walkDirectory(localPath);
+        return walkDirectory.walkDirectory(path);
     }
     return folderInterfaceKind.addTo({
-        path: localPath,
-        name,
+        path,
+        getName,
         getParentPath,
+        move: localMove,
         rename: localRename,
-        exist,
-        relocate,
+        exists: localExists,
+        relocate: localRelocate,
         remove: localRemove,
         getChildren,
         stat: localStat,

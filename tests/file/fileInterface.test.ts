@@ -48,25 +48,32 @@ describe("fileInterface", () => {
 	it("creates interface with name and mime info", () => {
 		const file = DServerFile.createFileInterface("/tmp/example.json");
 
-		expect(file.name).toBe("example.json");
-		expect(file.extension).toBe("json");
-		expect(file.mimeType).toBe("application/json");
+		expect(file.getName()).toBe("example.json");
+		expect(file.getExtension()).toBe("json");
+		expect(file.getMimeType()).toBe("application/json");
 		expect(file.getParentPath()).toBe("/tmp");
 	});
 
-	it("creates interface from URL and handles unknown extension", () => {
-		const file = DServerFile.createFileInterface(new URL("file:///tmp/unknown%20file.zzz"));
+	it("creates interface with unknown extension", () => {
+		const file = DServerFile.createFileInterface("/tmp/unknown file.zzz");
 
 		expect(file.path).toBe("/tmp/unknown file.zzz");
-		expect(file.extension).toBe(null);
-		expect(file.mimeType).toBe(null);
+		expect(file.getExtension()).toBe("zzz");
+		expect(file.getMimeType()).toBe(null);
 	});
 
-	it("returns empty parent path when no separator is present", () => {
+	it("returns null mime type when no extension exists", () => {
+		const file = DServerFile.createFileInterface("/tmp/file");
+
+		expect(file.getExtension()).toBe(null);
+		expect(file.getMimeType()).toBe(null);
+	});
+
+	it("returns null parent path when no separator is present", () => {
 		const file = DServerFile.createFileInterface("file");
 
-		expect(file.name).toBe("file");
-		expect(file.getParentPath()).toBe("");
+		expect(file.getName()).toBe("file");
+		expect(file.getParentPath()).toBe(null);
 	});
 
 	it("renames file and returns new interface", async() => {
@@ -92,7 +99,7 @@ describe("fileInterface", () => {
 		});
 		const file = DServerFile.createFileInterface("/tmp/example.json");
 
-		const result = await file.exist();
+		const result = await file.exists();
 
 		expect(E.isRight(result)).toBe(true);
 		expect(fs.access).toHaveBeenCalledWith("/tmp/example.json");
@@ -140,25 +147,25 @@ describe("fileInterface", () => {
 		const result = await file.relocate("/new/parent");
 
 		expect(E.isRight(result)).toBe(true);
-		expect(fs.rename).toHaveBeenCalledWith("/new/parent", "/tmp/example.json");
+		expect(fs.rename).toHaveBeenCalledWith("/tmp/example.json", "/new/parent/example.json");
 		if (E.isRight(result)) {
-			expect(unwrap(result).path).toBe("/tmp/example.json");
+			expect(unwrap(result).path).toBe("/new/parent/example.json");
 		}
 	});
 
-	it("relocates file using move with URL parent path", async() => {
+	it("moves file to new path", async() => {
 		setEnvironment("NODE");
 		const fs = setFsPromisesMock({
 			rename: vi.fn().mockResolvedValue(undefined),
 		});
 		const file = DServerFile.createFileInterface("/tmp/example.json");
 
-		const result = await file.relocate(new URL("file:///new/parent%20path"));
+		const result = await file.move("/new/path/example.json");
 
 		expect(E.isRight(result)).toBe(true);
-		expect(fs.rename).toHaveBeenCalledWith("/new/parent path", "/tmp/example.json");
+		expect(fs.rename).toHaveBeenCalledWith("/tmp/example.json", "/new/path/example.json");
 		if (E.isRight(result)) {
-			expect(unwrap(result).path).toBe("/tmp/example.json");
+			expect(unwrap(result).path).toBe("/new/path/example.json");
 		}
 	});
 });

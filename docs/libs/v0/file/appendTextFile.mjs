@@ -9,11 +9,11 @@ const appendTextFile = implementFunction("appendTextFile", {
         const fs = await nodeFileSystem.value;
         return fs.appendFile(path, data)
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-append-text-file", value));
     },
     DENO: (path, data) => Deno.writeTextFile(path, data, { append: true })
         .then(E.ok)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-append-text-file", value)),
 });
 
 export { appendTextFile };

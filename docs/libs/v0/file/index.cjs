@@ -33,8 +33,7 @@ var makeTemporaryFile = require('./makeTemporaryFile.cjs');
 var readJsonFile = require('./readJsonFile.cjs');
 var ensureFile = require('./ensureFile.cjs');
 var writeJsonFile = require('./writeJsonFile.cjs');
-var database = require('./mimeType/database.cjs');
-var isSupportedExtensionFile = require('./mimeType/isSupportedExtensionFile.cjs');
+var relocate = require('./relocate.cjs');
 
 /**
  * {@include file/index.md}
@@ -76,5 +75,4 @@ exports.makeTemporaryFile = makeTemporaryFile.makeTemporaryFile;
 exports.readJsonFile = readJsonFile.readJsonFile;
 exports.ensureFile = ensureFile.ensureFile;
 exports.writeJsonFile = writeJsonFile.writeJsonFile;
-exports.mimeType = database.mimeType;
-exports.isSupportedExtensionFile = isSupportedExtensionFile.isSupportedExtensionFile;
+exports.relocate = relocate.relocate;

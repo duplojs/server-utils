@@ -2,8 +2,8 @@
 outline: [2, 3]
 description: "Changes the current working directory."
 prev:
-  text: "getCurrentWorkDirectory"
-  link: "/en/v0/api/common/getCurrentWorkDirectory"
+  text: "getCurrentWorkDirectoryOrThrow"
+  link: "/en/v0/api/common/getCurrentWorkDirectoryOrThrow"
 next:
   text: "Common"
   link: "/en/v0/api/common/"
@@ -24,13 +24,13 @@ Changes the current working directory.
 
 ```typescript
 function setCurrentWorkingDirectory(
-  path: string | URL
+  path: string
 ): E.Fail | E.Ok
 ```
 
 ## Parameters
 
-- `path` (`string | URL`) : target path. If a `URL` is provided, it is decoded to a file path.
+- `path` (`string`) : target path.
 
 ## Return value
 

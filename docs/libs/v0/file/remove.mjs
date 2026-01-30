@@ -12,13 +12,13 @@ const remove = implementFunction("remove", {
             force: true,
         })
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-remove", value));
     },
     DENO: (path, params) => Deno.remove(path, {
         recursive: params?.recursive,
     })
         .then(E.ok)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-remove", value)),
 });
 
 export { remove };

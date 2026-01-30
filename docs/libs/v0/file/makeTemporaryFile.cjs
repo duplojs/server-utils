@@ -18,14 +18,14 @@ const makeTemporaryFile = implementor.implementFunction("makeTemporaryFile", {
         return fs.open(fileTemporaryPath, "wx")
             .then((fh) => fh.close())
             .then(() => utils.E.success(fileTemporaryPath))
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-make-temporary-file", value));
     },
     DENO: (prefix, suffix) => Deno.makeTempFile({
         prefix,
         suffix,
     })
         .then(utils.E.success)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-make-temporary-file", value)),
 });
 
 exports.makeTemporaryFile = makeTemporaryFile;

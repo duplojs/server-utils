@@ -24,8 +24,8 @@ Retrieves information about a symbolic link (the link itself, not the target).
 
 ```typescript
 function linkStat(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<StatInfo>>
+  path: string
+): Promise<FileSystemLeft<"link-stat"> | E.Success<StatInfo>>
 ```
 
 ### Interface StatInfo
@@ -63,7 +63,7 @@ interface StatInfo {
 ## Return value
 
 - `E.Success<StatInfo>` : information about the link.
-- `FileSystemLeft` : if the read fails.
+- `FileSystemLeft<"link-stat">` : if the read fails.
 
 ## Notes
 

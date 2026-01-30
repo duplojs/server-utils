@@ -1,8 +1,8 @@
 ---
 outline: [2, 3]
 prev:
-  text: "move"
-  link: "/en/v0/api/file/move/"
+  text: "relocate"
+  link: "/en/v0/api/file/relocate/"
 next:
   text: "truncate"
   link: "/en/v0/api/file/truncate/"
@@ -24,9 +24,9 @@ Renames a file or directory within its parent directory.
 
 ```typescript
 function rename(
-  path: string | URL,
+  path: string,
   newName: string
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"rename"> | E.Success<string>>
 ```
 
 ## Parameters
@@ -36,8 +36,8 @@ function rename(
 
 ## Return value
 
-- `E.Ok` : if renaming succeeds.
-- `FileSystemLeft` : if renaming fails.
+- `E.Success<string>` : the new path when renaming succeeds.
+- `FileSystemLeft<"rename">` : if renaming fails.
 
 ## See also
 

@@ -9,16 +9,16 @@ const readTextFile = implementFunction("readTextFile", {
         const fs = await nodeFileSystem.value;
         return fs.readFile(path, { encoding: "utf-8" })
             .then(E.success)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-read-text-file", value));
     },
     DENO: (path) => Deno
         .readTextFile(path)
         .then(E.success)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-read-text-file", value)),
     BUN: (path) => Bun.file(path)
         .text()
         .then(E.success)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-read-text-file", value)),
 });
 
 export { readTextFile };

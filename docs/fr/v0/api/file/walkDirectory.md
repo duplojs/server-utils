@@ -24,8 +24,8 @@ Parcourt un dossier récursivement.
 
 ```typescript
 function walkDirectory(
-  path: string | URL
-): Promise<FileSystemLeft | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>
+  path: string
+): Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>
 ```
 
 ## Paramètres
@@ -35,7 +35,7 @@ function walkDirectory(
 ## Valeur de retour
 
 - `E.Success<Generator<...>>` : generateur d'interfaces fichier, dossier ou inconnu.
-- `FileSystemLeft` : si la lecture échoue.
+- `FileSystemLeft<"walk-directory">` : si la lecture échoue.
 
 ## Voir aussi
 

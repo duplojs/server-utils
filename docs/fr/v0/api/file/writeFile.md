@@ -24,9 +24,9 @@ description: "Écrit un contenu binaire dans un fichier."
 
 ```typescript
 function writeFile(
-  path: string | URL,
+  path: string,
   data: Uint8Array
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"write-file"> | E.Ok>
 ```
 
 ## Paramètres
@@ -37,7 +37,7 @@ function writeFile(
 ## Valeur de retour
 
 - `E.Ok` : si l'écriture réussit.
-- `FileSystemLeft` : si l'écriture échoue.
+- `FileSystemLeft<"write-file">` : si l'écriture échoue.
 
 ## Voir aussi
 

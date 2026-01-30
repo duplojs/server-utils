@@ -4,7 +4,7 @@ import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
-		makeTemporaryDirectory(prefix: string): Promise<FileSystemLeft | E.Success<string>>;
+		makeTemporaryDirectory(prefix: string): Promise<FileSystemLeft<"make-temporary-directory"> | E.Success<string>>;
 	}
 }
 
@@ -18,10 +18,10 @@ export const makeTemporaryDirectory = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.mkdtemp(prefix)
 				.then(E.success)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-make-temporary-directory", value));
 		},
 		DENO: (prefix) => Deno.makeTempDir({ prefix })
 			.then(E.success)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-make-temporary-directory", value)),
 	},
 );

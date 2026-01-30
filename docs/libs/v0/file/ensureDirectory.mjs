@@ -11,13 +11,13 @@ const ensureDirectory = implementFunction("ensureDirectory", {
             recursive: true,
         })
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-ensure-directory", value));
     },
     DENO: (path) => Deno.mkdir(path, {
         recursive: true,
     })
         .then(E.ok)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-ensure-directory", value)),
 });
 
 export { ensureDirectory };

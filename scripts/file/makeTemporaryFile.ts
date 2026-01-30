@@ -4,7 +4,7 @@ import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
-		makeTemporaryFile(prefix: string, suffix?: string): Promise<FileSystemLeft | E.Success<string>>;
+		makeTemporaryFile(prefix: string, suffix?: string): Promise<FileSystemLeft<"make-temporary-file"> | E.Success<string>>;
 	}
 }
 
@@ -26,13 +26,13 @@ export const makeTemporaryFile = implementFunction(
 			return fs.open(fileTemporaryPath, "wx")
 				.then((fh) => fh.close())
 				.then(() => E.success(fileTemporaryPath))
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-make-temporary-file", value));
 		},
 		DENO: (prefix, suffix) => Deno.makeTempFile({
 			prefix,
 			suffix,
 		})
 			.then(E.success)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-make-temporary-file", value)),
 	},
 );

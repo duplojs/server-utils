@@ -1,6 +1,6 @@
 import { SF } from "@scripts";
 
 const result = await SF.exists("/tmp/file.txt");
-// result: E.Ok | SF.FileSystemLeft
+// result: E.Ok | SF.FileSystemLeft<"exists">
 
 const missing = await SF.exists("/tmp/missing.txt");

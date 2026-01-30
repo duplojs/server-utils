@@ -24,12 +24,12 @@ Serialize et écrit du JSON dans un fichier.
 
 ```typescript
 function writeJsonFile(
-  path: string | URL,
+  path: string,
   data: unknown,
   params?: {
     space?: number;
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"write-json-file"> | E.Ok>
 ```
 
 ## Paramètres
@@ -41,7 +41,7 @@ function writeJsonFile(
 ## Valeur de retour
 
 - `E.Ok` : si l'écriture réussit.
-- `FileSystemLeft` : si la serialisation ou l'écriture échoue.
+- `FileSystemLeft<"write-json-file">` : si la serialisation ou l'écriture échoue.
 
 ## Notes
 

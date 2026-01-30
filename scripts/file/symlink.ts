@@ -15,10 +15,10 @@ export interface SymlinkParams {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		symlink(
-			oldPath: string | URL,
-			newPath: string | URL,
+			oldPath: string,
+			newPath: string,
 			params?: SymlinkParams
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"symlink"> | E.Ok>;
 	}
 }
 
@@ -36,7 +36,7 @@ export const symlink = implementFunction(
 				params?.type,
 			)
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-symlink", value));
 		},
 		DENO: (oldPath, newPath, params) => Deno
 			.symlink(
@@ -45,6 +45,6 @@ export const symlink = implementFunction(
 				params,
 			)
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-symlink", value)),
 	},
 );

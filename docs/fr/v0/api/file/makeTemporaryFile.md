@@ -26,7 +26,7 @@ Crée un fichier temporaire.
 function makeTemporaryFile(
   prefix: string,
   suffix?: string
-): Promise<FileSystemLeft | E.Success<string>>
+): Promise<FileSystemLeft<"make-temporary-file"> | E.Success<string>>
 ```
 
 ## Paramètres
@@ -37,7 +37,7 @@ function makeTemporaryFile(
 ## Valeur de retour
 
 - `E.Success<string>` : chemin du fichier temporaire.
-- `FileSystemLeft` : si la création échoue.
+- `FileSystemLeft<"make-temporary-file">` : si la création échoue.
 
 ## Voir aussi
 

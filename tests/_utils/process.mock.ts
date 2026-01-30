@@ -1,6 +1,6 @@
 interface ProcessMock {
 	cwd?(): string;
-	chdir?(path: string | URL): void;
+	chdir?(path: string): void;
 }
 
 export function setProcessMock(mock: ProcessMock) {

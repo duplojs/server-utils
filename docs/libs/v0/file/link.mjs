@@ -1,4 +1,4 @@
-import { instanceOf, E } from '@duplojs/utils';
+import { E } from '@duplojs/utils';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -9,16 +9,12 @@ const link = implementFunction("link", {
         const fs = await nodeFileSystem.value;
         return fs.link(existingPath, newPath)
             .then(E.ok)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-link", value));
     },
     DENO: (existingPath, newPath) => Deno
-        .link(instanceOf(existingPath, URL)
-        ? decodeURIComponent(existingPath.pathname)
-        : existingPath, instanceOf(newPath, URL)
-        ? decodeURIComponent(newPath.pathname)
-        : newPath)
+        .link(existingPath, newPath)
         .then(E.ok)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-link", value)),
 });
 
 export { link };

@@ -10,7 +10,7 @@ export interface SymlinkParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        symlink(oldPath: string | URL, newPath: string | URL, params?: SymlinkParams): Promise<FileSystemLeft | E.Ok>;
+        symlink(oldPath: string, newPath: string, params?: SymlinkParams): Promise<FileSystemLeft<"symlink"> | E.Ok>;
     }
 }
 /**
@@ -20,7 +20,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.symlink("/tmp/target", "/tmp/link");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"symlink">
  * 
  * await SF.symlink("/tmp/target", "/tmp/link-file", { type: "file" });
  * ```
@@ -31,4 +31,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const symlink: (oldPath: string | URL, newPath: string | URL, params?: SymlinkParams) => Promise<FileSystemLeft | E.Ok>;
+export declare const symlink: (oldPath: string, newPath: string, params?: SymlinkParams) => Promise<FileSystemLeft<"symlink"> | E.Ok>;

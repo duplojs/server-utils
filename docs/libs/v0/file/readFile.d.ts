@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        readFile<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Success<Uint8Array>>;
+        readFile<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"read-file"> | E.Success<Uint8Array>>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.readFile("/tmp/file.bin");
- * // result: E.Success<Uint8Array> | SF.FileSystemLeft
+ * // result: E.Success<Uint8Array> | SF.FileSystemLeft<"read-file">
  * 
  * const other = await SF.readFile("/tmp/backup.bin");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const readFile: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Success<Uint8Array>>;
+export declare const readFile: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"read-file"> | E.Success<Uint8Array>>;

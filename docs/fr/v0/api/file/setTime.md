@@ -24,12 +24,12 @@ Met a jour les horodatages d'accès et de modification.
 
 ```typescript
 function setTime(
-  path: string | URL,
+  path: string,
   params: {
     accessTime: D.TheDate;
     modifiedTime: D.TheDate;
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"set-time"> | E.Ok>
 ```
 
 ## Paramètres
@@ -41,7 +41,7 @@ function setTime(
 ## Valeur de retour
 
 - `E.Ok` : si l'opération réussit.
-- `FileSystemLeft` : si l'opération échoue.
+- `FileSystemLeft<"set-time">` : si l'opération échoue.
 
 ## Notes
 

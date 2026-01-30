@@ -11,16 +11,12 @@ const link = implementor.implementFunction("link", {
         const fs = await implementor.nodeFileSystem.value;
         return fs.link(existingPath, newPath)
             .then(utils.E.ok)
-            .catch((value) => utils.E.left("file-system", value));
+            .catch((value) => utils.E.left("file-system-link", value));
     },
     DENO: (existingPath, newPath) => Deno
-        .link(utils.instanceOf(existingPath, URL)
-        ? decodeURIComponent(existingPath.pathname)
-        : existingPath, utils.instanceOf(newPath, URL)
-        ? decodeURIComponent(newPath.pathname)
-        : newPath)
+        .link(existingPath, newPath)
         .then(utils.E.ok)
-        .catch((value) => utils.E.left("file-system", value)),
+        .catch((value) => utils.E.left("file-system-link", value)),
 });
 
 exports.link = link;

@@ -49,9 +49,9 @@ function toMode(mode: SetMode): number {
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		setMode(
-			path: string | URL,
+			path: string,
 			mode: SetMode,
-		): Promise<FileSystemLeft | E.Ok>;
+		): Promise<FileSystemLeft<"set-mode"> | E.Ok>;
 	}
 }
 
@@ -65,11 +65,11 @@ export const setMode = implementFunction(
 			const fs = await nodeFileSystem.value;
 			return fs.chmod(path, toMode(mode))
 				.then(E.ok)
-				.catch((value) => E.left("file-system", value));
+				.catch((value) => E.left("file-system-set-mode", value));
 		},
 		DENO: (path, mode) => Deno
 			.chmod(path, toMode(mode))
 			.then(E.ok)
-			.catch((value) => E.left("file-system", value)),
+			.catch((value) => E.left("file-system-set-mode", value)),
 	},
 );

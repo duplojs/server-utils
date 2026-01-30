@@ -2,7 +2,7 @@ import { E } from "@duplojs/utils";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        move(fromPath: string | URL, toPath: string | URL): Promise<FileSystemLeft | E.Ok>;
+        move(fromPath: string, toPath: string): Promise<FileSystemLeft<"move"> | E.Ok>;
     }
 }
 /**
@@ -12,7 +12,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const result = await SF.move("/tmp/src", "/tmp/dest");
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"move">
  * 
  * await SF.move("/tmp/file.txt", "/tmp/archive/file.txt");
  * ```
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const move: (fromPath: string | URL, toPath: string | URL) => Promise<FileSystemLeft | E.Ok>;
+export declare const move: (fromPath: string, toPath: string) => Promise<FileSystemLeft<"move"> | E.Ok>;

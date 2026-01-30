@@ -24,11 +24,11 @@ Lists the entries in a directory.
 
 ```typescript
 function readDirectory(
-  path: string | URL,
+  path: string,
   params?: {
     recursive?: true
   }
-): Promise<FileSystemLeft | E.Success<string[]>>
+): Promise<FileSystemLeft<"read-directory"> | E.Success<string[]>>
 ```
 
 ## Parameters
@@ -39,7 +39,7 @@ function readDirectory(
 ## Return value
 
 - `E.Success<string[]>` : list of entries.
-- `FileSystemLeft` : if the read fails.
+- `FileSystemLeft<"read-directory">` : if the read fails.
 
 ## See also
 

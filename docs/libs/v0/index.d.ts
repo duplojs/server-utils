@@ -15,6 +15,7 @@ export * from "./common";
  * 
  * What you will find in this namespace:
  * - `getCurrentWorkDirectory`
+ * - `getCurrentWorkDirectoryOrThrow`
  * - `setCurrentWorkingDirectory`
  * 
  * @see https://server-utils.duplojs.dev/en/v0/api/common
@@ -39,7 +40,7 @@ export * as DServerCommon from "./common";
  * - Read/write: `readFile`, `readTextFile`, `writeFile`, `writeTextFile`, `appendFile`, `appendTextFile`
  * - JSON: `readJsonFile`, `writeJsonFile`
  * - Directory: `readDirectory`, `makeDirectory`, `ensureDirectory`, `walkDirectory`
- * - Move/copy/remove: `copy`, `move`, `rename`, `remove`, `truncate`
+ * - Move/copy/remove: `copy`, `move`, `relocate`, `rename`, `remove`, `truncate`
  * - Links: `symlink`, `readLink`, `link`, `linkStat`
  * - Metadata: `exists`, `stat`, `realPath`, `setMode`, `setOwner`, `setTime`
  * - Helpers: `ensureFile`, `makeTemporaryDirectory`, `makeTemporaryFile`
@@ -52,3 +53,7 @@ export * as DServerCommon from "./common";
  */
 export * as SF from "./file";
 export * as DServerFile from "./file";
+export * as SDP from "./dataParser";
+export * as DServerDataParser from "./dataParser";
+export * as SDPE from "./dataParser/extended";
+export * as DServerDataParserExtended from "./dataParser/extended";

@@ -12,6 +12,7 @@ import { getCurrentWorkDirectory } from "@duplojs/server-utils/common";
 
 What you will find in this namespace:
 - `getCurrentWorkDirectory`
+- `getCurrentWorkDirectoryOrThrow`
 - `setCurrentWorkingDirectory`
 
 @see https://server-utils.duplojs.dev/en/v0/api/common

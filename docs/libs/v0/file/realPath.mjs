@@ -9,12 +9,12 @@ const realPath = implementFunction("realPath", {
         const fs = await nodeFileSystem.value;
         return fs.realpath(path)
             .then(E.success)
-            .catch((value) => E.left("file-system", value));
+            .catch((value) => E.left("file-system-real-path", value));
     },
     DENO: (path) => Deno
         .realPath(path)
         .then(E.success)
-        .catch((value) => E.left("file-system", value)),
+        .catch((value) => E.left("file-system-real-path", value)),
 });
 
 export { realPath };

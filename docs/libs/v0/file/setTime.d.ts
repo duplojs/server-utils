@@ -6,7 +6,7 @@ interface SetTimeParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        setTime(path: string | URL, params: SetTimeParams): Promise<FileSystemLeft | E.Ok>;
+        setTime(path: string, params: SetTimeParams): Promise<FileSystemLeft<"set-time"> | E.Ok>;
     }
 }
 /**
@@ -20,7 +20,7 @@ declare module "../implementor" {
  * 	accessTime: now,
  * 	modifiedTime: now,
  * });
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"set-time">
  * 
  * await SF.setTime("/tmp/report.txt", {
  * 	accessTime: now,
@@ -34,5 +34,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const setTime: (path: string | URL, params: SetTimeParams) => Promise<FileSystemLeft | E.Ok>;
+export declare const setTime: (path: string, params: SetTimeParams) => Promise<FileSystemLeft<"set-time"> | E.Ok>;
 export {};

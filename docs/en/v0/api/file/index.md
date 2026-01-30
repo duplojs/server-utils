@@ -105,6 +105,9 @@ copies a file or directory.
 ### [`move`](/en/v0/api/file/move)
 moves a file or directory.
 
+### [`relocate`](/en/v0/api/file/relocate)
+relocates a path into a new parent directory.
+
 ### [`rename`](/en/v0/api/file/rename)
 renames a file or directory within its parent directory.
 
@@ -132,11 +135,6 @@ creates a temporary file.
 
 ### [`ensureFile`](/en/v0/api/file/ensureFile)
 ensures a file exists.
-
-## MIME types
-
-### [`mimeType`](/en/v0/api/file/mimeType)
-list of supported MIME types and extensions.
 
 ## Interfaces
 

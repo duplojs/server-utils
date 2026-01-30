@@ -24,9 +24,9 @@ Ajoute un contenu texte a la fin d'un fichier.
 
 ```typescript
 function appendTextFile(
-  path: string | URL,
+  path: string,
   data: string
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"append-text-file"> | E.Ok>
 ```
 
 ## Paramètres
@@ -37,7 +37,7 @@ function appendTextFile(
 ## Valeur de retour
 
 - `E.Ok` : si l'opération réussit.
-- `FileSystemLeft` : si l'opération échoue.
+- `FileSystemLeft<"append-text-file">` : si l'opération échoue.
 
 ## Voir aussi
 

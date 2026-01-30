@@ -6,7 +6,7 @@ interface SetOwnerParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        setOwner(path: string | URL, params: SetOwnerParams): Promise<FileSystemLeft | E.Ok>;
+        setOwner(path: string, params: SetOwnerParams): Promise<FileSystemLeft<"set-owner"> | E.Ok>;
     }
 }
 /**
@@ -19,7 +19,7 @@ declare module "../implementor" {
  * 	userId: 1000,
  * 	groupId: 1000,
  * });
- * // result: E.Ok | SF.FileSystemLeft
+ * // result: E.Ok | SF.FileSystemLeft<"set-owner">
  * 
  * await SF.setOwner("/tmp/app.log", {
  * 	userId: 0,
@@ -31,5 +31,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const setOwner: (path: string | URL, params: SetOwnerParams) => Promise<FileSystemLeft | E.Ok>;
+export declare const setOwner: (path: string, params: SetOwnerParams) => Promise<FileSystemLeft<"set-owner"> | E.Ok>;
 export {};

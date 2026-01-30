@@ -24,11 +24,11 @@ Supprime un fichier ou un dossier.
 
 ```typescript
 function remove(
-  path: string | URL,
+  path: string,
   params?: {
     recursive?: boolean
   }
-): Promise<FileSystemLeft | E.Ok>
+): Promise<FileSystemLeft<"remove"> | E.Ok>
 ```
 
 ## Paramètres
@@ -39,7 +39,7 @@ function remove(
 ## Valeur de retour
 
 - `E.Ok` : si la suppression réussit.
-- `FileSystemLeft` : si la suppression échoue.
+- `FileSystemLeft<"remove">` : si la suppression échoue.
 
 ## Voir aussi
 

@@ -33,7 +33,7 @@ export interface StatInfo {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        stat<GenericPath extends string | URL>(path: GenericPath): Promise<FileSystemLeft | E.Success<StatInfo>>;
+        stat<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
     }
 }
 /**
@@ -43,7 +43,7 @@ declare module "../implementor" {
  * 
  * ```ts
  * const info = await SF.stat("/tmp/file.txt");
- * // info: E.Success<StatInfo> | SF.FileSystemLeft
+ * // info: E.Success<StatInfo> | SF.FileSystemLeft<"stat">
  * 
  * const dirInfo = await SF.stat("/tmp");
  * ```
@@ -52,4 +52,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const stat: <GenericPath extends string | URL>(path: GenericPath) => Promise<FileSystemLeft | E.Success<StatInfo>>;
+export declare const stat: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
