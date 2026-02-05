@@ -1,4 +1,4 @@
-export { setEnvironment } from "./implementor";
+export { setEnvironment, TESTImplementation } from "./implementor";
 
 export * from "./common";
 
