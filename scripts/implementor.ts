@@ -51,8 +51,10 @@ export namespace TESTImplementation {
 	>(
 		functionName: GenericFunctionName,
 		theFunction: ServerUtilsFunction[GenericFunctionName],
-	) {
-		return store.set(functionName, theFunction);
+	): ServerUtilsFunction[GenericFunctionName] {
+		store.set(functionName, theFunction);
+
+		return theFunction;
 	}
 
 	export function get<
@@ -93,30 +95,6 @@ export function implementFunction<
 	};
 
 	return (...args: unknown[]) => environmentFunctions[environmentStoreHandler.value](...args);
-}
-
-function createImportCache<
-	GenericOutput extends unknown,
->(
-	theFunction: () => Promise<GenericOutput>,
-) {
-	const memo = {
-		get value(): MaybePromise<GenericOutput> {
-			return theFunction()
-				.then((value) => {
-					Object.defineProperty(
-						memo,
-						"value",
-						{
-							value,
-						},
-					);
-					return value;
-				});
-		},
-	};
-
-	return memo;
 }
 
 export const nodeFileSystem = memoPromise(() => import("node:fs/promises") as Promise<typeof import("node:fs/promises")>);
