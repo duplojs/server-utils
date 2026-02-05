@@ -3,7 +3,7 @@ import { type AnyFunction, createEnum, createGlobalStore, type GetEnumValue, typ
 
 export interface ServerUtilsFunction {}
 
-export const SupportedEnvironment = createEnum(["BUN", "DENO", "NODE"]);
+export const SupportedEnvironment = createEnum(["BUN", "DENO", "NODE", "TEST"]);
 export type SupportedEnvironment = GetEnumValue<typeof SupportedEnvironment>;
 
 const SymbolEnvironmentStore = Symbol("environmentStore");
@@ -39,6 +39,31 @@ export function setEnvironment(environment: SupportedEnvironment) {
 	environmentStoreHandler.set(environment);
 }
 
+export namespace TESTImplementation {
+	const store = new Map<string, AnyFunction>();
+
+	export function clear() {
+		store.clear();
+	}
+
+	export function set<
+		GenericFunctionName extends keyof ServerUtilsFunction,
+	>(
+		functionName: GenericFunctionName,
+		theFunction: ServerUtilsFunction[GenericFunctionName],
+	) {
+		return store.set(functionName, theFunction);
+	}
+
+	export function get<
+		GenericFunctionName extends keyof ServerUtilsFunction,
+	>(
+		functionName: GenericFunctionName,
+	): ServerUtilsFunction[GenericFunctionName] | undefined {
+		return store.get(functionName);
+	}
+}
+
 export function implementFunction<
 	GenericFunctionName extends keyof ServerUtilsFunction,
 >(
@@ -49,12 +74,25 @@ export function implementFunction<
 		DENO?: ServerUtilsFunction[GenericFunctionName];
 	},
 ): ServerUtilsFunction[GenericFunctionName] {
-	theFunctions.BUN ||= theFunctions.NODE;
-	theFunctions.DENO ||= theFunctions.NODE;
+	const environmentFunctions: Record<
+		SupportedEnvironment,
+		AnyFunction
+	> = {
+		NODE: theFunctions.NODE,
+		BUN: theFunctions.BUN ||= theFunctions.NODE,
+		DENO: theFunctions.DENO ||= theFunctions.NODE,
+		get TEST() {
+			const theFunction = TESTImplementation.get(functionName);
 
-	return (...args: unknown[]) => (
-		theFunctions[environmentStoreHandler.value] as AnyFunction
-	)(...args);
+			if (!theFunction) {
+				throw new Error(`Missing function implementation "${functionName}" in TEST environment.`);
+			}
+
+			return theFunction;
+		},
+	};
+
+	return (...args: unknown[]) => environmentFunctions[environmentStoreHandler.value](...args);
 }
 
 function createImportCache<
