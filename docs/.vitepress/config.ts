@@ -103,6 +103,15 @@ export default defineConfig({
 								"// @filename: @duplojs/server-utils/common.ts",
 								`export * from "@v${namedGroups?.version ?? ""}/common";`,
 
+								"// @filename: @duplojs/server-utils/dataParser.ts",
+								`export * from "@v${namedGroups?.version ?? ""}/dataParser";`,
+
+								"// @filename: @duplojs/server-utils/dataParserCoerce.ts",
+								`export * from "@v${namedGroups?.version ?? ""}/dataParserCoerce";`,
+
+								"// @filename: @duplojs/server-utils/dataParserExtended.ts",
+								`export * from "@v${namedGroups?.version ?? ""}/dataParserExtended";`,
+
 								"// @filename: index.ts",
 								"// ---cut---",
 							],
@@ -123,8 +132,11 @@ export default defineConfig({
 						moduleDetection: ModuleDetectionKind.Force,
 						paths: {
 							"@v0": ["libs/v0/index"],
-							"@v0/common": ["libs/v0/file/index"],
+							"@v0/common": ["libs/v0/common/index"],
 							"@v0/file": ["libs/v0/file/index"],
+							"@v0/dataParser": ["libs/v0/dataParser/index"],
+							"@v0/dataParserCoerce": ["libs/v0/dataParser/parsers/coerce/index"],
+							"@v0/dataParserExtended": ["libs/v0/dataParser/extended/index"],
 						},
 					},
 				},
@@ -177,6 +189,10 @@ export default defineConfig({
 							{
 								text: "File",
 								link: "/fr/v0/api/file/",
+							},
+							{
+								text: "DataParser",
+								link: "/fr/v0/api/dataParser/",
 							},
 						],
 					},
@@ -247,6 +263,10 @@ export default defineConfig({
 							{
 								text: "File",
 								link: "/en/v0/api/file/",
+							},
+							{
+								text: "DataParser",
+								link: "/en/v0/api/dataParser/",
 							},
 						],
 					},

@@ -30,7 +30,6 @@ describe("dataParser.extended.coerce.file", () => {
 		).maxSize(10);
 		const file = DServerFile.createFileInterface(
 			"/tmp/demo.json",
-			{ mimeType: "application/json" },
 		);
 		vi.spyOn(file, "stat").mockResolvedValue(E.success({
 			isFile: true,

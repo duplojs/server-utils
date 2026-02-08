@@ -6,6 +6,9 @@
 		"@duplojs/server-utils": ["libs/v0/index"],
 		"@duplojs/server-utils/common": ["libs/v0/common/index"],
 		"@duplojs/server-utils/file": ["libs/v0/file/index"],
+		"@duplojs/server-utils/dataParser": ["libs/v0/dataParser/index"],
+		"@duplojs/server-utils/dataParserCoerce": ["libs/v0/dataParser/parsers/coerce/index"],
+		"@duplojs/server-utils/dataParserExtended": ["libs/v0/dataParser/extended/index"],
 	}
   },
   "include": ["examples/v0/**/*.ts", "libs/v0/**/*.d.ts"],

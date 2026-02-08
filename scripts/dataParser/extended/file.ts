@@ -48,13 +48,31 @@ export interface DataParserFileExtended<
 		>
 	>;
 
+	/** Set a mime type constraint on the parsed file. */
 	mimeType(value: string | string[] | RegExp): DataParserFileExtended<GenericDefinition>;
 
+	/**
+	 * Set the minimum file size.
+	 * This check requires async validation through `asyncParse`.
+	 */
 	minSize(value: number | BytesInString): DataParserFileExtended<GenericDefinition>;
 
+	/**
+	 * Set the maximum file size.
+	 * This check requires async validation through `asyncParse`.
+	 */
 	maxSize(value: number | BytesInString): DataParserFileExtended<GenericDefinition>;
+
+	/**
+	 * Require the file to exist.
+	 * This check requires async validation through `asyncParse`.
+	 */
+	mustExist(): DataParserFileExtended<GenericDefinition>;
 }
 
+/**
+ * {@include dataParserExtended/file/index.md}
+ */
 export function file<
 	const GenericDefinition extends Omit<
 		Partial<dataParsers.DataParserDefinitionFile>,
@@ -81,6 +99,7 @@ export function file<
 						mimeType: value,
 						minSize: self.definition.minSize,
 						maxSize: self.definition.maxSize,
+						checkExist: self.definition.checkExist,
 					},
 					{
 						checkers: self.definition.checkers,
@@ -95,6 +114,7 @@ export function file<
 						mimeType: self.definition.mimeType,
 						minSize: value,
 						maxSize: self.definition.maxSize,
+						checkExist: self.definition.checkExist,
 					},
 					{
 						checkers: self.definition.checkers,
@@ -109,6 +129,22 @@ export function file<
 						mimeType: self.definition.mimeType,
 						minSize: self.definition.minSize,
 						maxSize: value,
+						checkExist: self.definition.checkExist,
+					},
+					{
+						checkers: self.definition.checkers,
+						errorMessage: self.definition.errorMessage,
+						coerce: self.definition.coerce,
+					},
+				);
+			},
+			mustExist(self) {
+				return file(
+					{
+						mimeType: self.definition.mimeType,
+						minSize: self.definition.minSize,
+						maxSize: self.definition.maxSize,
+						checkExist: true,
 					},
 					{
 						checkers: self.definition.checkers,

@@ -3,7 +3,7 @@
 var utils = require('@duplojs/utils');
 
 /* eslint-disable @typescript-eslint/consistent-type-imports */
-utils.createEnum(["BUN", "DENO", "NODE"]);
+utils.createEnum(["BUN", "DENO", "NODE", "TEST"]);
 const SymbolEnvironmentStore = Symbol("environmentStore");
 const environmentStoreHandler = utils.createGlobalStore(SymbolEnvironmentStore, (() => {
     if (typeof Deno !== "undefined") {
@@ -23,28 +23,41 @@ const environmentStoreHandler = utils.createGlobalStore(SymbolEnvironmentStore, 
 function setEnvironment(environment) {
     environmentStoreHandler.set(environment);
 }
+exports.TESTImplementation = void 0;
+(function (TESTImplementation) {
+    const store = new Map();
+    function clear() {
+        store.clear();
+    }
+    TESTImplementation.clear = clear;
+    function set(functionName, theFunction) {
+        store.set(functionName, theFunction);
+        return theFunction;
+    }
+    TESTImplementation.set = set;
+    function get(functionName) {
+        return store.get(functionName);
+    }
+    TESTImplementation.get = get;
+})(exports.TESTImplementation || (exports.TESTImplementation = {}));
 function implementFunction(functionName, theFunctions) {
-    theFunctions.BUN ||= theFunctions.NODE;
-    theFunctions.DENO ||= theFunctions.NODE;
-    return (...args) => theFunctions[environmentStoreHandler.value](...args);
-}
-function createImportCache(theFunction) {
-    const memo = {
-        get value() {
-            return theFunction()
-                .then((value) => {
-                Object.defineProperty(memo, "value", {
-                    value,
-                });
-                return value;
-            });
+    const environmentFunctions = {
+        NODE: theFunctions.NODE,
+        BUN: theFunctions.BUN ||= theFunctions.NODE,
+        DENO: theFunctions.DENO ||= theFunctions.NODE,
+        get TEST() {
+            const theFunction = exports.TESTImplementation.get(functionName);
+            if (!theFunction) {
+                throw new Error(`Missing function implementation "${functionName}" in TEST environment.`);
+            }
+            return theFunction;
         },
     };
-    return memo;
+    return (...args) => environmentFunctions[environmentStoreHandler.value](...args);
 }
-const nodeFileSystem = createImportCache(() => import('node:fs/promises'));
-const nodeCrypto = createImportCache(() => import('node:crypto'));
-const nodeOs = createImportCache(() => import('node:os'));
+const nodeFileSystem = utils.memoPromise(() => import('node:fs/promises'));
+const nodeCrypto = utils.memoPromise(() => import('node:crypto'));
+const nodeOs = utils.memoPromise(() => import('node:os'));
 
 exports.implementFunction = implementFunction;
 exports.nodeCrypto = nodeCrypto;

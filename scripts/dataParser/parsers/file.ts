@@ -1,4 +1,4 @@
-import { type BytesInString, createOverride, DP, E, stringToBytes, unwrap, type FixDeepFunctionInfer, type Kind, type O, P, isType, forward, escapeRegExp, innerPipe, A, type NeverCoalescing } from "@duplojs/utils";
+import { type BytesInString, createOverride, DP, E, stringToBytes, unwrap, type FixDeepFunctionInfer, type Kind, type O, type NeverCoalescing, toRegExp } from "@duplojs/utils";
 import { createFileInterface, isFileInterface, type FileInterface } from "@scripts/file";
 import { createDataParserKind } from "../kind";
 
@@ -22,6 +22,7 @@ export interface DataParserDefinitionFile extends DP.DataParserDefinition<
 	readonly mimeType?: RegExp;
 	readonly minSize?: number;
 	readonly maxSize?: number;
+	readonly checkExist: boolean;
 }
 
 export const fileKind = createDataParserKind("file");
@@ -65,12 +66,16 @@ export interface DataParserFileParams {
 	mimeType?: string | string[] | RegExp;
 	minSize?: number | BytesInString;
 	maxSize?: number | BytesInString;
+	checkExist?: boolean;
 }
 
+/**
+ * {@include dataParser/file/index.md}
+ */
 export function file<
 	const GenericDefinition extends Omit<
 		Partial<DataParserDefinitionFile>,
-		"mimeType" | "minSize" | "maxSize"
+		"mimeType" | "minSize" | "maxSize" | "checkExist"
 	> = never,
 >(
 	params?: DataParserFileParams,
@@ -87,33 +92,50 @@ export function file<
 			errorMessage: definition?.errorMessage,
 			checkers: definition?.checkers ?? [],
 			coerce: definition?.coerce ?? false,
+			checkExist: params?.checkExist ?? false,
 			maxSize: params?.maxSize !== undefined
 				? stringToBytes(params.maxSize)
 				: undefined,
 			minSize: params?.minSize !== undefined
 				? stringToBytes(params.minSize)
 				: undefined,
-			mimeType: P.match(params?.mimeType)
-				.when(
-					isType("undefined"),
-					forward,
-				)
-				.when(
-					isType("string"),
-					(value) => new RegExp(escapeRegExp(value)),
-				)
-				.when(
-					isType("array"),
-					innerPipe(
-						A.map(escapeRegExp),
-						A.join("|"),
-						(value) => new RegExp(value),
-					),
-				)
-				.otherwise(forward),
+			mimeType: params?.mimeType
+				? toRegExp(params.mimeType)
+				: undefined,
 		},
 		{
-			sync: () => DP.SymbolDataParserErrorPromiseIssue,
+			sync: (data, error, self) => {
+				if (
+					self.definition.checkExist
+					|| self.definition.maxSize !== undefined
+					|| self.definition.minSize !== undefined
+				) {
+					return DP.SymbolDataParserErrorPromiseIssue;
+				}
+
+				let fileInterface = data;
+
+				if (self.definition.coerce && typeof fileInterface === "string") {
+					fileInterface = createFileInterface(fileInterface);
+				}
+
+				if (!isFileInterface(fileInterface)) {
+					return DP.SymbolDataParserErrorIssue;
+				}
+
+				if (
+					self.definition.mimeType
+					&& !self
+						.definition
+						.mimeType
+						.test(fileInterface.getMimeType() ?? "")
+				) {
+					DP.addIssue(error, self, data, "Wrong mimeType.");
+					return DP.SymbolDataParserError;
+				}
+
+				return fileInterface;
+			},
 			async: async(data, error, self) => {
 				let fileInterface = data;
 
@@ -130,43 +152,53 @@ export function file<
 					&& !self
 						.definition
 						.mimeType
-						.test(
-							fileInterface.metadata?.mimeType
-							?? fileInterface.getMimeType()
-							?? "",
-						)
+						.test(fileInterface.getMimeType() ?? "")
 				) {
-					return DP.SymbolDataParserErrorIssue;
+					DP.addIssue(error, self, data, "Wrong mimeType.");
+					return DP.SymbolDataParserError;
 				}
 
-				const resultStats = await fileInterface.stat();
-
-				if (E.isLeft(resultStats)) {
-					return DP.SymbolDataParserErrorIssue;
-				}
-
-				const stat = unwrap(resultStats);
-
-				if (!stat.isFile) {
-					return DP.SymbolDataParserErrorIssue;
-				}
 				if (
-					self.definition.maxSize !== undefined
+					self.definition.checkExist
+					|| self.definition.maxSize !== undefined
+					|| self.definition.minSize !== undefined
+				) {
+					const resultStats = await fileInterface.stat();
+
+					if (E.isLeft(resultStats)) {
+						DP.addIssue(error, self, data, "File not exist.");
+						return DP.SymbolDataParserError;
+					}
+
+					const stat = unwrap(resultStats);
+
+					if (!stat.isFile) {
+						DP.addIssue(error, self, data, "Is not file.");
+						return DP.SymbolDataParserError;
+					}
+
+					if (
+						self.definition.maxSize !== undefined
 					&& stat.sizeBytes > self.definition.maxSize
-				) {
-					return DP.SymbolDataParserErrorIssue;
-				}
+					) {
+						DP.addIssue(error, self, data, "File is to large.");
+						return DP.SymbolDataParserError;
+					}
 
-				if (
-					self.definition.minSize !== undefined
+					if (
+						self.definition.minSize !== undefined
 					&& stat.sizeBytes < self.definition.minSize
-				) {
-					return DP.SymbolDataParserErrorIssue;
+					) {
+						DP.addIssue(error, self, data, "File is to small.");
+						return DP.SymbolDataParserError;
+					}
 				}
 
 				return fileInterface;
 			},
-			isAsynchronous: () => true,
+			isAsynchronous: (self) => self.definition.checkExist
+			|| self.definition.maxSize !== undefined
+			|| self.definition.minSize !== undefined,
 		},
 		file.overrideHandler,
 	);

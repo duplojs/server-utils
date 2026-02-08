@@ -8,18 +8,12 @@ import { type StatInfo, stat } from "./stat";
 import type { FileSystemLeft } from "./types";
 import { relocate } from "./relocate";
 
-export interface FileInterfaceMetaData {
-	mimeType?: string;
-	name?: string;
-}
-
 const fileInterfaceKind = createDuplojsServerUtilsKind("fileInterface");
 
 export interface FileInterface extends Kind<
 	typeof fileInterfaceKind.definition
 > {
 	path: string;
-	metadata?: FileInterfaceMetaData;
 	getName(): string | null;
 	getMimeType(): string | null;
 	getExtension(): string | null;
@@ -37,7 +31,6 @@ export interface FileInterface extends Kind<
  */
 export function createFileInterface(
 	path: string,
-	metadata?: FileInterfaceMetaData,
 ): FileInterface {
 	function getName() {
 		return Path.getBaseName(path);
@@ -110,7 +103,6 @@ export function createFileInterface(
 
 	return fileInterfaceKind.addTo({
 		path,
-		metadata,
 		getName,
 		getExtension,
 		getMimeType,

@@ -1,12 +1,13 @@
-import { type GetEnumValue, type MaybePromise } from "@duplojs/utils";
+import { type GetEnumValue } from "@duplojs/utils";
 export interface ServerUtilsFunction {
 }
 export declare const SupportedEnvironment: {
     BUN: "BUN";
     DENO: "DENO";
     NODE: "NODE";
-    toTuple: () => ["BUN", "DENO", "NODE"];
-    has: (value: string) => value is "BUN" | "DENO" | "NODE";
+    TEST: "TEST";
+    toTuple: () => ["BUN", "DENO", "NODE", "TEST"];
+    has: (value: string) => value is "BUN" | "DENO" | "NODE" | "TEST";
 };
 export type SupportedEnvironment = GetEnumValue<typeof SupportedEnvironment>;
 declare const SymbolEnvironmentStore: unique symbol;
@@ -27,18 +28,17 @@ declare module "@duplojs/utils" {
  * 
  */
 export declare function setEnvironment(environment: SupportedEnvironment): void;
+export declare namespace TESTImplementation {
+    function clear(): void;
+    function set<GenericFunctionName extends keyof ServerUtilsFunction>(functionName: GenericFunctionName, theFunction: ServerUtilsFunction[GenericFunctionName]): ServerUtilsFunction[GenericFunctionName];
+    function get<GenericFunctionName extends keyof ServerUtilsFunction>(functionName: GenericFunctionName): ServerUtilsFunction[GenericFunctionName] | undefined;
+}
 export declare function implementFunction<GenericFunctionName extends keyof ServerUtilsFunction>(functionName: GenericFunctionName, theFunctions: {
     NODE: ServerUtilsFunction[GenericFunctionName];
     BUN?: ServerUtilsFunction[GenericFunctionName];
     DENO?: ServerUtilsFunction[GenericFunctionName];
 }): ServerUtilsFunction[GenericFunctionName];
-export declare const nodeFileSystem: {
-    readonly value: MaybePromise<typeof import("node:fs/promises")>;
-};
-export declare const nodeCrypto: {
-    readonly value: MaybePromise<typeof import("node:crypto")>;
-};
-export declare const nodeOs: {
-    readonly value: MaybePromise<typeof import("node:os")>;
-};
+export declare const nodeFileSystem: import("@duplojs/utils").MemoizedPromise<typeof import("node:fs/promises")>;
+export declare const nodeCrypto: import("@duplojs/utils").MemoizedPromise<typeof import("node:crypto")>;
+export declare const nodeOs: import("@duplojs/utils").MemoizedPromise<typeof import("node:os")>;
 export {};

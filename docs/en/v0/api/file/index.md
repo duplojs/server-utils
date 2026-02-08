@@ -5,8 +5,8 @@ prev:
   text: "Common"
   link: "/en/v0/api/common/"
 next:
-  text: "API Reference"
-  link: "/en/v0/api/"
+  text: "DataParser"
+  link: "/en/v0/api/dataParser/"
 ---
 
 # File

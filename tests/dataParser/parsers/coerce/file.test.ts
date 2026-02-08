@@ -1,7 +1,6 @@
-import { type ExpectType, type DP, E, pipe, stringToBytes, unwrap } from "@duplojs/utils";
+import { E, pipe, unwrap } from "@duplojs/utils";
 import { DServerDataParser, DServerFile } from "@scripts";
 import * as DServerFileSource from "@scripts/file";
-import type { FileInterface } from "@scripts/file";
 
 describe("dataParser.coerce.file", () => {
 	afterEach(() => {
@@ -42,7 +41,6 @@ describe("dataParser.coerce.file", () => {
 		);
 		const file = DServerFile.createFileInterface(
 			"/tmp/demo.json",
-			{ mimeType: "application/json" },
 		);
 		vi.spyOn(file, "stat").mockResolvedValue(E.success({
 			isFile: true,

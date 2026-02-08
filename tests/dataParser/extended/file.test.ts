@@ -9,7 +9,7 @@ describe("dataParser.extended.file", () => {
 	});
 
 	it("builds extended file parser", async() => {
-		const schema = DServerDataParser.extended.file();
+		const schema = DServerDataParser.extended.file().mustExist();
 		const file = DServerFile.createFileInterface("/tmp/demo.txt");
 		vi.spyOn(file, "stat").mockResolvedValue(E.success({
 			isFile: true,
@@ -85,7 +85,6 @@ describe("dataParser.extended.file", () => {
 		).maxSize(20);
 		const file = DServerFile.createFileInterface(
 			"/tmp/demo.json",
-			{ mimeType: "application/json" },
 		);
 		vi.spyOn(file, "stat").mockResolvedValue(E.success({
 			isFile: true,
