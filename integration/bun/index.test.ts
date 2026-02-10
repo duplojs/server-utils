@@ -1,11 +1,15 @@
 import { describe, expect, it } from "bun:test";
-import { E, unwrap, A } from "@duplojs/utils";
-import { SF } from "@duplojs/server-utils";
+import { E, unwrap, A, DP } from "@duplojs/utils";
+import { SF, SC } from "@duplojs/server-utils";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const makeTempDir = async() => fs.mkdtemp(path.join(os.tmpdir(), "duplojs-bun-"));
+const envApplicationPath = fileURLToPath(new URL("../fixtures/env/application.env", import.meta.url));
+const envServicePath = fileURLToPath(new URL("../fixtures/env/service.env", import.meta.url));
+const envRuntimePath = fileURLToPath(new URL("../fixtures/env/runtime.env", import.meta.url));
 
 describe("bun integration", () => {
 	it("readFile/writeFile", async() => {
@@ -101,5 +105,108 @@ describe("bun integration", () => {
 			recursive: true,
 			force: true,
 		});
+	});
+
+	it("environmentVariable normal", async() => {
+		const initialEnv = process.env;
+		try {
+			process.env = {
+				BASE_NAME: "bun-runtime",
+			};
+
+			const result = await SC.environmentVariable(
+				{
+					BASE_NAME: DP.string(),
+					APP_NAME: DP.string(),
+					API_URL: DP.string(),
+					LOG_LABEL: DP.string(),
+					MULTILINE: DP.string(),
+					ESCAPED: DP.string(),
+				},
+				{
+					paths: [envApplicationPath, envServicePath],
+					override: false,
+					justRead: false,
+				},
+			);
+
+			expect(E.isRight(result)).toBe(true);
+			expect(process.env.BASE_NAME).toBe("bun-runtime");
+			expect(process.env.APP_NAME).toBe("core-app");
+			expect(process.env.API_URL).toBe("https://api.duplo.local/v1");
+			expect(process.env.LOG_LABEL).toBe("[service]");
+			expect(process.env.MULTILINE).toBe("line1\nline2\r");
+			expect(process.env.ESCAPED).toBe("$TOKEN");
+		} finally {
+			process.env = initialEnv;
+		}
+	});
+
+	it("environmentVariable override", async() => {
+		const initialEnv = process.env;
+		try {
+			process.env = {
+				BASE_NAME: "bun-runtime",
+				APP_NAME: "base-app",
+			};
+
+			const result = await SC.environmentVariable(
+				{
+					BASE_NAME: DP.string(),
+					APP_NAME: DP.string(),
+					COMPOSED: DP.string(),
+					API_PREFIX: DP.string(),
+					NEW_KEY: DP.string(),
+				},
+				{
+					paths: [envApplicationPath, envServicePath, envRuntimePath],
+					override: true,
+					justRead: false,
+				},
+			);
+
+			expect(E.isRight(result)).toBe(true);
+			expect(process.env.BASE_NAME).toBe("service");
+			expect(process.env.APP_NAME).toBe("runtime-app");
+			expect(process.env.API_PREFIX).toBe("/v2");
+			expect(process.env.COMPOSED).toBe("service/v2");
+			expect(process.env.NEW_KEY).toBe("runtime");
+		} finally {
+			process.env = initialEnv;
+		}
+	});
+
+	it("environmentVariable justRead", async() => {
+		const initialEnv = process.env;
+		try {
+			process.env = {
+				BASE_NAME: "bun-runtime",
+				APP_NAME: "base-app",
+			};
+
+			const result = await SC.environmentVariable(
+				{
+					BASE_NAME: DP.string(),
+					APP_NAME: DP.string(),
+					COMPOSED: DP.string(),
+				},
+				{
+					paths: [envApplicationPath, envRuntimePath],
+					override: true,
+					justRead: true,
+				},
+			);
+
+			expect(E.isRight(result)).toBe(true);
+			if (E.isRight(result)) {
+				expect(unwrap(result).BASE_NAME).toBe("core");
+				expect(unwrap(result).APP_NAME).toBe("runtime-app");
+				expect(unwrap(result).COMPOSED).toBe("core/v2");
+			}
+			expect(process.env.APP_NAME).toBe("base-app");
+			expect(process.env.COMPOSED).toBeUndefined();
+		} finally {
+			process.env = initialEnv;
+		}
 	});
 });

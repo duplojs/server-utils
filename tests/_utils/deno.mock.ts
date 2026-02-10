@@ -1,4 +1,8 @@
 interface DenoMock {
+	env?: {
+		toObject(): Record<string, string>;
+		set(key: string, value: string): void;
+	};
 	cwd?(): string;
 	chdir?(path: string): void;
 	readFile?(path: string): Promise<Uint8Array>;

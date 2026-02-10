@@ -8,6 +8,7 @@ interface BunFileMock {
 
 interface BunMock {
 	file(path: string): BunFileMock;
+	env?: Partial<Record<string, string>>;
 }
 
 const globalWithBun = globalThis as unknown as { Bun?: BunMock };

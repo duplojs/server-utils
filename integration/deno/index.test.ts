@@ -1,7 +1,23 @@
 import { describe, it } from "@std/testing/bdd";
 import { assert, assertEquals, assertRejects } from "@std/assert";
-import { E, unwrap, A } from "@duplojs/utils";
-import { SF } from "@duplojs/server-utils";
+import { E, unwrap, A, DP } from "@duplojs/utils";
+import { SF, SC } from "@duplojs/server-utils";
+
+const envApplicationPath = new URL("../fixtures/env/application.env", import.meta.url).pathname;
+const envServicePath = new URL("../fixtures/env/service.env", import.meta.url).pathname;
+const envRuntimePath = new URL("../fixtures/env/runtime.env", import.meta.url).pathname;
+
+function restoreDenoEnv(snapshot: Record<string, string>) {
+	const current = Deno.env.toObject();
+	for (const key of Object.keys(current)) {
+		if (!(key in snapshot)) {
+			Deno.env.delete(key);
+		}
+	}
+	for (const [key, value] of Object.entries(snapshot)) {
+		Deno.env.set(key, value);
+	}
+}
 
 describe("deno integration", () => {
 	it("readFile/writeFile", async() => {
@@ -78,5 +94,103 @@ describe("deno integration", () => {
 		await assertRejects(() => Deno.stat(filePath), Deno.errors.NotFound);
 
 		await Deno.remove(tempDir, { recursive: true });
+	});
+
+	it("environmentVariable normal", async() => {
+		const snapshot = Deno.env.toObject();
+		try {
+			Deno.env.set("BASE_NAME", "deno-runtime");
+			Deno.env.delete("APP_NAME");
+
+			const result = await SC.environmentVariable(
+				{
+					BASE_NAME: DP.string(),
+					APP_NAME: DP.string(),
+					API_URL: DP.string(),
+					LOG_LABEL: DP.string(),
+					MULTILINE: DP.string(),
+					ESCAPED: DP.string(),
+				},
+				{
+					paths: [envApplicationPath, envServicePath],
+					override: false,
+					justRead: false,
+				},
+			);
+
+			assert(E.isRight(result));
+			assertEquals(Deno.env.get("BASE_NAME"), "deno-runtime");
+			assertEquals(Deno.env.get("APP_NAME"), "core-app");
+			assertEquals(Deno.env.get("API_URL"), "https://api.duplo.local/v1");
+			assertEquals(Deno.env.get("LOG_LABEL"), "[service]");
+			assertEquals(Deno.env.get("MULTILINE"), "line1\nline2\r");
+			assertEquals(Deno.env.get("ESCAPED"), "$TOKEN");
+		} finally {
+			restoreDenoEnv(snapshot);
+		}
+	});
+
+	it("environmentVariable override", async() => {
+		const snapshot = Deno.env.toObject();
+		try {
+			Deno.env.set("BASE_NAME", "deno-runtime");
+			Deno.env.set("APP_NAME", "base-app");
+
+			const result = await SC.environmentVariable(
+				{
+					BASE_NAME: DP.string(),
+					APP_NAME: DP.string(),
+					COMPOSED: DP.string(),
+					API_PREFIX: DP.string(),
+					NEW_KEY: DP.string(),
+				},
+				{
+					paths: [envApplicationPath, envServicePath, envRuntimePath],
+					override: true,
+					justRead: false,
+				},
+			);
+
+			assert(E.isRight(result));
+			assertEquals(Deno.env.get("BASE_NAME"), "service");
+			assertEquals(Deno.env.get("APP_NAME"), "runtime-app");
+			assertEquals(Deno.env.get("API_PREFIX"), "/v2");
+			assertEquals(Deno.env.get("COMPOSED"), "service/v2");
+			assertEquals(Deno.env.get("NEW_KEY"), "runtime");
+		} finally {
+			restoreDenoEnv(snapshot);
+		}
+	});
+
+	it("environmentVariable justRead", async() => {
+		const snapshot = Deno.env.toObject();
+		try {
+			Deno.env.set("BASE_NAME", "deno-runtime");
+			Deno.env.set("APP_NAME", "base-app");
+
+			const result = await SC.environmentVariable(
+				{
+					BASE_NAME: DP.string(),
+					APP_NAME: DP.string(),
+					COMPOSED: DP.string(),
+				},
+				{
+					paths: [envApplicationPath, envRuntimePath],
+					override: true,
+					justRead: true,
+				},
+			);
+
+			assert(E.isRight(result));
+			if (E.isRight(result)) {
+				assertEquals(unwrap(result).BASE_NAME, "core");
+				assertEquals(unwrap(result).APP_NAME, "runtime-app");
+				assertEquals(unwrap(result).COMPOSED, "core/v2");
+			}
+			assertEquals(Deno.env.get("APP_NAME"), "base-app");
+			assertEquals(Deno.env.get("COMPOSED"), undefined);
+		} finally {
+			restoreDenoEnv(snapshot);
+		}
 	});
 });
