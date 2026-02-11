@@ -7,17 +7,20 @@ import { overrideEnvironmentVariables } from "./overrideEnvironmentVariables";
 
 export interface EnvironmentVariableParams {
 
+	/** Env file paths to read and merge with runtime environment variables. */
 	paths?: string[];
 
 	/**
+	 * Allow values from env files to replace existing runtime environment values.
 	 * @default false
 	 */
-	override: boolean;
+	override?: boolean;
 
 	/**
+	 * Parse and validate values without writing resolved variables back to the runtime environment.
 	 * @default false
 	 */
-	justRead: boolean;
+	justRead?: boolean;
 }
 
 declare module "@scripts/implementor" {
@@ -35,6 +38,9 @@ declare module "@scripts/implementor" {
 	}
 }
 
+/**
+ * {@include common/environmentVariable/index.md}
+ */
 export const environmentVariable = implementFunction(
 	"environmentVariable",
 	{

@@ -34,3 +34,11 @@ retourne le répertoire de travail courant ou lance une erreur.
 
 ### [`setCurrentWorkingDirectory`](/fr/v0/api/common/setCurrentWorkingDirectory)
 change le répertoire de travail courant à partir d'un chemin.
+
+## Variables d'environnement
+
+### [`environmentVariable`](/fr/v0/api/common/environmentVariable)
+charge les variables d'environnement depuis le runtime et des fichiers optionnels, les valide, puis retourne un résultat Either.
+
+### [`environmentVariableOrThrow`](/fr/v0/api/common/environmentVariableOrThrow)
+charge et valide les variables d'environnement, puis lance une erreur en cas d'échec.

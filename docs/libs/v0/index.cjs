@@ -8,6 +8,8 @@ var index$3 = require('./dataParser/parsers/coerce/index.cjs');
 var index$4 = require('./dataParser/extended/index.cjs');
 var getCurrentWorkDirectory = require('./common/getCurrentWorkDirectory.cjs');
 var setCurrentWorkingDirectory = require('./common/setCurrentWorkingDirectory.cjs');
+var index$5 = require('./common/environmentVariable/index.cjs');
+var environmentVariableOrThrow = require('./common/environmentVariableOrThrow.cjs');
 
 
 
@@ -29,3 +31,6 @@ exports.SDPE = index$4;
 exports.getCurrentWorkDirectory = getCurrentWorkDirectory.getCurrentWorkDirectory;
 exports.getCurrentWorkDirectoryOrThrow = getCurrentWorkDirectory.getCurrentWorkDirectoryOrThrow;
 exports.setCurrentWorkingDirectory = setCurrentWorkingDirectory.setCurrentWorkingDirectory;
+exports.environmentVariable = index$5.environmentVariable;
+exports.EnvironmentVariableError = environmentVariableOrThrow.EnvironmentVariableError;
+exports.environmentVariableOrThrow = environmentVariableOrThrow.environmentVariableOrThrow;

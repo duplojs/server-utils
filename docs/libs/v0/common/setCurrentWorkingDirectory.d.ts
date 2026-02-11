@@ -11,8 +11,6 @@ declare module "../implementor" {
  * and return an Either ok/fail based on the result.
  * 
  * ```ts
- * import { setCurrentWorkingDirectory } from "..";
- * 
  * setCurrentWorkingDirectory("/tmp/project");
  * // Either ok/fail.
  * 

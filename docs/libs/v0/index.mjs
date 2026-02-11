@@ -16,3 +16,5 @@ export { index$4 as DServerDataParserExtended };
 export { index$4 as SDPE };
 export { getCurrentWorkDirectory, getCurrentWorkDirectoryOrThrow } from './common/getCurrentWorkDirectory.mjs';
 export { setCurrentWorkingDirectory } from './common/setCurrentWorkingDirectory.mjs';
+export { environmentVariable } from './common/environmentVariable/index.mjs';
+export { EnvironmentVariableError, environmentVariableOrThrow } from './common/environmentVariableOrThrow.mjs';

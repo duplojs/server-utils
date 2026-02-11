@@ -12,6 +12,8 @@
  * ```
  * 
  * What you will find in this namespace:
+ * - `environmentVariable`
+ * - `environmentVariableOrThrow`
  * - `getCurrentWorkDirectory`
  * - `getCurrentWorkDirectoryOrThrow`
  * - `setCurrentWorkingDirectory`
@@ -21,3 +23,5 @@
  */
 export * from "./getCurrentWorkDirectory";
 export * from "./setCurrentWorkingDirectory";
+export * from "./environmentVariable";
+export * from "./environmentVariableOrThrow";

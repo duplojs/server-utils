@@ -34,3 +34,11 @@ returns the current working directory or throws.
 
 ### [`setCurrentWorkingDirectory`](/en/v0/api/common/setCurrentWorkingDirectory)
 changes the current working directory from a path.
+
+## Environment variables
+
+### [`environmentVariable`](/en/v0/api/common/environmentVariable)
+loads env variables from runtime and optional files, validates them, and returns an Either result.
+
+### [`environmentVariableOrThrow`](/en/v0/api/common/environmentVariableOrThrow)
+loads and validates env variables, then throws on failure.

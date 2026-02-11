@@ -5,8 +5,8 @@ prev:
   text: "getCurrentWorkDirectoryOrThrow"
   link: "/en/v0/api/common/getCurrentWorkDirectoryOrThrow"
 next:
-  text: "Common"
-  link: "/en/v0/api/common/"
+  text: "environmentVariable"
+  link: "/en/v0/api/common/environmentVariable"
 ---
 
 # setCurrentWorkingDirectory
@@ -40,3 +40,4 @@ function setCurrentWorkingDirectory(
 ## See also
 
 - [`getCurrentWorkDirectory`](/en/v0/api/common/getCurrentWorkDirectory) - Returns the current working directory.
+- [`environmentVariable`](/en/v0/api/common/environmentVariable) - Loads and validates environment variables.

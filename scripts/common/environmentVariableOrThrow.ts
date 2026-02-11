@@ -15,6 +15,9 @@ export class EnvironmentVariableError extends kindHeritage(
 	}
 }
 
+/**
+ * {@include common/environmentVariableOrThrow/index.md}
+ */
 export async function environmentVariableOrThrow<
 	GenericShape extends DP.DataParserObjectShape,
 >(

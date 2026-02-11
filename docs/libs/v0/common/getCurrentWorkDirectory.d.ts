@@ -12,8 +12,6 @@ declare module "../implementor" {
  * or an error if the working directory cannot be read.
  * 
  * ```ts
- * import { getCurrentWorkDirectory, setCurrentWorkingDirectory } from "..";
- * 
  * const cwd = getCurrentWorkDirectory();
  * // cwd is an Either with the current path.
  * 
@@ -35,8 +33,6 @@ export declare const getCurrentWorkDirectory: () => E.Error<unknown> | E.Success
  * Return the current path directly and throw if the runtime cannot read it.
  * 
  * ```ts
- * import { getCurrentWorkDirectoryOrThrow, setCurrentWorkingDirectory } from "..";
- * 
  * const cwd = getCurrentWorkDirectoryOrThrow();
  * // cwd: string
  * 

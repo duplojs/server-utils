@@ -14,6 +14,8 @@ export * from "./common";
  * ```
  * 
  * What you will find in this namespace:
+ * - `environmentVariable`
+ * - `environmentVariableOrThrow`
  * - `getCurrentWorkDirectory`
  * - `getCurrentWorkDirectoryOrThrow`
  * - `setCurrentWorkingDirectory`

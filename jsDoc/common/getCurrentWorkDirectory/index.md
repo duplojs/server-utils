@@ -4,7 +4,7 @@ Return an Either containing the current path for the current runtime,
 or an error if the working directory cannot be read.
 
 ```ts
-{@include common/getCurrentWorkDirectory/example.ts[1,11]}
+{@include common/getCurrentWorkDirectory/example.ts[3,11]}
 ```
 
 @see https://server-utils.duplojs.dev/en/v0/api/common/getCurrentWorkDirectory
