@@ -24,14 +24,3 @@ export const getCurrentWorkDirectory = implementFunction(
 		),
 	},
 );
-
-/**
- * {@include common/getCurrentWorkDirectoryOrThrow/index.md}
- */
-export const getCurrentWorkDirectoryOrThrow = implementFunction(
-	"getCurrentWorkDirectoryOrThrow",
-	{
-		NODE: () => process.cwd(),
-		DENO: () => Deno.cwd(),
-	},
-);
