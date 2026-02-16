@@ -58,6 +58,11 @@
       "import": "./dist/dataParser/extended/index.mjs",
       "require": "./dist/dataParser/extended/index.cjs",
       "types": "./dist/dataParser/extended/index.d.ts"
+    },
+    "./command": {
+      "import": "./dist/command/index.mjs",
+      "require": "./dist/command/index.cjs",
+      "types": "./dist/command/index.d.ts"
     }
   },
   "files": [
