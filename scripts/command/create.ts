@@ -16,14 +16,18 @@ export type Subject = (
 			}
 		>
 	>
-	| DP.DataParserTuple<
-		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionTuple, "shape" | "rest" | "checkers">
+	| DP.AdvancedContract<
+		DP.DataParserTuple<
+			SimplifyTopLevel<
+			& Omit<DP.DataParserDefinitionTuple, "shape" | "rest">
 			& {
-				readonly shape: [EligibleDataParser, ...EligibleDataParser[]];
-				readonly rest?: EligibleDataParser;
-				readonly checkers: readonly [];
+				readonly shape: readonly [
+					EligibleDataParser,
+					...EligibleDataParser[],
+				];
+				readonly rest: EligibleDataParser | undefined;
 			}
+			>
 		>
 	>
 );

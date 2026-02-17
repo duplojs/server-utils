@@ -1,92 +1,65 @@
 import type { DP, SimplifyTopLevel } from "@duplojs/utils";
 
-type EligibleDataParserBase = (
-	| DP.DataParserString<
-		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionString, "checkers">
-			& {
-				readonly checkers: readonly (
-					| DP.DataParserCheckerEmail
-					| DP.DataParserCheckerStringMax
-					| DP.DataParserCheckerStringMin
-					| DP.DataParserCheckerStringRegex
-				)[];
-			}
-		>
-	>
+export type EligibleDataParser = (
+	| DP.DataParserString
 	| DP.DataParserNumber<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionNumber, "checkers" | "coerce">
+			& Omit<DP.DataParserDefinitionNumber, "coerce">
 			& {
-				readonly checkers: readonly DP.DataParserCheckerInt[];
 				readonly coerce: true;
 			}
 		>
 	>
 	| DP.DataParserBigInt<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionBigInt, "checkers" | "coerce">
+			& Omit<DP.DataParserDefinitionBigInt, "coerce">
 			& {
-				readonly checkers: readonly [];
 				readonly coerce: true;
 			}
 		>
 	>
 	| DP.DataParserDate<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionDate, "checkers" | "coerce">
+			& Omit<DP.DataParserDefinitionDate, "coerce">
 			& {
-				readonly checkers: readonly [];
 				readonly coerce: true;
 			}
 		>
 	>
 	| DP.DataParserTime<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionTime, "checkers" | "coerce">
+			& Omit<DP.DataParserDefinitionTime, "coerce">
 			& {
-				readonly checkers: readonly [];
 				readonly coerce: true;
 			}
 		>
 	>
 	| DP.DataParserLiteral<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionLiteral, "checkers" | "value">
+			& Omit<DP.DataParserDefinitionLiteral, "value">
 			& {
-				readonly checkers: readonly [];
 				readonly value: readonly string[];
 			}
 		>
 	>
 	| DP.DataParserNil<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionNil, "checkers" | "coerce">
+			& Omit<DP.DataParserDefinitionNil, "coerce">
 			& {
-				readonly checkers: readonly [];
 				readonly coerce: true;
 			}
 		>
 	>
-	| DP.DataParserTemplateLiteral<
+	| DP.DataParserTemplateLiteral
+	| DP.DataParserUnion<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionTemplateLiteral, "checkers">
-			& { readonly checkers: readonly [] }
+			& Omit<DP.DataParserDefinitionUnion, "options">
+			& {
+				readonly options: readonly [
+					EligibleDataParser,
+					...EligibleDataParser[],
+				];
+			}
 		>
 	>
 );
-
-type EligibleDataParserUnion = DP.DataParserUnion<
-	SimplifyTopLevel<
-	& Omit<DP.DataParserDefinitionUnion, "checkers" | "options">
-	& {
-		readonly checkers: readonly [];
-		readonly options: readonly [
-			EligibleDataParserBase,
-			...EligibleDataParserBase[],
-		];
-	}
-	>
->;
-
-export type EligibleDataParser = EligibleDataParserBase | EligibleDataParserUnion;

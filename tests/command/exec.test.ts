@@ -38,9 +38,27 @@ describe("exec", () => {
 		await Command.exec(
 			{
 				options: [Command.createBooleanOption("verbose")],
-				subject: DP.array(DP.string()),
+				subject: DP.tuple([DP.string()]),
 			},
-			executeSpy,
+			({ options, subject }) => {
+				type _CheckOptions = ExpectType<
+					typeof options,
+					{
+						verbose: boolean;
+					},
+					"strict"
+				>;
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					[string] | undefined,
+					"strict"
+				>;
+
+				executeSpy({
+					options,
+					subject,
+				});
+			},
 		);
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
