@@ -1,5 +1,5 @@
 import { type ExpectType, pipe } from "@duplojs/utils";
-import { Command } from "@scripts";
+import { ServerCommand } from "@scripts";
 
 describe("createBooleanOption", () => {
 	afterEach(() => {
@@ -8,7 +8,7 @@ describe("createBooleanOption", () => {
 	});
 
 	it("returns false when option is missing", () => {
-		const option = Command.createBooleanOption("help");
+		const option = ServerCommand.createBooleanOption("help");
 
 		const result = option.execute(["subject"]);
 
@@ -23,7 +23,7 @@ describe("createBooleanOption", () => {
 	});
 
 	it("returns true when option is present", () => {
-		const option = Command.createBooleanOption("help");
+		const option = ServerCommand.createBooleanOption("help");
 
 		const result = option.execute(["--help", "subject"]);
 
@@ -32,7 +32,7 @@ describe("createBooleanOption", () => {
 	});
 
 	it("returns true when alias is present", () => {
-		const option = Command.createBooleanOption("help", { aliases: ["h"] });
+		const option = ServerCommand.createBooleanOption("help", { aliases: ["h"] });
 
 		const result = option.execute(["-h", "subject"]);
 
@@ -41,13 +41,13 @@ describe("createBooleanOption", () => {
 	});
 
 	it("throws when a value is provided", () => {
-		const option = Command.createBooleanOption("help");
+		const option = ServerCommand.createBooleanOption("help");
 
-		expect(() => option.execute(["--help=true"])).toThrowError(Command.CommandOptionValueNotRequiredError);
+		expect(() => option.execute(["--help=true"])).toThrowError(ServerCommand.CommandOptionValueNotRequiredError);
 	});
 
 	it("works when called from pipe", () => {
-		const option = Command.createBooleanOption("help");
+		const option = ServerCommand.createBooleanOption("help");
 
 		const result = pipe(["--help"], option.execute);
 

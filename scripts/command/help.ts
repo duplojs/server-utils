@@ -101,36 +101,35 @@ export function logHelp(
 		);
 	}
 	if (A.minElements(command.options, 1)) {
+		const optionLines: string[] = [];
+
+		command.options.forEach((option, index) => {
+			optionLines.push(
+				Printer.indent(depth + 1),
+				Printer.dash,
+				Printer.colorized(` ${option.name}: `, "cyan"),
+				Printer.colorizedOption(option, "gray"),
+			);
+
+			if (option.description) {
+				optionLines.push(
+					Printer.back,
+					Printer.indent(depth + 1),
+					`   ${option.description}`,
+				);
+			}
+
+			if (index < command.options.length - 1) {
+				optionLines.push(Printer.back);
+			}
+		});
+
 		Printer.render(
 			[
 				Printer.indent(depth + 1),
 				Printer.colorized("OPTIONS:", "BLUE"),
 				Printer.back,
-				...A.flatMap(
-					command.options,
-					(option) => {
-						const firstPart = [
-							Printer.indent(depth + 1),
-							Printer.dash,
-							Printer.colorized(`${option.name}:`, "cyan"),
-							Printer.colorizedOption(option, "gray"),
-							Printer.back,
-						];
-
-						if (!option.description) {
-							return firstPart;
-						}
-
-						return A.concat(
-							firstPart,
-							[
-								Printer.indent(depth + 2),
-								option.description,
-								Printer.back,
-							],
-						);
-					},
-				),
+				...optionLines,
 			],
 		);
 	}

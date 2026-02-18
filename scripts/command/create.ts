@@ -107,6 +107,8 @@ export function create(
 					for (const command of self.subject) {
 						if (args[0] === command.name) {
 							await command.execute(A.shift(args));
+
+							return;
 						}
 					}
 				}
@@ -116,6 +118,8 @@ export function create(
 				if (help.result) {
 					logHelp(self);
 					exitProcess(0);
+
+					return;
 				}
 
 				const commandOptions = A.reduce(
@@ -165,6 +169,8 @@ export function create(
 					await execute({});
 				}
 				exitProcess(0);
+
+				return;
 			},
 		} satisfies RemoveKind<Command>,
 	);

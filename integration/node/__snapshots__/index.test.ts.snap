@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`node integration > command integration with nested help and execute > help command 1`] = `
+"NAME:db
+	DESCRIPTION:
+	Database commands
+	NAME:help-db
+	NAME:seed
+		DESCRIPTION:
+		Seed a target
+		OPTIONS:
+		- force: -f, --force
+		   force execution
+		SUBJECT:[string]"
+`;
+
+exports[`node integration > command integration with nested help and execute > help root 1`] = `
+"NAME:root
+	NAME:db
+		DESCRIPTION:
+		Database commands
+		NAME:help-db
+		NAME:seed
+			DESCRIPTION:
+			Seed a target
+			OPTIONS:
+			- force: -f, --force
+			   force execution
+			SUBJECT:[string]"
+`;
+
+exports[`node integration > command integration with nested help and execute > help sub-command 1`] = `"NAME:help-db"`;

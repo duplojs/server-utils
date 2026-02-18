@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { E, unwrap, A, DP } from "@duplojs/utils";
-import { SF, SC } from "@duplojs/server-utils";
+import { describe, expect, it, vi } from "vitest";
+import { type ExpectType, E, unwrap, A, DP } from "@duplojs/utils";
+import { SF, setEnvironment, TESTImplementation, environmentVariable, SC } from "@duplojs/server-utils";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -10,6 +10,8 @@ const makeTempDir = async() => fs.mkdtemp(path.join(os.tmpdir(), "duplojs-node-"
 const envApplicationPath = fileURLToPath(new URL("../fixtures/env/application.env", import.meta.url));
 const envServicePath = fileURLToPath(new URL("../fixtures/env/service.env", import.meta.url));
 const envRuntimePath = fileURLToPath(new URL("../fixtures/env/runtime.env", import.meta.url));
+// eslint-disable-next-line no-control-regex
+const stripAnsiColor = (value: string) => value.replace(/\u001B\[[0-9;]*m/g, "");
 
 describe("node integration", () => {
 	it("readFile/writeFile", async() => {
@@ -112,7 +114,7 @@ describe("node integration", () => {
 				BASE_NAME: "node-runtime",
 			};
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),
@@ -148,7 +150,7 @@ describe("node integration", () => {
 				APP_NAME: "base-app",
 			};
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),
@@ -182,7 +184,7 @@ describe("node integration", () => {
 				APP_NAME: "base-app",
 			};
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),
@@ -205,6 +207,116 @@ describe("node integration", () => {
 			expect(process.env.COMPOSED).toBeUndefined();
 		} finally {
 			process.env = initialEnv;
+		}
+	});
+
+	it("command integration with nested help and execute", async() => {
+		setEnvironment("TEST");
+
+		const exitSpy = vi.fn();
+		const getProcessArgumentsSpy = vi.fn();
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const rootExecuteSpy = vi.fn();
+		const commandExecuteSpy = vi.fn();
+		const subCommandExecuteSpy = vi.fn();
+		const subHelpExecuteSpy = vi.fn();
+
+		TESTImplementation.set("exitProcess", exitSpy);
+		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
+
+		const subHelpCommand = SC.create(
+			"help-db",
+			subHelpExecuteSpy,
+		);
+
+		const subCommand = SC.create(
+			"seed",
+			{
+				description: "Seed a target",
+				options: [
+					SC.createBooleanOption(
+						"force",
+						{
+							aliases: ["f"],
+							description: "force execution",
+						},
+					),
+				],
+				subject: DP.tuple([DP.string()]),
+			},
+			({ options, subject }) => {
+				type _CheckOptions = ExpectType<
+					typeof options,
+					{
+						force: boolean;
+					},
+					"strict"
+				>;
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					[string] | undefined,
+					"strict"
+				>;
+
+				subCommandExecuteSpy({
+					options,
+					subject,
+				});
+			},
+		);
+
+		const command = SC.create(
+			"db",
+			{
+				description: "Database commands",
+				subject: [subHelpCommand, subCommand],
+			},
+			commandExecuteSpy,
+		);
+
+		try {
+			getProcessArgumentsSpy.mockReturnValue(["--help"]);
+			await SC.exec(
+				{
+					subject: [command],
+				},
+				rootExecuteSpy,
+			);
+
+			expect(logSpy).toHaveBeenCalled();
+			expect(
+				stripAnsiColor(
+					logSpy.mock.calls.map((call) => call.join("")).join("\n"),
+				),
+			).toMatchSnapshot("help root");
+
+			logSpy.mockClear();
+			await command.execute(["--help"]);
+			expect(
+				stripAnsiColor(
+					logSpy.mock.calls.map((call) => call.join("")).join("\n"),
+				),
+			).toMatchSnapshot("help command");
+
+			logSpy.mockClear();
+			await command.execute(["help-db", "--help"]);
+			expect(
+				stripAnsiColor(
+					logSpy.mock.calls.map((call) => call.join("")).join("\n"),
+				),
+			).toMatchSnapshot("help sub-command");
+
+			await command.execute(["seed", "--force", "users"]);
+			expect(subCommandExecuteSpy).toHaveBeenCalledWith({
+				options: {
+					force: true,
+				},
+				subject: ["users"],
+			});
+		} finally {
+			setEnvironment("NODE");
+			TESTImplementation.clear();
+			logSpy.mockRestore();
 		}
 	});
 });

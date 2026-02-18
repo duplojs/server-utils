@@ -1,5 +1,5 @@
 import { type ExpectType, pipe } from "@duplojs/utils";
-import { Command } from "@scripts";
+import { ServerCommand } from "@scripts";
 
 describe("initOption", () => {
 	afterEach(() => {
@@ -8,7 +8,7 @@ describe("initOption", () => {
 	});
 
 	it("creates an option with default metadata", () => {
-		const option = Command.initOption("verbose", ({ isHere }) => isHere);
+		const option = ServerCommand.initOption("verbose", ({ isHere }) => isHere);
 
 		type _CheckName = ExpectType<
 			typeof option.name,
@@ -23,7 +23,7 @@ describe("initOption", () => {
 	});
 
 	it("returns fallback execute output and keeps args when option is missing", () => {
-		const option = Command.initOption("verbose", (params) => params);
+		const option = ServerCommand.initOption("verbose", (params) => params);
 
 		const result = option.execute(["--other"]);
 
@@ -35,7 +35,7 @@ describe("initOption", () => {
 	});
 
 	it("detects option by alias and removes the flag from args", () => {
-		const option = Command.initOption("verbose", (params) => params, { aliases: ["v"] });
+		const option = ServerCommand.initOption("verbose", (params) => params, { aliases: ["v"] });
 
 		const result = option.execute(["-v", "subject"]);
 
@@ -47,7 +47,7 @@ describe("initOption", () => {
 	});
 
 	it("extracts inline value when option requires a value", () => {
-		const option = Command.initOption("port", (params) => params, { hasValue: true });
+		const option = ServerCommand.initOption("port", (params) => params, { hasValue: true });
 
 		const result = option.execute(["--port=8080", "subject"]);
 
@@ -59,7 +59,7 @@ describe("initOption", () => {
 	});
 
 	it("extracts next argument when option requires a value", () => {
-		const option = Command.initOption("port", (params) => params, { hasValue: true });
+		const option = ServerCommand.initOption("port", (params) => params, { hasValue: true });
 
 		const result = option.execute(["--port", "8080", "subject"]);
 
@@ -71,13 +71,13 @@ describe("initOption", () => {
 	});
 
 	it("throws when required value looks like another option", () => {
-		const option = Command.initOption("port", (params) => params, { hasValue: true });
+		const option = ServerCommand.initOption("port", (params) => params, { hasValue: true });
 
-		expect(() => option.execute(["--port", "--other"])).toThrowError(Command.CommandOptionValueLooksLikeOptionError);
+		expect(() => option.execute(["--port", "--other"])).toThrowError(ServerCommand.CommandOptionValueLooksLikeOptionError);
 	});
 
 	it("keeps undefined when no value is provided to a value option", () => {
-		const option = Command.initOption("port", (params) => params, { hasValue: true });
+		const option = ServerCommand.initOption("port", (params) => params, { hasValue: true });
 
 		const result = option.execute(["--port"]);
 
@@ -89,13 +89,13 @@ describe("initOption", () => {
 	});
 
 	it("throws when value is provided to an option without value", () => {
-		const option = Command.initOption("verbose", (params) => params);
+		const option = ServerCommand.initOption("verbose", (params) => params);
 
-		expect(() => option.execute(["--verbose=true"])).toThrowError(Command.CommandOptionValueNotRequiredError);
+		expect(() => option.execute(["--verbose=true"])).toThrowError(ServerCommand.CommandOptionValueNotRequiredError);
 	});
 
 	it("works when execute is called from pipe", () => {
-		const option = Command.initOption("verbose", ({ isHere }) => isHere);
+		const option = ServerCommand.initOption("verbose", ({ isHere }) => isHere);
 
 		const result = pipe(["--verbose"], option.execute);
 

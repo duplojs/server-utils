@@ -1,5 +1,5 @@
 import { type ExpectType, DP } from "@duplojs/utils";
-import { Command, TESTImplementation, setEnvironment } from "@scripts";
+import { ServerCommand, TESTImplementation, setEnvironment } from "@scripts";
 
 describe("create", () => {
 	afterEach(() => {
@@ -10,7 +10,7 @@ describe("create", () => {
 	});
 
 	it("creates a command with default params", () => {
-		const command = Command.create(
+		const command = ServerCommand.create(
 			"root",
 			() => undefined,
 		);
@@ -33,7 +33,7 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = Command.create(
+		const command = ServerCommand.create(
 			"root",
 			executeSpy,
 		);
@@ -50,14 +50,14 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = Command.create(
+		const command = ServerCommand.create(
 			"root",
 			{
 				options: [
-					Command.createBooleanOption("verbose", { aliases: ["v"] }),
-					Command.createOption("name", DP.string(), { required: true }),
+					ServerCommand.createBooleanOption("verbose", { aliases: ["v"] }),
+					ServerCommand.createOption("name", DP.string(), { required: true }),
 				],
-				subject: DP.tuple([DP.string()]) as never,
+				subject: DP.tuple([DP.string()]),
 			},
 			executeSpy,
 		);
@@ -78,7 +78,7 @@ describe("create", () => {
 		setEnvironment("TEST");
 		TESTImplementation.set("exitProcess", vi.fn());
 
-		const command = Command.create(
+		const command = ServerCommand.create(
 			"root",
 			{
 				subject: DP.string(),
@@ -86,7 +86,7 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await expect(command.execute(["one", "two"])).rejects.toThrowError(Command.CommandManyArgumentsError);
+		await expect(command.execute(["one", "two"])).rejects.toThrowError(ServerCommand.CommandManyArgumentsError);
 	});
 
 	it("runs help flow when help option is provided", async() => {
@@ -95,7 +95,7 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = Command.create(
+		const command = ServerCommand.create(
 			"root",
 			executeSpy,
 		);
@@ -111,7 +111,7 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = Command.create(
+		const command = ServerCommand.create(
 			"root",
 			{
 				options: [
@@ -149,11 +149,11 @@ describe("create", () => {
 		const rootExecuteSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const child = Command.create(
+		const child = ServerCommand.create(
 			"child",
 			childExecuteSpy,
 		);
-		const root = Command.create(
+		const root = ServerCommand.create(
 			"root",
 			{
 				subject: [child],
@@ -164,7 +164,7 @@ describe("create", () => {
 		await root.execute(["child", "arg"]);
 
 		expect(childExecuteSpy).toHaveBeenCalledWith({ options: {} });
-		expect(rootExecuteSpy).toHaveBeenCalledWith({});
+		expect(rootExecuteSpy).not.toHaveBeenCalled();
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
@@ -175,11 +175,11 @@ describe("create", () => {
 		const rootExecuteSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const child = Command.create(
+		const child = ServerCommand.create(
 			"child",
 			childExecuteSpy,
 		);
-		const root = Command.create(
+		const root = ServerCommand.create(
 			"root",
 			{
 				subject: [child],
@@ -191,6 +191,32 @@ describe("create", () => {
 
 		expect(childExecuteSpy).not.toHaveBeenCalled();
 		expect(rootExecuteSpy).toHaveBeenCalledWith({});
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("runs help only on matching child command", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const child = ServerCommand.create(
+			"child",
+			() => undefined,
+		);
+		const root = ServerCommand.create(
+			"root",
+			{
+				subject: [child],
+			},
+			() => undefined,
+		);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		await root.execute(["child", "--help"]);
+
+		const renderedHelp = consoleLogSpy.mock.calls.flat().join(" ");
+
+		expect(renderedHelp).toContain("child");
+		expect(renderedHelp).not.toContain("root");
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 });

@@ -1,5 +1,5 @@
 import { DP } from "@duplojs/utils";
-import { Command } from "@scripts";
+import { ServerCommand } from "@scripts";
 
 describe("logHelp", () => {
 	afterEach(() => {
@@ -8,19 +8,19 @@ describe("logHelp", () => {
 	});
 
 	it("renders name, description, and options blocks", () => {
-		const renderSpy = vi.spyOn(Command.Printer, "render").mockImplementation(() => undefined);
-		const command = Command.create(
+		const renderSpy = vi.spyOn(ServerCommand.Printer, "render").mockImplementation(() => undefined);
+		const command = ServerCommand.create(
 			"root",
 			{
 				description: "Root command description",
 				options: [
-					Command.createBooleanOption(
+					ServerCommand.createBooleanOption(
 						"silent",
 						{
 							aliases: ["s"],
 						},
 					),
-					Command.createBooleanOption(
+					ServerCommand.createBooleanOption(
 						"verbose",
 						{
 							description: "Enable verbose mode",
@@ -32,27 +32,27 @@ describe("logHelp", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		Command.logHelp(command, 1);
+		ServerCommand.logHelp(command, 1);
 
 		expect(renderSpy).toHaveBeenCalledTimes(3);
 		expect(renderSpy.mock.calls[0]![0]).toEqual([
-			Command.Printer.indent(1),
-			Command.Printer.colorized("NAME:", "GREEN"),
+			ServerCommand.Printer.indent(1),
+			ServerCommand.Printer.colorized("NAME:", "GREEN"),
 			"root",
 		]);
 		expect(renderSpy.mock.calls[1]![0]).toContain("Root command description");
-		expect(renderSpy.mock.calls[2]![0]).toContain(Command.Printer.colorized("OPTIONS:", "BLUE"));
-		expect(renderSpy.mock.calls[2]![0]).toContain("Enable verbose mode");
+		expect(renderSpy.mock.calls[2]![0]).toContain(ServerCommand.Printer.colorized("OPTIONS:", "BLUE"));
+		expect(renderSpy.mock.calls[2]![0].join("")).toContain("Enable verbose mode");
 	});
 
 	it("recursively renders child commands when subject is a command list", () => {
-		const renderSpy = vi.spyOn(Command.Printer, "render").mockImplementation(() => undefined);
+		const renderSpy = vi.spyOn(ServerCommand.Printer, "render").mockImplementation(() => undefined);
 
-		const child = Command.create(
+		const child = ServerCommand.create(
 			"child",
 			() => Promise.resolve(undefined),
 		);
-		const root = Command.create(
+		const root = ServerCommand.create(
 			"root",
 			{
 				subject: [child],
@@ -60,7 +60,7 @@ describe("logHelp", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		Command.logHelp(root);
+		ServerCommand.logHelp(root);
 
 		const renderedNames = renderSpy.mock.calls.map((call) => call[0]).flat();
 
@@ -69,7 +69,7 @@ describe("logHelp", () => {
 	});
 
 	it("formats supported subject data parser kinds", () => {
-		const renderSpy = vi.spyOn(Command.Printer, "render").mockImplementation(() => undefined);
+		const renderSpy = vi.spyOn(ServerCommand.Printer, "render").mockImplementation(() => undefined);
 		const cases = [
 			{
 				subject: DP.string(),
@@ -112,15 +112,15 @@ describe("logHelp", () => {
 				expected: "string[]",
 			},
 			{
-				subject: DP.tuple([DP.string(), DP.number()]) as never,
+				subject: DP.tuple([DP.string(), DP.number()]),
 				expected: "[string, number]",
 			},
 			{
-				subject: DP.tuple([DP.string()], { rest: DP.number() }) as never,
+				subject: DP.tuple([DP.string()], { rest: DP.number() }),
 				expected: "[string, ...number[]]",
 			},
 			{
-				subject: DP.tuple([DP.literal("")], { rest: DP.number() }) as never,
+				subject: DP.tuple([DP.literal("")], { rest: DP.number() }),
 				expected: "[...number[]]",
 			},
 			{
@@ -131,7 +131,7 @@ describe("logHelp", () => {
 
 		for (const testCase of cases) {
 			renderSpy.mockClear();
-			const command = Command.create(
+			const command = ServerCommand.create(
 				"root",
 				{
 					subject: testCase.subject as never,
@@ -139,10 +139,10 @@ describe("logHelp", () => {
 				() => Promise.resolve(undefined),
 			);
 
-			Command.logHelp(command);
+			ServerCommand.logHelp(command);
 
 			const subjectCall = renderSpy.mock.calls.find(
-				(call) => call[0].includes(Command.Printer.colorized("SUBJECT:", "MAGENTA")),
+				(call) => call[0].includes(ServerCommand.Printer.colorized("SUBJECT:", "MAGENTA")),
 			);
 
 			expect(subjectCall).toBeDefined();

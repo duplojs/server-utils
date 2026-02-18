@@ -14,7 +14,7 @@ describe("implementor", () => {
 	it("stores and retrieves TEST implementations", () => {
 		const implementation = vi.fn();
 
-		TESTImplementation.set("exists", implementation as never);
+		TESTImplementation.set("exists", implementation);
 
 		expect(TESTImplementation.get("exists")).toBe(implementation);
 
@@ -28,7 +28,7 @@ describe("implementor", () => {
 		const nodeImplementation = vi.fn().mockReturnValue("node-result");
 		const runtimeFunction = implementFunction(
 			"getCurrentWorkDirectory",
-			{ NODE: nodeImplementation as never },
+			{ NODE: nodeImplementation },
 		);
 
 		expect(runtimeFunction()).toBe("node-result");
@@ -39,7 +39,7 @@ describe("implementor", () => {
 		const nodeImplementation = vi.fn().mockReturnValue("node-result");
 		const runtimeFunction = implementFunction(
 			"getCurrentWorkDirectory",
-			{ NODE: nodeImplementation as never },
+			{ NODE: nodeImplementation },
 		);
 
 		setEnvironment("BUN");
@@ -56,10 +56,10 @@ describe("implementor", () => {
 		const testImplementation = vi.fn().mockReturnValue("test-result");
 		const runtimeFunction = implementFunction(
 			"getCurrentWorkDirectory",
-			{ NODE: vi.fn() as never },
+			{ NODE: vi.fn() },
 		);
 
-		TESTImplementation.set("getCurrentWorkDirectory", testImplementation as never);
+		TESTImplementation.set("getCurrentWorkDirectory", testImplementation);
 
 		expect(runtimeFunction()).toBe("test-result");
 		expect(testImplementation).toHaveBeenCalledTimes(1);
@@ -69,7 +69,7 @@ describe("implementor", () => {
 		setEnvironment("TEST");
 		const runtimeFunction = implementFunction(
 			"getCurrentWorkDirectory",
-			{ NODE: vi.fn() as never },
+			{ NODE: vi.fn() },
 		);
 
 		expect(() => runtimeFunction()).toThrowError(
