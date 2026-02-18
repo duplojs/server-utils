@@ -5,8 +5,8 @@ prev:
   text: "getCurrentWorkDirectoryOrThrow"
   link: "/en/v0/api/common/getCurrentWorkDirectoryOrThrow"
 next:
-  text: "environmentVariable"
-  link: "/en/v0/api/common/environmentVariable"
+  text: "getProcessArguments"
+  link: "/en/v0/api/common/getProcessArguments"
 ---
 
 # setCurrentWorkingDirectory
@@ -40,4 +40,5 @@ function setCurrentWorkingDirectory(
 ## See also
 
 - [`getCurrentWorkDirectory`](/en/v0/api/common/getCurrentWorkDirectory) - Returns the current working directory.
+- [`getProcessArguments`](/en/v0/api/common/getProcessArguments) - Returns command-line arguments.
 - [`environmentVariable`](/en/v0/api/common/environmentVariable) - Loads and validates environment variables.

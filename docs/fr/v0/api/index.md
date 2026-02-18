@@ -18,3 +18,6 @@ Utilitaires de système de fichiers pour lire, écrire et manipuler des chemins.
 
 ## [📊 DataParser](/fr/v0/api/dataParser/)
 Outils pour parser et valider les données entrantes. Transformez des données brutes en structures typées avec des règles de validation personnalisées.
+
+## [🧭 Command](/fr/v0/api/command/)
+Utilitaires pour construire des commandes CLI, parser des options, et exécuter des arbres de commandes.

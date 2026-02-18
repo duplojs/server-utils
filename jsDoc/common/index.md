@@ -12,9 +12,9 @@ import { getCurrentWorkDirectory } from "@duplojs/server-utils/common";
 
 What you will find in this namespace:
 - `environmentVariable`
-- `environmentVariableOrThrow`
 - `getCurrentWorkDirectory`
-- `getCurrentWorkDirectoryOrThrow`
 - `setCurrentWorkingDirectory`
+- `exitProcess`
+- `getProcessArguments`
 
 @see https://server-utils.duplojs.dev/en/v0/api/common

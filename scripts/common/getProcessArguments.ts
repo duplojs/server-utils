@@ -8,6 +8,9 @@ declare module "@scripts/implementor" {
 
 let args: string[] | undefined = undefined;
 
+/**
+ * {@include common/getProcessArguments/index.md}
+ */
 export const getProcessArguments = implementFunction(
 	"getProcessArguments",
 	{

@@ -76,6 +76,14 @@ jobs:
         with:
           name: dist
           path: ./dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+      - run: npm ci
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.6'
       - run: npm run test:integration:bun
 
   integration-deno:

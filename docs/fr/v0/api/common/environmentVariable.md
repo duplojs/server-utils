@@ -2,8 +2,8 @@
 outline: [2, 3]
 description: "Charge, développe et valide les variables d'environnement."
 prev:
-  text: "setCurrentWorkingDirectory"
-  link: "/fr/v0/api/common/setCurrentWorkingDirectory"
+  text: "exitProcess"
+  link: "/fr/v0/api/common/exitProcess"
 next:
   text: "environmentVariableOrThrow"
   link: "/fr/v0/api/common/environmentVariableOrThrow"

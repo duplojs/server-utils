@@ -6,6 +6,8 @@
 ## Namespaces
 common
 DServerFile
+DServerDataParser
+DServerCommand
 
 ## Répertoires de travail
 - `scripts/` : code source

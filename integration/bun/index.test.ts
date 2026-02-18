@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { E, unwrap, A, DP } from "@duplojs/utils";
-import { SF, SC } from "@duplojs/server-utils";
+import { SF, environmentVariable } from "@duplojs/server-utils";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -114,7 +114,7 @@ describe("bun integration", () => {
 				BASE_NAME: "bun-runtime",
 			};
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),
@@ -150,7 +150,7 @@ describe("bun integration", () => {
 				APP_NAME: "base-app",
 			};
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),
@@ -184,7 +184,7 @@ describe("bun integration", () => {
 				APP_NAME: "base-app",
 			};
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),

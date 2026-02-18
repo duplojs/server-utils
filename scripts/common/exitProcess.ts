@@ -6,6 +6,9 @@ declare module "@scripts/implementor" {
 	}
 }
 
+/**
+ * {@include common/exitProcess/index.md}
+ */
 export const exitProcess = implementFunction(
 	"exitProcess",
 	{
