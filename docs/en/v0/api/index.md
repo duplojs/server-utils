@@ -18,3 +18,6 @@ File system utilities to read, write, and manipulate paths.
 
 ## [📊 DataParser](/en/v0/api/dataParser/)
 Tools to parse and validate incoming data. Transform raw inputs into typed structures with custom validation rules.
+
+## [🧭 Command](/en/v0/api/command/)
+Utilities to build CLI commands, parse options, and execute command trees.

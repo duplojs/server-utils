@@ -1,5 +1,5 @@
 import { type ExpectType, DP } from "@duplojs/utils";
-import { ServerCommand, TESTImplementation, setEnvironment } from "@scripts";
+import { DServerCommand, TESTImplementation, setEnvironment } from "@scripts";
 
 describe("create", () => {
 	afterEach(() => {
@@ -10,7 +10,7 @@ describe("create", () => {
 	});
 
 	it("creates a command with default params", () => {
-		const command = ServerCommand.create(
+		const command = DServerCommand.create(
 			"root",
 			() => undefined,
 		);
@@ -33,7 +33,7 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = ServerCommand.create(
+		const command = DServerCommand.create(
 			"root",
 			executeSpy,
 		);
@@ -50,12 +50,12 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = ServerCommand.create(
+		const command = DServerCommand.create(
 			"root",
 			{
 				options: [
-					ServerCommand.createBooleanOption("verbose", { aliases: ["v"] }),
-					ServerCommand.createOption("name", DP.string(), { required: true }),
+					DServerCommand.createBooleanOption("verbose", { aliases: ["v"] }),
+					DServerCommand.createOption("name", DP.string(), { required: true }),
 				],
 				subject: DP.tuple([DP.string()]),
 			},
@@ -78,7 +78,7 @@ describe("create", () => {
 		setEnvironment("TEST");
 		TESTImplementation.set("exitProcess", vi.fn());
 
-		const command = ServerCommand.create(
+		const command = DServerCommand.create(
 			"root",
 			{
 				subject: DP.string(),
@@ -86,7 +86,7 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await expect(command.execute(["one", "two"])).rejects.toThrowError(ServerCommand.CommandManyArgumentsError);
+		await expect(command.execute(["one", "two"])).rejects.toThrowError(DServerCommand.CommandManyArgumentsError);
 	});
 
 	it("runs help flow when help option is provided", async() => {
@@ -95,7 +95,7 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = ServerCommand.create(
+		const command = DServerCommand.create(
 			"root",
 			executeSpy,
 		);
@@ -111,7 +111,7 @@ describe("create", () => {
 		const executeSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const command = ServerCommand.create(
+		const command = DServerCommand.create(
 			"root",
 			{
 				options: [
@@ -149,11 +149,11 @@ describe("create", () => {
 		const rootExecuteSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const child = ServerCommand.create(
+		const child = DServerCommand.create(
 			"child",
 			childExecuteSpy,
 		);
-		const root = ServerCommand.create(
+		const root = DServerCommand.create(
 			"root",
 			{
 				subject: [child],
@@ -175,11 +175,11 @@ describe("create", () => {
 		const rootExecuteSpy = vi.fn();
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const child = ServerCommand.create(
+		const child = DServerCommand.create(
 			"child",
 			childExecuteSpy,
 		);
-		const root = ServerCommand.create(
+		const root = DServerCommand.create(
 			"root",
 			{
 				subject: [child],
@@ -198,11 +198,11 @@ describe("create", () => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
 		const consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
-		const child = ServerCommand.create(
+		const child = DServerCommand.create(
 			"child",
 			() => undefined,
 		);
-		const root = ServerCommand.create(
+		const root = DServerCommand.create(
 			"root",
 			{
 				subject: [child],

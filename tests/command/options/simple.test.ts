@@ -1,5 +1,5 @@
 import { type ExpectType, DP, pipe } from "@duplojs/utils";
-import { ServerCommand } from "@scripts";
+import { DServerCommand } from "@scripts";
 
 describe("createOption", () => {
 	afterEach(() => {
@@ -8,7 +8,7 @@ describe("createOption", () => {
 	});
 
 	it("returns undefined when optional option is missing", () => {
-		const option = ServerCommand.createOption("name", DP.string());
+		const option = DServerCommand.createOption("name", DP.string());
 
 		const result = option.execute(["subject"]);
 
@@ -23,7 +23,7 @@ describe("createOption", () => {
 	});
 
 	it("parses inline value for optional option", () => {
-		const option = ServerCommand.createOption("name", DP.string());
+		const option = DServerCommand.createOption("name", DP.string());
 
 		const result = option.execute(["--name=duplo", "subject"]);
 
@@ -32,7 +32,7 @@ describe("createOption", () => {
 	});
 
 	it("parses next argument value for optional option", () => {
-		const option = ServerCommand.createOption("name", DP.string());
+		const option = DServerCommand.createOption("name", DP.string());
 
 		const result = option.execute(["--name", "duplo", "subject"]);
 
@@ -41,13 +41,13 @@ describe("createOption", () => {
 	});
 
 	it("throws when required option is missing", () => {
-		const option = ServerCommand.createOption("name", DP.string(), { required: true });
+		const option = DServerCommand.createOption("name", DP.string(), { required: true });
 
-		expect(() => option.execute(["subject"])).toThrowError(ServerCommand.CommandOptionRequiredError);
+		expect(() => option.execute(["subject"])).toThrowError(DServerCommand.CommandOptionRequiredError);
 	});
 
 	it("parses value when required option is present", () => {
-		const option = ServerCommand.createOption("name", DP.string(), { required: true });
+		const option = DServerCommand.createOption("name", DP.string(), { required: true });
 
 		const result = option.execute(["--name=duplo", "subject"]);
 
@@ -62,13 +62,13 @@ describe("createOption", () => {
 	});
 
 	it("throws when value cannot be parsed by schema", () => {
-		const option = ServerCommand.createOption("enabled", DP.boolean() as never);
+		const option = DServerCommand.createOption("enabled", DP.boolean() as never);
 
 		expect(() => option.execute(["--enabled=yes"])).toThrow();
 	});
 
 	it("works when called from pipe", () => {
-		const option = ServerCommand.createOption("name", DP.string());
+		const option = DServerCommand.createOption("name", DP.string());
 
 		const result = pipe(["--name=duplo"], option.execute);
 

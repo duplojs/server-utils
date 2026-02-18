@@ -112,6 +112,9 @@ export default defineConfig({
 								"// @filename: @duplojs/server-utils/dataParserExtended.ts",
 								`export * from "@v${namedGroups?.version ?? ""}/dataParserExtended";`,
 
+								"// @filename: @duplojs/server-utils/command.ts",
+								`export * from "@v${namedGroups?.version ?? ""}/command";`,
+
 								"// @filename: index.ts",
 								"// ---cut---",
 							],
@@ -137,6 +140,7 @@ export default defineConfig({
 							"@v0/dataParser": ["libs/v0/dataParser/index"],
 							"@v0/dataParserCoerce": ["libs/v0/dataParser/parsers/coerce/index"],
 							"@v0/dataParserExtended": ["libs/v0/dataParser/extended/index"],
+							"@v0/command": ["libs/v0/command/index"],
 						},
 					},
 				},
@@ -193,6 +197,10 @@ export default defineConfig({
 							{
 								text: "DataParser",
 								link: "/fr/v0/api/dataParser/",
+							},
+							{
+								text: "Command",
+								link: "/fr/v0/api/command/",
 							},
 						],
 					},
@@ -267,6 +275,10 @@ export default defineConfig({
 							{
 								text: "DataParser",
 								link: "/en/v0/api/dataParser/",
+							},
+							{
+								text: "Command",
+								link: "/en/v0/api/command/",
 							},
 						],
 					},

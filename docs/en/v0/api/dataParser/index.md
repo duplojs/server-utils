@@ -5,8 +5,8 @@ prev:
   text: "File"
   link: "/en/v0/api/file/"
 next:
-  text: "API Reference"
-  link: "/en/v0/api/"
+  text: "Command"
+  link: "/en/v0/api/command/"
 ---
 
 # Data Parser

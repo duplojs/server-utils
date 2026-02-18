@@ -33,6 +33,14 @@ retourne le répertoire de travail courant ou lance une erreur.
 ### [`setCurrentWorkingDirectory`](/fr/v0/api/common/setCurrentWorkingDirectory)
 change le répertoire de travail courant à partir d'un chemin.
 
+## Processus
+
+### [`getProcessArguments`](/fr/v0/api/common/getProcessArguments)
+retourne les arguments du processus passés en ligne de commande.
+
+### [`exitProcess`](/fr/v0/api/common/exitProcess)
+arrête le processus courant avec un code de sortie optionnel.
+
 ## Variables d'environnement
 
 ### [`environmentVariable`](/fr/v0/api/common/environmentVariable)

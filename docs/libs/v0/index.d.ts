@@ -69,7 +69,7 @@ export * as DServerDataParserExtended from "./dataParser/extended";
  * - Via direct import for tree-shaking
  * 
  * ```ts
- * import { SC, ServerCommand } from "@duplojs/server-utils";
+ * import { SC, DServerCommand } from "@duplojs/server-utils";
  * import * as SC from "@duplojs/server-utils/command";
  * ```
  * 
@@ -84,4 +84,4 @@ export * as DServerDataParserExtended from "./dataParser/extended";
  * 
  */
 export * as SC from "./command";
-export * as ServerCommand from "./command";
+export * as DServerCommand from "./command";

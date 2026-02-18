@@ -33,6 +33,14 @@ returns the current working directory or throws.
 ### [`setCurrentWorkingDirectory`](/en/v0/api/common/setCurrentWorkingDirectory)
 changes the current working directory from a path.
 
+## Process
+
+### [`getProcessArguments`](/en/v0/api/common/getProcessArguments)
+returns process arguments provided from the command line.
+
+### [`exitProcess`](/en/v0/api/common/exitProcess)
+stops the current process with an optional exit code.
+
 ## Environment variables
 
 ### [`environmentVariable`](/en/v0/api/common/environmentVariable)

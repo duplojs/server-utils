@@ -24,4 +24,4 @@ export * as DServerDataParserExtended from "./dataParser/extended";
  * {@include command/index.md}
  */
 export * as SC from "./command";
-export * as ServerCommand from "./command";
+export * as DServerCommand from "./command";

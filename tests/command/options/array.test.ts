@@ -1,5 +1,5 @@
 import { type ExpectType, DP, pipe } from "@duplojs/utils";
-import { ServerCommand } from "@scripts";
+import { DServerCommand } from "@scripts";
 
 describe("createArrayOption", () => {
 	afterEach(() => {
@@ -8,7 +8,7 @@ describe("createArrayOption", () => {
 	});
 
 	it("returns undefined when optional option is missing", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string());
+		const option = DServerCommand.createArrayOption("tags", DP.string());
 
 		const result = option.execute(["subject"]);
 
@@ -23,7 +23,7 @@ describe("createArrayOption", () => {
 	});
 
 	it("parses comma separated inline values by default", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string());
+		const option = DServerCommand.createArrayOption("tags", DP.string());
 
 		const result = option.execute(["--tags=one,two", "subject"]);
 
@@ -32,7 +32,7 @@ describe("createArrayOption", () => {
 	});
 
 	it("parses next argument value with custom separator", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string(), { separator: "|" });
+		const option = DServerCommand.createArrayOption("tags", DP.string(), { separator: "|" });
 
 		const result = option.execute(["--tags", "one|two", "subject"]);
 
@@ -41,25 +41,25 @@ describe("createArrayOption", () => {
 	});
 
 	it("throws when required option is missing", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string(), { required: true });
+		const option = DServerCommand.createArrayOption("tags", DP.string(), { required: true });
 
-		expect(() => option.execute(["subject"])).toThrowError(ServerCommand.CommandOptionRequiredError);
+		expect(() => option.execute(["subject"])).toThrowError(DServerCommand.CommandOptionRequiredError);
 	});
 
 	it("throws when min checker is not satisfied", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string(), { min: 2 });
+		const option = DServerCommand.createArrayOption("tags", DP.string(), { min: 2 });
 
 		expect(() => option.execute(["--tags=one"])).toThrow();
 	});
 
 	it("throws when max checker is exceeded", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string(), { max: 1 });
+		const option = DServerCommand.createArrayOption("tags", DP.string(), { max: 1 });
 
 		expect(() => option.execute(["--tags=one,two"])).toThrow();
 	});
 
 	it("supports aliases", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string(), { aliases: ["t"] });
+		const option = DServerCommand.createArrayOption("tags", DP.string(), { aliases: ["t"] });
 
 		const result = option.execute(["-t=one,two", "subject"]);
 
@@ -68,7 +68,7 @@ describe("createArrayOption", () => {
 	});
 
 	it("works when called from pipe", () => {
-		const option = ServerCommand.createArrayOption("tags", DP.string());
+		const option = DServerCommand.createArrayOption("tags", DP.string());
 
 		const result = pipe(["--tags=one,two"], option.execute);
 

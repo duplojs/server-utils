@@ -1,5 +1,5 @@
 import { DP } from "@duplojs/utils";
-import { ServerCommand } from "@scripts";
+import { DServerCommand } from "@scripts";
 
 describe("logHelp", () => {
 	afterEach(() => {
@@ -8,19 +8,19 @@ describe("logHelp", () => {
 	});
 
 	it("renders name, description, and options blocks", () => {
-		const renderSpy = vi.spyOn(ServerCommand.Printer, "render").mockImplementation(() => undefined);
-		const command = ServerCommand.create(
+		const renderSpy = vi.spyOn(DServerCommand.Printer, "render").mockImplementation(() => undefined);
+		const command = DServerCommand.create(
 			"root",
 			{
 				description: "Root command description",
 				options: [
-					ServerCommand.createBooleanOption(
+					DServerCommand.createBooleanOption(
 						"silent",
 						{
 							aliases: ["s"],
 						},
 					),
-					ServerCommand.createBooleanOption(
+					DServerCommand.createBooleanOption(
 						"verbose",
 						{
 							description: "Enable verbose mode",
@@ -32,27 +32,27 @@ describe("logHelp", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		ServerCommand.logHelp(command, 1);
+		DServerCommand.logHelp(command, 1);
 
 		expect(renderSpy).toHaveBeenCalledTimes(3);
 		expect(renderSpy.mock.calls[0]![0]).toEqual([
-			ServerCommand.Printer.indent(1),
-			ServerCommand.Printer.colorized("NAME:", "GREEN"),
+			DServerCommand.Printer.indent(1),
+			DServerCommand.Printer.colorized("NAME:", "GREEN"),
 			"root",
 		]);
 		expect(renderSpy.mock.calls[1]![0]).toContain("Root command description");
-		expect(renderSpy.mock.calls[2]![0]).toContain(ServerCommand.Printer.colorized("OPTIONS:", "BLUE"));
+		expect(renderSpy.mock.calls[2]![0]).toContain(DServerCommand.Printer.colorized("OPTIONS:", "BLUE"));
 		expect(renderSpy.mock.calls[2]![0].join("")).toContain("Enable verbose mode");
 	});
 
 	it("recursively renders child commands when subject is a command list", () => {
-		const renderSpy = vi.spyOn(ServerCommand.Printer, "render").mockImplementation(() => undefined);
+		const renderSpy = vi.spyOn(DServerCommand.Printer, "render").mockImplementation(() => undefined);
 
-		const child = ServerCommand.create(
+		const child = DServerCommand.create(
 			"child",
 			() => Promise.resolve(undefined),
 		);
-		const root = ServerCommand.create(
+		const root = DServerCommand.create(
 			"root",
 			{
 				subject: [child],
@@ -60,7 +60,7 @@ describe("logHelp", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		ServerCommand.logHelp(root);
+		DServerCommand.logHelp(root);
 
 		const renderedNames = renderSpy.mock.calls.map((call) => call[0]).flat();
 
@@ -69,7 +69,7 @@ describe("logHelp", () => {
 	});
 
 	it("formats supported subject data parser kinds", () => {
-		const renderSpy = vi.spyOn(ServerCommand.Printer, "render").mockImplementation(() => undefined);
+		const renderSpy = vi.spyOn(DServerCommand.Printer, "render").mockImplementation(() => undefined);
 		const cases = [
 			{
 				subject: DP.string(),
@@ -131,7 +131,7 @@ describe("logHelp", () => {
 
 		for (const testCase of cases) {
 			renderSpy.mockClear();
-			const command = ServerCommand.create(
+			const command = DServerCommand.create(
 				"root",
 				{
 					subject: testCase.subject as never,
@@ -139,10 +139,10 @@ describe("logHelp", () => {
 				() => Promise.resolve(undefined),
 			);
 
-			ServerCommand.logHelp(command);
+			DServerCommand.logHelp(command);
 
 			const subjectCall = renderSpy.mock.calls.find(
-				(call) => call[0].includes(ServerCommand.Printer.colorized("SUBJECT:", "MAGENTA")),
+				(call) => call[0].includes(DServerCommand.Printer.colorized("SUBJECT:", "MAGENTA")),
 			);
 
 			expect(subjectCall).toBeDefined();

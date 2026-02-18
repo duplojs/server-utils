@@ -2,8 +2,8 @@
 outline: [2, 3]
 description: "Loads, expands, and validates environment variables."
 prev:
-  text: "setCurrentWorkingDirectory"
-  link: "/en/v0/api/common/setCurrentWorkingDirectory"
+  text: "exitProcess"
+  link: "/en/v0/api/common/exitProcess"
 next:
   text: "environmentVariableOrThrow"
   link: "/en/v0/api/common/environmentVariableOrThrow"

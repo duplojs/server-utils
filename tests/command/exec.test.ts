@@ -1,5 +1,5 @@
 import { type ExpectType, DP, pipe } from "@duplojs/utils";
-import { ServerCommand, TESTImplementation, setEnvironment } from "@scripts";
+import { DServerCommand, TESTImplementation, setEnvironment } from "@scripts";
 
 describe("exec", () => {
 	afterEach(() => {
@@ -17,7 +17,7 @@ describe("exec", () => {
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		await ServerCommand.exec(executeSpy);
+		await DServerCommand.exec(executeSpy);
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(executeSpy).toHaveBeenCalledWith({ options: {} });
@@ -35,9 +35,9 @@ describe("exec", () => {
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		await ServerCommand.exec(
+		await DServerCommand.exec(
 			{
-				options: [ServerCommand.createBooleanOption("verbose")],
+				options: [DServerCommand.createBooleanOption("verbose")],
 				subject: DP.tuple([DP.string()]),
 			},
 			({ options, subject }) => {

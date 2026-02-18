@@ -1,7 +1,7 @@
 import { describe, it } from "@std/testing/bdd";
 import { assert, assertEquals, assertRejects } from "@std/assert";
 import { E, unwrap, A, DP } from "@duplojs/utils";
-import { SF, SC } from "@duplojs/server-utils";
+import { environmentVariable, SF } from "@duplojs/server-utils";
 
 const envApplicationPath = new URL("../fixtures/env/application.env", import.meta.url).pathname;
 const envServicePath = new URL("../fixtures/env/service.env", import.meta.url).pathname;
@@ -102,7 +102,7 @@ describe("deno integration", () => {
 			Deno.env.set("BASE_NAME", "deno-runtime");
 			Deno.env.delete("APP_NAME");
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),
@@ -136,7 +136,7 @@ describe("deno integration", () => {
 			Deno.env.set("BASE_NAME", "deno-runtime");
 			Deno.env.set("APP_NAME", "base-app");
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),
@@ -168,7 +168,7 @@ describe("deno integration", () => {
 			Deno.env.set("BASE_NAME", "deno-runtime");
 			Deno.env.set("APP_NAME", "base-app");
 
-			const result = await SC.environmentVariable(
+			const result = await environmentVariable(
 				{
 					BASE_NAME: DP.string(),
 					APP_NAME: DP.string(),

@@ -9,6 +9,7 @@
 		"@duplojs/server-utils/dataParser": ["libs/v0/dataParser/index"],
 		"@duplojs/server-utils/dataParserCoerce": ["libs/v0/dataParser/parsers/coerce/index"],
 		"@duplojs/server-utils/dataParserExtended": ["libs/v0/dataParser/extended/index"],
+		"@duplojs/server-utils/command": ["libs/v0/command/index"],
 	}
   },
   "include": ["examples/v0/**/*.ts", "libs/v0/**/*.d.ts"],
