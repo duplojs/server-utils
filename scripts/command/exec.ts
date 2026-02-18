@@ -3,6 +3,9 @@ import { type CreateCommandExecuteParams, type CreateCommandParams, type Subject
 import { type Option } from "./options";
 import { getProcessArguments } from "@scripts/common";
 
+/**
+ * {@include command/exec/index.md}
+ */
 export function exec(
 	execute: () => void,
 ): Promise<void>;

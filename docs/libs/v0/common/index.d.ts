@@ -13,15 +13,18 @@
  * 
  * What you will find in this namespace:
  * - `environmentVariable`
- * - `environmentVariableOrThrow`
  * - `getCurrentWorkDirectory`
- * - `getCurrentWorkDirectoryOrThrow`
  * - `setCurrentWorkingDirectory`
+ * - `exitProcess`
+ * - `getProcessArguments`
  * 
  * @see https://server-utils.duplojs.dev/en/v0/api/common
  * 
  */
 export * from "./getCurrentWorkDirectory";
+export * from "./getCurrentWorkDirectoryOrThrow";
 export * from "./setCurrentWorkingDirectory";
 export * from "./environmentVariable";
 export * from "./environmentVariableOrThrow";
+export * from "./exitProcess";
+export * from "./getProcessArguments";

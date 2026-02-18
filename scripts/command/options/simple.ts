@@ -3,6 +3,9 @@ import { initOption, type Option } from "./base";
 import type { EligibleDataParser } from "../types";
 import { CommandOptionRequiredError } from "../errors";
 
+/**
+ * {@include command/createOption/index.md}
+ */
 export function createOption<
 	GenericName extends string,
 	GenericSchema extends EligibleDataParser,

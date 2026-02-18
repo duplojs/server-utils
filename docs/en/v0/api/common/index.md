@@ -19,9 +19,7 @@ All functions are exported from the main entry or via direct import (tree-shakin
 
 ```typescript
 import { getCurrentWorkDirectory } from "@duplojs/server-utils";
-import { DServerCommon, SC } from "@duplojs/server-utils";
 import * as DServerCommon from "@duplojs/server-utils/common";
-import * as SC from "@duplojs/server-utils/common";
 ```
 
 ## Current directory

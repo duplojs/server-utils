@@ -54,7 +54,6 @@ export declare class EnvironmentVariableError extends EnvironmentVariableError_b
  * 
  * @see https://server-utils.duplojs.dev/en/v0/api/common/environmentVariableOrThrow
  * @see https://server-utils.duplojs.dev/en/v0/api/common/environmentVariable
- * 
  */
 export declare function environmentVariableOrThrow<GenericShape extends DP.DataParserObjectShape>(shape: GenericShape, params?: EnvironmentVariableParams): Promise<DP.DataParserObjectShapeOutput<GenericShape>>;
 export {};

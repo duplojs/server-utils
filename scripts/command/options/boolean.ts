@@ -1,5 +1,8 @@
 import { initOption } from "./base";
 
+/**
+ * {@include command/createBooleanOption/index.md}
+ */
 export function createBooleanOption<
 	GenericName extends string,
 >(

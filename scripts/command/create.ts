@@ -70,6 +70,9 @@ export interface CreateCommandExecuteParams<
 	subject?: DP.Output<GenericSubject>;
 }
 
+/**
+ * {@include command/create/index.md}
+ */
 export function create(
 	name: string,
 	execute: () => void,

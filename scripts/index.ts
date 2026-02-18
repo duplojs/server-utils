@@ -20,5 +20,8 @@ export * as DServerDataParserCoerce from "./dataParser/parsers/coerce";
 export * as SDPE from "./dataParser/extended";
 export * as DServerDataParserExtended from "./dataParser/extended";
 
+/**
+ * {@include command/index.md}
+ */
 export * as SC from "./command";
 export * as ServerCommand from "./command";

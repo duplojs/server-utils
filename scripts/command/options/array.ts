@@ -5,6 +5,9 @@ import { CommandOptionRequiredError } from "../errors";
 
 const defaultSeparator = ",";
 
+/**
+ * {@include command/createArrayOption/index.md}
+ */
 export function createArrayOption<
 	GenericName extends string,
 	GenericSchema extends EligibleDataParser,

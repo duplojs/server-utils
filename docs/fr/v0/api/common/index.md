@@ -19,9 +19,7 @@ Toutes les fonctions sont exportées depuis l'entrée principale ou via l'import
 
 ```typescript
 import { getCurrentWorkDirectory } from "@duplojs/server-utils";
-import { DServerCommon, SC } from "@duplojs/server-utils";
 import * as DServerCommon from "@duplojs/server-utils/common";
-import * as SC from "@duplojs/server-utils/common";
 ```
 
 ## Répertoire courant
