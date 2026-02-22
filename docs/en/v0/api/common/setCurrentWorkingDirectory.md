@@ -2,8 +2,8 @@
 outline: [2, 3]
 description: "Changes the current working directory."
 prev:
-  text: "getCurrentWorkDirectoryOrThrow"
-  link: "/en/v0/api/common/getCurrentWorkDirectoryOrThrow"
+  text: "getCurrentWorkDirectory"
+  link: "/en/v0/api/common/getCurrentWorkDirectory"
 next:
   text: "getProcessArguments"
   link: "/en/v0/api/common/getProcessArguments"

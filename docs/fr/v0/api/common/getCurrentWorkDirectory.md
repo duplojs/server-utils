@@ -2,22 +2,33 @@
 outline: [2, 3]
 description: "Retourne le répertoire de travail courant."
 prev:
-  text: "Common"
-  link: "/fr/v0/api/common/"
+  text: "environmentVariable"
+  link: "/fr/v0/api/common/environmentVariable"
 next:
-  text: "getCurrentWorkDirectoryOrThrow"
-  link: "/fr/v0/api/common/getCurrentWorkDirectoryOrThrow"
+  text: "setCurrentWorkingDirectory"
+  link: "/fr/v0/api/common/setCurrentWorkingDirectory"
 ---
 
 # getCurrentWorkDirectory
 
 Retourne le répertoire de travail courant.
+Cette version retourne un résultat `Either`.
+Si vous préférez une version qui lance une erreur directement, utilisez `getCurrentWorkDirectoryOrThrow`.
 
 ## Exemple
 
 ```ts twoslash
 // @version: 0
 <!--@include: @/examples/v0/api/common/getCurrentWorkDirectory/main.ts-->
+```
+
+## Autres exemples
+
+### Version throw
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/common/getCurrentWorkDirectory/otherExample.ts-->
 ```
 
 ## Syntaxe
@@ -37,5 +48,4 @@ Cette fonction ne prend aucun paramètre.
 
 ## Voir aussi
 
-- [`getCurrentWorkDirectoryOrThrow`](/fr/v0/api/common/getCurrentWorkDirectoryOrThrow) - Retourne le répertoire courant ou lance une erreur.
 - [`setCurrentWorkingDirectory`](/fr/v0/api/common/setCurrentWorkingDirectory) - Change le répertoire de travail courant.

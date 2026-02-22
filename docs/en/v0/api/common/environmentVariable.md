@@ -2,22 +2,33 @@
 outline: [2, 3]
 description: "Loads, expands, and validates environment variables."
 prev:
-  text: "exitProcess"
-  link: "/en/v0/api/common/exitProcess"
+  text: "Common"
+  link: "/en/v0/api/common/"
 next:
-  text: "environmentVariableOrThrow"
-  link: "/en/v0/api/common/environmentVariableOrThrow"
+  text: "getCurrentWorkDirectory"
+  link: "/en/v0/api/common/getCurrentWorkDirectory"
 ---
 
 # environmentVariable
 
 Loads, expands, and validates environment variables.
+This version returns an `Either` result.
+If you prefer throwing behavior, use `environmentVariableOrThrow`.
 
 ## Example
 
 ```ts twoslash
 // @version: 0
 <!--@include: @/examples/v0/api/common/environmentVariable/main.ts-->
+```
+
+## Other examples
+
+### Throw variant
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/common/environmentVariable/otherExample.ts-->
 ```
 
 ## Syntax
@@ -51,5 +62,4 @@ function environmentVariable<
 
 ## See also
 
-- [`environmentVariableOrThrow`](/en/v0/api/common/environmentVariableOrThrow) - Throws instead of returning a left value.
 - [`setCurrentWorkingDirectory`](/en/v0/api/common/setCurrentWorkingDirectory) - Changes the current working directory.

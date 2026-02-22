@@ -5,8 +5,8 @@ prev:
   text: "getProcessArguments"
   link: "/fr/v0/api/common/getProcessArguments"
 next:
-  text: "environmentVariable"
-  link: "/fr/v0/api/common/environmentVariable"
+  text: "Common"
+  link: "/fr/v0/api/common/"
 ---
 
 # exitProcess

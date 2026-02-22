@@ -22,13 +22,15 @@ import { getCurrentWorkDirectory } from "@duplojs/server-utils";
 import * as DServerCommon from "@duplojs/server-utils/common";
 ```
 
+## Variables d'environnement
+
+### [`environmentVariable`](/fr/v0/api/common/environmentVariable)
+charge les variables d'environnement depuis le runtime et des fichiers optionnels, les valide, puis retourne un résultat Either. Version throw disponible: `environmentVariableOrThrow`.
+
 ## Répertoire courant
 
 ### [`getCurrentWorkDirectory`](/fr/v0/api/common/getCurrentWorkDirectory)
-retourne le répertoire de travail courant pour le runtime actif.
-
-### [`getCurrentWorkDirectoryOrThrow`](/fr/v0/api/common/getCurrentWorkDirectoryOrThrow)
-retourne le répertoire de travail courant ou lance une erreur.
+retourne le répertoire de travail courant pour le runtime actif. Version throw disponible: `getCurrentWorkDirectoryOrThrow`.
 
 ### [`setCurrentWorkingDirectory`](/fr/v0/api/common/setCurrentWorkingDirectory)
 change le répertoire de travail courant vers un dossier cible.
@@ -40,11 +42,3 @@ retourne les arguments du processus passés en ligne de commande.
 
 ### [`exitProcess`](/fr/v0/api/common/exitProcess)
 arrête le processus courant avec un code de sortie optionnel.
-
-## Variables d'environnement
-
-### [`environmentVariable`](/fr/v0/api/common/environmentVariable)
-charge les variables d'environnement depuis le runtime et des fichiers optionnels, les valide, puis retourne un résultat Either.
-
-### [`environmentVariableOrThrow`](/fr/v0/api/common/environmentVariableOrThrow)
-charge et valide les variables d'environnement, puis lance une erreur en cas d'échec.

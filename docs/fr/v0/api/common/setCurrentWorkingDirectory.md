@@ -2,8 +2,8 @@
 outline: [2, 3]
 description: "Change le répertoire de travail courant."
 prev:
-  text: "getCurrentWorkDirectoryOrThrow"
-  link: "/fr/v0/api/common/getCurrentWorkDirectoryOrThrow"
+  text: "getCurrentWorkDirectory"
+  link: "/fr/v0/api/common/getCurrentWorkDirectory"
 next:
   text: "getProcessArguments"
   link: "/fr/v0/api/common/getProcessArguments"
