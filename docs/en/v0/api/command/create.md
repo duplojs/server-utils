@@ -6,12 +6,14 @@ prev:
 next:
   text: "createBooleanOption"
   link: "/en/v0/api/command/createBooleanOption"
-description: "Creates a command node with optional options, subject parser, and sub-commands."
+description: "Creates a CLI command with a name, an execute handler, and optional configuration."
 ---
 
 # create
 
-Creates a command node with optional options, subject parser, and sub-commands.
+`create` is used to declare a CLI command.
+You provide a name and an execute function.
+You can also add options, a subject (positional arguments), or sub-commands.
 
 ## Example
 
@@ -52,6 +54,15 @@ function create<
 ## Return value
 
 - `Command` : executable command object with `execute(args)`.
+
+## Others examples
+
+### Advanced
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/command/create/advanced.ts-->
+```
 
 ## See also
 

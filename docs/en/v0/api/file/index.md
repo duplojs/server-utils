@@ -1,6 +1,6 @@
 ---
 outline: [2, 3]
-description: "File system utilities to read, write, and inspect paths."
+description: "File system utilities to read, write, and inspect resources."
 prev:
   text: "Common"
   link: "/en/v0/api/common/"
@@ -11,7 +11,7 @@ next:
 
 # File
 
-File system utilities to read, write, and inspect paths.
+File system utilities to read, write, and inspect resources.
 
 ## How to import?
 
@@ -83,16 +83,16 @@ creates a hard link.
 ### [`linkStat`](/en/v0/api/file/linkStat)
 retrieves information about a symbolic link.
 
-## Paths and metadata
+## Checks and metadata
 
 ### [`exists`](/en/v0/api/file/exists)
-checks that a path exists.
+checks that a resource exists.
 
 ### [`stat`](/en/v0/api/file/stat)
-retrieves information about a path.
+retrieves information about a resource.
 
 ### [`realPath`](/en/v0/api/file/realPath)
-resolves a path to its canonical form.
+resolves a resource to its canonical form.
 
 ## Move and copy
 
@@ -106,7 +106,7 @@ copies a file or directory.
 moves a file or directory.
 
 ### [`relocate`](/en/v0/api/file/relocate)
-relocates a path into a new parent directory.
+relocates a resource into a new parent directory.
 
 ### [`rename`](/en/v0/api/file/rename)
 renames a file or directory within its parent directory.
@@ -145,4 +145,4 @@ creates a file interface with utility methods.
 creates a directory interface with utility methods.
 
 ### [`unknownInterface`](/en/v0/api/file/unknownInterface)
-creates an interface for a path of unknown type.
+creates an interface for a resource of unknown type.

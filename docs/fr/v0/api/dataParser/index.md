@@ -37,4 +37,4 @@ import * as SDPE from "@duplojs/utils/dataParserExtended";
 ## Parsers files
 
 ### [file](/fr/v0/api/dataParser/file)
-Valide les `FileInterface`, contraintes sur la taille et le mimeType du fichier. Supporte la coercition avec un path
+Valide les `FileInterface`, contraintes sur la taille et le mimeType du fichier. Supporte la coercition depuis une entrée texte.

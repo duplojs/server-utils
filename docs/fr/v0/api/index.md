@@ -14,7 +14,7 @@ Bienvenue dans la référence API de `@duplojs/server-utils`. Cette section pré
 Helpers transverses sans cas d’usage métier précis
 
 ## [📁 File](/fr/v0/api/file/)
-Utilitaires de système de fichiers pour lire, écrire et manipuler des chemins.
+Utilitaires de système de fichiers pour lire, écrire et manipuler des ressources.
 
 ## [📊 DataParser](/fr/v0/api/dataParser/)
 Outils pour parser et valider les données entrantes. Transformez des données brutes en structures typées avec des règles de validation personnalisées.

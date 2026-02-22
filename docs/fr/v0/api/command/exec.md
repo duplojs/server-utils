@@ -6,46 +6,20 @@ prev:
 next:
   text: "create"
   link: "/fr/v0/api/command/create"
-description: "Exécute un arbre de commandes CLI à partir des arguments du process runtime."
+description: "Lance une commande CLI à partir des arguments du runtime."
 ---
 
 # exec
 
-Exécute un arbre de commandes CLI à partir des arguments du process runtime.
+`exec` lance votre CLI.
+Il lit les arguments passés au programme, choisit la bonne commande, puis exécute votre callback.
+Si l'utilisateur passe `--help`, le help correspondant est affiché automatiquement.
 
-`exec` est le bloc central de l'API command: il crée la commande implicite `root`, lit les arguments du process, route vers les sous-commandes, parse options/sujet, et déclenche l'affichage du help (`--help`) au bon niveau.
-
-## Exemple détaillé (flux complet)
+## Exemple
 
 ```ts twoslash
 // @version: 0
 <!--@include: @/examples/v0/api/command/exec/main.ts-->
-```
-
-### Ce qui se passe étape par étape
-
-1. `SC.exec(...)` construit une commande `root`.
-2. Les arguments runtime sont lus (`process.argv`, `Bun.argv`, ou `Deno.args`).
-3. La première sous-commande correspondante est sélectionnée pour les arbres de commandes.
-4. `--help` affiche le help du niveau courant (root/commande/sous-commande).
-5. Les options sont parsées dans l'ordre de déclaration.
-6. Le `subject` (si présent) est parsé avec DataParser.
-7. Le callback `execute` reçoit `{ options, subject }` avec typage inféré.
-
-## Autres exemples
-
-### Commande racine minimale
-
-```ts twoslash
-// @version: 0
-<!--@include: @/examples/v0/api/command/exec/otherExample.ts-->
-```
-
-### Commande orientée sujet
-
-```ts twoslash
-// @version: 0
-<!--@include: @/examples/v0/api/command/exec/subjectExample.ts-->
 ```
 
 ## Syntaxe
@@ -78,6 +52,22 @@ function exec<
 ## Valeur de retour
 
 - `Promise<void>` : résolue une fois le dispatch et l'exécution terminés.
+
+## Autres exemples
+
+### Commande racine minimale
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/command/exec/otherExample.ts-->
+```
+
+### Avancé
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/command/exec/advanced.ts-->
+```
 
 ## Voir aussi
 

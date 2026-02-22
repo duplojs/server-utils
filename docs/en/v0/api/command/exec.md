@@ -6,46 +6,20 @@ prev:
 next:
   text: "create"
   link: "/en/v0/api/command/create"
-description: "Executes a CLI command tree from runtime process arguments."
+description: "Runs a CLI command from runtime arguments."
 ---
 
 # exec
 
-Executes a CLI command tree from runtime process arguments.
+`exec` runs your CLI.
+It reads runtime arguments, picks the right command, then runs your callback.
+If the user passes `--help`, the matching help output is shown automatically.
 
-`exec` is the central block of the command API: it creates the implicit `root` command, reads process arguments, routes to sub-commands, parses options/subject, and triggers help rendering (`--help`) at the correct level.
-
-## Detailed example (full command flow)
+## Example
 
 ```ts twoslash
 // @version: 0
 <!--@include: @/examples/v0/api/command/exec/main.ts-->
-```
-
-### What happens step by step?
-
-1. `SC.exec(...)` builds a `root` command.
-2. Runtime arguments are read (`process.argv`, `Bun.argv`, or `Deno.args`).
-3. The first matching sub-command is selected when using command arrays.
-4. `--help` prints help for the current level (root/command/sub-command).
-5. Options are parsed in declaration order.
-6. The command `subject` (if provided) is parsed with DataParser.
-7. Your execute callback receives typed `{ options, subject }`.
-
-## Other examples
-
-### Minimal root command
-
-```ts twoslash
-// @version: 0
-<!--@include: @/examples/v0/api/command/exec/otherExample.ts-->
-```
-
-### Subject-only command
-
-```ts twoslash
-// @version: 0
-<!--@include: @/examples/v0/api/command/exec/subjectExample.ts-->
 ```
 
 ## Syntax
@@ -78,6 +52,22 @@ function exec<
 ## Return value
 
 - `Promise<void>` : resolves after command dispatch and execution complete.
+
+## Other examples
+
+### Minimal root command
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/command/exec/otherExample.ts-->
+```
+
+### Advanced
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/command/exec/advanced.ts-->
+```
 
 ## See also
 

@@ -6,12 +6,14 @@ prev:
 next:
   text: "createBooleanOption"
   link: "/fr/v0/api/command/createBooleanOption"
-description: "Crée un noeud de commande avec options, parser de sujet, et sous-commandes optionnelles."
+description: "Crée une commande CLI avec son nom, son comportement, et une configuration optionnelle."
 ---
 
 # create
 
-Crée un noeud de commande avec options, parser de sujet, et sous-commandes optionnelles.
+`create` sert à déclarer une commande CLI.
+Vous donnez un nom et une fonction à exécuter.
+Vous pouvez aussi ajouter des options, un sujet (arguments positionnels), ou des sous-commandes.
 
 ## Exemple
 
@@ -52,6 +54,15 @@ function create<
 ## Valeur de retour
 
 - `Command` : objet commande exécutable avec `execute(args)`.
+
+## Autres exemples
+
+### Avancé
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/command/create/advanced.ts-->
+```
 
 ## Voir aussi
 

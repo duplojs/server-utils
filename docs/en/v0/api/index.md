@@ -14,7 +14,7 @@ Welcome to the API reference for `@duplojs/server-utils`. This section lists all
 Cross-cutting helpers with no specific business use case
 
 ## [📁 File](/en/v0/api/file/)
-File system utilities to read, write, and manipulate paths.
+File system utilities to read, write, and manipulate resources.
 
 ## [📊 DataParser](/en/v0/api/dataParser/)
 Tools to parse and validate incoming data. Transform raw inputs into typed structures with custom validation rules.

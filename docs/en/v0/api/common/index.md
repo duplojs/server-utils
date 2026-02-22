@@ -31,7 +31,7 @@ returns the current working directory for the active runtime.
 returns the current working directory or throws.
 
 ### [`setCurrentWorkingDirectory`](/en/v0/api/common/setCurrentWorkingDirectory)
-changes the current working directory from a path.
+changes the current working directory to a target directory.
 
 ## Process
 

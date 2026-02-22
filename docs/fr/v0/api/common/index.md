@@ -31,7 +31,7 @@ retourne le répertoire de travail courant pour le runtime actif.
 retourne le répertoire de travail courant ou lance une erreur.
 
 ### [`setCurrentWorkingDirectory`](/fr/v0/api/common/setCurrentWorkingDirectory)
-change le répertoire de travail courant à partir d'un chemin.
+change le répertoire de travail courant vers un dossier cible.
 
 ## Processus
 

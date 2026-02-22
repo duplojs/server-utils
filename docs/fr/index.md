@@ -4,7 +4,7 @@ title: "@duplojs/server-utils"
 hero:
   name: "@duplojs/server-utils"
   text: "Utilitaires serveur légers et efficaces"
-  tagline: "Des helpers typés pour manipuler fichiers, chemins et opérations système, sans surcharge."
+  tagline: "Des helpers typés pour manipuler fichiers, opérations système et commandes CLI."
   image: "/images/logo.png"
   actions:
     - theme: brand
@@ -15,8 +15,8 @@ hero:
       link: "https://github.com/duplojs/server-utils"
 features:
   - icon: 📁
-    title: "Fichiers et chemins"
-    details: "Lecture, écriture, liens, permissions, JSON, temporaires et interfaces de ressources."
+    title: "Fichiers"
+    details: "Lecture, écriture, liens, permissions, JSON, fichiers temporaires et interfaces de ressources."
   - icon: ⚙️
     title: "Cross-Platform"
     details: "Fonctionne avec Node.js, Deno et Bun."
@@ -26,9 +26,9 @@ features:
   - icon: 🔍
     title: "Typage solide"
     details: "Types exportés pour extensions supportées, MIME types et interfaces de fichiers."
-  - icon: 🤙
-    title: Simple à prendre en main
-    details: Rien de nouveau, juste des petites choses logiques qui vous feront du bien.
+  - icon: 🧭
+    title: "Commandes CLI"
+    details: "Construisez des arbres de commandes, options et sujets avec une DX proche de commander, en plus typé et plus sûr."
   - icon: 🧱
     title: Standards DuploJS
     details: Toujours très typé, toujours robuste, toujours opiniâtre, toujours à gagner du temps sur des aspects techniques inutiles.

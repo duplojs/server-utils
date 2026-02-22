@@ -1,6 +1,6 @@
 ---
 outline: [2, 3]
-description: "Utilitaires de système de fichiers pour lire, écrire et inspecter des chemins."
+description: "Utilitaires de système de fichiers pour lire, écrire et inspecter des ressources."
 prev:
   text: "Common"
   link: "/fr/v0/api/common/"
@@ -11,7 +11,7 @@ next:
 
 # File
 
-Utilitaires de système de fichiers pour lire, écrire et inspecter des chemins.
+Utilitaires de système de fichiers pour lire, écrire et inspecter des ressources.
 
 ## Comment faire les imports ?
 
@@ -83,16 +83,16 @@ crée un lien physique.
 ### [`linkStat`](/fr/v0/api/file/linkStat)
 récupère les informations d'un lien symbolique.
 
-## Chemins et métadonnées
+## Vérification et métadonnées
 
 ### [`exists`](/fr/v0/api/file/exists)
-vérifie qu'un chemin existe.
+vérifie qu'une ressource existe.
 
 ### [`stat`](/fr/v0/api/file/stat)
-récupère les informations d'un chemin.
+récupère les informations d'une ressource.
 
 ### [`realPath`](/fr/v0/api/file/realPath)
-résout un chemin vers sa forme canonique.
+résout une ressource vers sa forme canonique.
 
 ## Déplacement et copie
 
@@ -106,7 +106,7 @@ copie un fichier ou un dossier.
 déplace un fichier ou un dossier.
 
 ### [`relocate`](/fr/v0/api/file/relocate)
-relocate un chemin dans un dossier parent.
+relocate une ressource dans un dossier parent.
 
 ### [`rename`](/fr/v0/api/file/rename)
 renomme un fichier ou un dossier dans son dossier parent.
@@ -145,4 +145,4 @@ crée une interface fichier avec des méthodes utilitaires.
 crée une interface dossier avec des méthodes utilitaires.
 
 ### [`unknownInterface`](/fr/v0/api/file/unknownInterface)
-crée une interface pour un chemin de type inconnu.
+crée une interface pour une ressource de type inconnu.
