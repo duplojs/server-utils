@@ -27,7 +27,12 @@ const deployCommand = SC.create(
 	({ options: { environment }, subject }) => {
 		type check = ExpectType<
 			typeof subject,
-			`v${number}.${number}.${number}` | "latest" | undefined,
+			`v${number}.${number}.${number}` | "latest",
+			"strict"
+		>;
+		type checkOption = ExpectType<
+			typeof environment,
+			"staging" | "prod",
 			"strict"
 		>;
 	},

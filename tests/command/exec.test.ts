@@ -17,7 +17,15 @@ describe("exec", () => {
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		await DServerCommand.exec(executeSpy);
+		const promise = DServerCommand.exec(executeSpy);
+
+		type _CheckPromise = ExpectType<
+			typeof promise,
+			Promise<void>,
+			"strict"
+		>;
+
+		await promise;
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(executeSpy).toHaveBeenCalledWith({ options: {} });
@@ -50,7 +58,7 @@ describe("exec", () => {
 				>;
 				type _CheckSubject = ExpectType<
 					typeof subject,
-					[string] | undefined,
+					[string],
 					"strict"
 				>;
 
@@ -66,6 +74,37 @@ describe("exec", () => {
 			options: {
 				verbose: true,
 			},
+			subject: ["subject"],
+		});
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("infers typed tuple subject with params overload and no options", async() => {
+		setEnvironment("TEST");
+		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["subject"]);
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		await DServerCommand.exec(
+			{
+				subject: DP.tuple([DP.string()]),
+			},
+			(params) => {
+				type check = ExpectType<
+					typeof params.subject,
+					[string],
+					"strict"
+				>;
+
+				executeSpy(params);
+			},
+		);
+
+		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
+		expect(executeSpy).toHaveBeenCalledWith({
+			options: {},
 			subject: ["subject"],
 		});
 		expect(exitSpy).toHaveBeenCalledWith(0);

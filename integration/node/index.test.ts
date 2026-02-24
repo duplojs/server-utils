@@ -254,7 +254,7 @@ describe("node integration", () => {
 				>;
 				type _CheckSubject = ExpectType<
 					typeof subject,
-					[string] | undefined,
+					[string],
 					"strict"
 				>;
 

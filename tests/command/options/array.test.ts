@@ -1,4 +1,4 @@
-import { type ExpectType, DP, pipe } from "@duplojs/utils";
+import { type ExpectType, DP, pipe, S } from "@duplojs/utils";
 import { DServerCommand } from "@scripts";
 
 describe("createArrayOption", () => {
@@ -10,9 +10,15 @@ describe("createArrayOption", () => {
 	it("returns undefined when optional option is missing", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string());
 
+		type _checkOption = ExpectType<
+			typeof option,
+			DServerCommand.Option<"tags", string[] | undefined>,
+			"strict"
+		>;
+
 		const result = option.execute(["subject"]);
 
-		type _CheckResult = ExpectType<
+		type _checkResult = ExpectType<
 			typeof result.result,
 			string[] | undefined,
 			"strict"
@@ -26,6 +32,15 @@ describe("createArrayOption", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string());
 
 		const result = option.execute(["--tags=one,two", "subject"]);
+
+		type check = ExpectType<
+			typeof result,
+			{
+				result: string[] | undefined;
+				argumentRest: readonly string[];
+			},
+			"strict"
+		>;
 
 		expect(result.result).toEqual(["one", "two"]);
 		expect(result.argumentRest).toEqual(["subject"]);
@@ -73,5 +88,30 @@ describe("createArrayOption", () => {
 		const result = pipe(["--tags=one,two"], option.execute);
 
 		expect(result.result).toEqual(["one", "two"]);
+	});
+
+	it("supports transform and pipe schemas with typed array output", () => {
+		const option = DServerCommand.createArrayOption(
+			"sizes",
+			DP.pipe(
+				DP.string(),
+				DP.transform(
+					DP.string(),
+					S.length,
+				),
+			),
+			{ required: true },
+		);
+
+		const result = option.execute(["--sizes=duplo,js"]);
+
+		type _CheckResult = ExpectType<
+			typeof result.result,
+			number[],
+			"strict"
+		>;
+
+		expect(result.result).toEqual([5, 2]);
+		expect(result.argumentRest).toEqual([]);
 	});
 });

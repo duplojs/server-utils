@@ -67,7 +67,7 @@ export interface CreateCommandExecuteParams<
 			>["execute"]
 		>["result"]
 	};
-	subject?: DP.Output<GenericSubject>;
+	subject: DP.Output<GenericSubject>;
 }
 
 /**
@@ -160,7 +160,7 @@ export function create(
 						subject: self.subject.parseOrThrow(commandOptions.restArgs),
 					});
 				} else if (DP.identifier(self.subject, DP.dataParserKind)) {
-					if (commandOptions.restArgs.length !== 1) {
+					if (commandOptions.restArgs.length > 1) {
 						throw new CommandManyArgumentsError(commandOptions.restArgs.length);
 					}
 

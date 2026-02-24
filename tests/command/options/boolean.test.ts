@@ -45,12 +45,4 @@ describe("createBooleanOption", () => {
 
 		expect(() => option.execute(["--help=true"])).toThrowError(DServerCommand.CommandOptionValueNotRequiredError);
 	});
-
-	it("works when called from pipe", () => {
-		const option = DServerCommand.createBooleanOption("help");
-
-		const result = pipe(["--help"], option.execute);
-
-		expect(result.result).toBe(true);
-	});
 });

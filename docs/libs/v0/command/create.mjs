@@ -54,7 +54,7 @@ function create(...args) {
                 });
             }
             else if (DP.identifier(self.subject, DP.dataParserKind)) {
-                if (commandOptions.restArgs.length !== 1) {
+                if (commandOptions.restArgs.length > 1) {
                     throw new CommandManyArgumentsError(commandOptions.restArgs.length);
                 }
                 await execute({

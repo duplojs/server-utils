@@ -1,4 +1,4 @@
-import { type ExpectType, DP } from "@duplojs/utils";
+import { type ExpectType, DPE, DP, S } from "@duplojs/utils";
 import { DServerCommand, TESTImplementation, setEnvironment } from "@scripts";
 
 describe("create", () => {
@@ -18,6 +18,16 @@ describe("create", () => {
 		type _CheckName = ExpectType<
 			typeof command.name,
 			string,
+			"strict"
+		>;
+		type _CheckDescription = ExpectType<
+			typeof command.description,
+			string | null,
+			"strict"
+		>;
+		type _CheckSubject = ExpectType<
+			typeof command.subject,
+			DServerCommand.Subject | null | readonly DServerCommand.Command[],
 			"strict"
 		>;
 
@@ -55,11 +65,27 @@ describe("create", () => {
 			{
 				options: [
 					DServerCommand.createBooleanOption("verbose", { aliases: ["v"] }),
-					DServerCommand.createOption("name", DP.string(), { required: true }),
+					DServerCommand.createOption("name", DPE.string(), { required: true }),
 				],
 				subject: DP.tuple([DP.string()]),
 			},
-			executeSpy,
+			(params) => {
+				type _CheckOptions = ExpectType<
+					typeof params.options,
+					{
+						verbose: boolean;
+						name: string;
+					},
+					"strict"
+				>;
+				type _CheckSubject = ExpectType<
+					typeof params.subject,
+					[string],
+					"strict"
+				>;
+
+				return executeSpy(params);
+			},
 		);
 
 		await command.execute(["--verbose", "--name=duplo", "subject"]);
@@ -81,9 +107,17 @@ describe("create", () => {
 		const command = DServerCommand.create(
 			"root",
 			{
-				subject: DP.string(),
+				subject: DPE.string().optional(),
 			},
-			() => undefined,
+			({ subject }) => {
+				type check = ExpectType<
+					typeof subject,
+					string | undefined,
+					"strict"
+				>;
+
+				return undefined;
+			},
 		);
 
 		await expect(command.execute(["one", "two"])).rejects.toThrowError(DServerCommand.CommandManyArgumentsError);
@@ -126,9 +160,20 @@ describe("create", () => {
 						}),
 					} as never,
 				],
-				subject: DP.string(),
+				subject: DPE.string(),
 			},
-			executeSpy,
+			({ options, subject }) => {
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					string,
+					"strict"
+				>;
+
+				executeSpy({
+					options,
+					subject,
+				});
+			},
 		);
 
 		await command.execute(["subject"]);
@@ -140,6 +185,86 @@ describe("create", () => {
 			subject: "a",
 		});
 		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("infers typed params with array subject", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DPE.string().array(),
+			},
+			(params) => {
+				type _CheckSubject = ExpectType<
+					typeof params.subject,
+					string[],
+					"strict"
+				>;
+
+				executeSpy(params);
+			},
+		);
+
+		await command.execute(["one", "two"]);
+
+		expect(executeSpy).toHaveBeenCalledWith({
+			options: {},
+			subject: ["one", "two"],
+		});
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("executes optional option with pipe and transform parser without runtime bug", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				options: [
+					DServerCommand.createOption(
+						"name",
+						DPE.string().pipe(
+							DPE.transform(
+								DPE.string(),
+								S.toUpperCase,
+							),
+						),
+					),
+				],
+			},
+			({ options }) => {
+				type _CheckOptions = ExpectType<
+					typeof options.name,
+					Uppercase<string> | undefined,
+					"strict"
+				>;
+
+				executeSpy({ options });
+			},
+		);
+
+		await command.execute([]);
+		await command.execute(["--name=guest"]);
+
+		expect(executeSpy).toHaveBeenNthCalledWith(1, {
+			options: {
+				name: undefined,
+			},
+		});
+		expect(executeSpy).toHaveBeenNthCalledWith(2, {
+			options: {
+				name: "GUEST",
+			},
+		});
+		expect(exitSpy).toHaveBeenNthCalledWith(1, 0);
+		expect(exitSpy).toHaveBeenNthCalledWith(2, 0);
 	});
 
 	it("executes matching child command when subject is a command list", async() => {

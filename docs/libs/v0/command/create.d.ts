@@ -29,7 +29,7 @@ export interface CreateCommandExecuteParams<GenericOptions extends readonly Opti
             name: GenericOptionName;
         }>["execute"]>["result"];
     };
-    subject?: DP.Output<GenericSubject>;
+    subject: DP.Output<GenericSubject>;
 }
 /**
  * Create a command node.

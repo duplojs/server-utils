@@ -62,4 +62,29 @@ export type EligibleDataParser = (
 			}
 		>
 	>
+	| DP.DataParserTransform<
+		SimplifyTopLevel<
+				& Omit<DP.DataParserDefinitionTransform, "inner">
+				& {
+					readonly inner: EligibleDataParser;
+				}
+		>
+	>
+	| DP.DataParserPipe<
+		SimplifyTopLevel<
+			& Omit<DP.DataParserDefinitionPipe, "input" | "output">
+			& {
+				readonly input: EligibleDataParser;
+				readonly output: EligibleDataParser;
+			}
+		>
+	>
+	| DP.DataParserOptional<
+		SimplifyTopLevel<
+			& Omit<DP.DataParserDefinitionOptional, "inner">
+			& {
+				readonly inner: EligibleDataParser;
+			}
+		>
+	>
 );
