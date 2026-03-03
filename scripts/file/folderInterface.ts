@@ -117,6 +117,6 @@ export function createFolderInterface(path: string): FolderInterface {
  */
 export function isFolderInterface(
 	input: unknown,
-): input is FileInterface {
+): input is FolderInterface {
 	return folderInterfaceKind.has(input);
 }

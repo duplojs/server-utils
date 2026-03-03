@@ -1,4 +1,4 @@
-import { E, unwrap } from "@duplojs/utils";
+import { E, type ExpectType, unwrap } from "@duplojs/utils";
 import { DServerFile, setEnvironment } from "@scripts";
 import { setFsPromisesMock } from "tests/_utils/fsPromises.mock";
 
@@ -38,6 +38,16 @@ describe("folderInterface", () => {
 		const folder = DServerFile.createFolderInterface("/tmp/demo");
 		const file = DServerFile.createFileInterface("/tmp/example.json");
 		const unknown = DServerFile.createUnknownInterface("/tmp/entry");
+
+		const unknownValue: unknown = undefined;
+
+		if (DServerFile.isFolderInterface(unknownValue)) {
+			type check = ExpectType<
+				typeof unknownValue,
+				DServerFile.FolderInterface,
+				"strict"
+			>;
+		}
 
 		expect(DServerFile.isFolderInterface(folder)).toBe(true);
 		expect(DServerFile.isFolderInterface(file)).toBe(false);
