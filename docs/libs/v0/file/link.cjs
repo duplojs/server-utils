@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const link = implementor.implementFunction("link", {
     NODE: async (existingPath, newPath) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.link(existingPath, newPath)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-link", value));

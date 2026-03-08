@@ -2,6 +2,11 @@ interface BunFileMock {
 	bytes?(): Promise<Uint8Array>;
 	text?(): Promise<string>;
 	write?(data: Uint8Array | string): Promise<void>;
+	stream?(): AsyncIterable<Uint8Array>;
+	writer?(): {
+		write(chunk: Uint8Array): void | Promise<void>;
+		end(): Promise<void>;
+	};
 	exists?(): Promise<boolean>;
 	stat?(): Promise<unknown>;
 }

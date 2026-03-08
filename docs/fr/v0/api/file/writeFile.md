@@ -1,8 +1,8 @@
 ---
 outline: [2, 3]
 prev:
-  text: "readTextFile"
-  link: "/fr/v0/api/file/readTextFile/"
+  text: "readStream"
+  link: "/fr/v0/api/file/readStream/"
 next:
   text: "writeTextFile"
   link: "/fr/v0/api/file/writeTextFile/"
@@ -42,3 +42,4 @@ function writeFile(
 ## Voir aussi
 
 - [`writeTextFile`](/fr/v0/api/file/writeTextFile) - Écrit un contenu texte.
+- [`writeStream`](/fr/v0/api/file/writeStream) - Écrit un flux asynchrone d'octets.

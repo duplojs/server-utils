@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const ensureFile = implementor.implementFunction("ensureFile", {
     NODE: async (path) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.open(path, "a")
             .then((fh) => fh.close())
             .then(utils.E.ok)

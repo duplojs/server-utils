@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const setOwner = implementor.implementFunction("setOwner", {
     NODE: async (path, { userId, groupId }) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.chown(path, userId, groupId)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-set-owner", value));

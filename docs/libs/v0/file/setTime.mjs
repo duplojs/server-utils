@@ -1,12 +1,12 @@
 import { D, E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/setTime/index.md}
  */
 const setTime = implementFunction("setTime", {
     NODE: async (path, { accessTime, modifiedTime }) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.utimes(path, D.toTimestamp(accessTime), D.toTimestamp(modifiedTime))
             .then(E.ok)
             .catch((value) => E.left("file-system-set-time", value));

@@ -1,5 +1,5 @@
 import { innerPipe, G, P, E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 import { createFileInterface } from './fileInterface.mjs';
 import { createFolderInterface } from './folderInterface.mjs';
 import { createUnknownInterface } from './unknownInterface.mjs';
@@ -9,7 +9,7 @@ import { createUnknownInterface } from './unknownInterface.mjs';
  */
 const walkDirectory = implementFunction("walkDirectory", {
     NODE: async (path, params) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readdir(path, {
             recursive: params?.recursive ?? false,
             withFileTypes: true,

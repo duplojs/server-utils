@@ -1,12 +1,12 @@
 import { pipe, when, instanceOf, E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/truncate/index.md}
  */
 const truncate = implementFunction("truncate", {
     NODE: async (path, size) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.truncate(path, size)
             .then(E.ok)
             .catch((value) => E.left("file-system-truncate", value));

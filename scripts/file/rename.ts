@@ -1,5 +1,5 @@
 import { E, Path } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
@@ -18,7 +18,7 @@ export const rename = implementFunction(
 	"rename",
 	{
 		NODE: async(path, newName) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 
 			const parentPath = Path.getParentFolderPath(path);
 

@@ -4,8 +4,8 @@ prev:
   text: "writeFile"
   link: "/fr/v0/api/file/writeFile/"
 next:
-  text: "appendFile"
-  link: "/fr/v0/api/file/appendFile/"
+  text: "writeStream"
+  link: "/fr/v0/api/file/writeStream/"
 description: "Écrit un contenu texte dans un fichier."
 ---
 
@@ -42,3 +42,4 @@ function writeTextFile(
 ## Voir aussi
 
 - [`writeFile`](/fr/v0/api/file/writeFile) - Écrit un contenu binaire.
+- [`writeStream`](/fr/v0/api/file/writeStream) - Écrit un flux asynchrone d'octets.

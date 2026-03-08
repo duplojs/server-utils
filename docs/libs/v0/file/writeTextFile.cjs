@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const writeTextFile = implementor.implementFunction("writeTextFile", {
     NODE: async (path, data) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.writeFile(path, data, { encoding: "utf-8" })
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-write-text-file", value));

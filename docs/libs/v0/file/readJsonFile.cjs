@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const readJsonFile = implementor.implementFunction("readJsonFile", {
     NODE: async (path) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readFile(path, { encoding: "utf-8" })
             .then(JSON.parse)
             .then(utils.E.success)

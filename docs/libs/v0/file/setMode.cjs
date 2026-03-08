@@ -28,7 +28,7 @@ function toMode(mode) {
  */
 const setMode = implementor.implementFunction("setMode", {
     NODE: async (path, mode) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.chmod(path, toMode(mode))
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-set-mode", value));

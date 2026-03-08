@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const symlink = implementor.implementFunction("symlink", {
     NODE: async (oldPath, newPath, params) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.symlink(oldPath, newPath, params?.type)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-symlink", value));

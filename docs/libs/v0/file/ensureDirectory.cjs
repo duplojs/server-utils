@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const ensureDirectory = implementor.implementFunction("ensureDirectory", {
     NODE: async (path) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.mkdir(path, {
             recursive: true,
         })

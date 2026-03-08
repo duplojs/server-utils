@@ -1,12 +1,12 @@
 import { E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/readLink/index.md}
  */
 const readLink = implementFunction("readLink", {
     NODE: async (path) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readlink(path, { encoding: "utf-8" })
             .then(E.success)
             .catch((value) => E.left("file-system-read-link", value));

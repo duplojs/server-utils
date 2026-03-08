@@ -70,7 +70,7 @@ function createStatInfoWithDeno(source) {
  */
 const linkStat = implementor.implementFunction("linkStat", {
     NODE: async (path) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.lstat(path)
             .then(utils.innerPipe(createStatInfoWithFsSource, utils.E.success))
             .catch((value) => utils.E.left("file-system-link-stat", value));

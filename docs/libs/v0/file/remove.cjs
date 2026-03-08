@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const remove = implementor.implementFunction("remove", {
     NODE: async (path, params) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.rm(path, {
             recursive: params?.recursive ?? false,
             force: true,

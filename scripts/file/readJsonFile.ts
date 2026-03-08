@@ -1,5 +1,5 @@
 import { E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
@@ -20,7 +20,7 @@ export const readJsonFile = implementFunction(
 	"readJsonFile",
 	{
 		NODE: async(path) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.readFile(path, { encoding: "utf-8" })
 				.then(JSON.parse)
 				.then(E.success)

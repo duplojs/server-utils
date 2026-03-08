@@ -37,3 +37,5 @@ export * from "./readJsonFile";
 export * from "./ensureFile";
 export * from "./writeJsonFile";
 export * from "./relocate";
+export * from "./readStream";
+export * from "./writeStream";

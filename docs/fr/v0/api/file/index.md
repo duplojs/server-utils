@@ -31,6 +31,9 @@ lit un fichier et retourne son contenu binaire.
 ### [`readTextFile`](/fr/v0/api/file/readTextFile)
 lit un fichier texte et retourne son contenu.
 
+### [`readStream`](/fr/v0/api/file/readStream)
+lit un fichier comme un flux asynchrone de morceaux binaires.
+
 ## Écriture
 
 ### [`writeFile`](/fr/v0/api/file/writeFile)
@@ -38,6 +41,9 @@ lit un fichier texte et retourne son contenu.
 
 ### [`writeTextFile`](/fr/v0/api/file/writeTextFile)
 écrit un contenu texte dans un fichier.
+
+### [`writeStream`](/fr/v0/api/file/writeStream)
+écrit un flux asynchrone de morceaux binaires dans un fichier.
 
 ## Ajout
 

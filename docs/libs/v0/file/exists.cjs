@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const exists = implementor.implementFunction("exists", {
     NODE: async (path) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.access(path)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-exists", value));

@@ -1,12 +1,12 @@
 import { asyncPipe, E, pipe } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/writeJsonFile/index.md}
  */
 const writeJsonFile = implementFunction("writeJsonFile", {
     NODE: async (path, data, params) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return pipe(E.safeCallback(() => JSON.stringify(data, null, params?.space)), E.whenIsRight((value) => fs.writeFile(path, value, { encoding: "utf-8" })
             .then(E.ok)
             .catch((value) => E.left("file-system-write-json-file", value))), E.whenIsLeft((value) => E.left("file-system-write-json-file", value)));

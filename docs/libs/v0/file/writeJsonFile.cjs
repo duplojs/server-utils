@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const writeJsonFile = implementor.implementFunction("writeJsonFile", {
     NODE: async (path, data, params) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return utils.pipe(utils.E.safeCallback(() => JSON.stringify(data, null, params?.space)), utils.E.whenIsRight((value) => fs.writeFile(path, value, { encoding: "utf-8" })
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-write-json-file", value))), utils.E.whenIsLeft((value) => utils.E.left("file-system-write-json-file", value)));

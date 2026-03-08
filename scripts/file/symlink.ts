@@ -1,5 +1,5 @@
 import { E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 export interface SymlinkParams {
@@ -29,7 +29,7 @@ export const symlink = implementFunction(
 	"symlink",
 	{
 		NODE: async(oldPath, newPath, params) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.symlink(
 				oldPath,
 				newPath,

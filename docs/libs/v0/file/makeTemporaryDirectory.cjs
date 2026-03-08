@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const makeTemporaryDirectory = implementor.implementFunction("makeTemporaryDirectory", {
     NODE: async (prefix) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.mkdtemp(prefix)
             .then(utils.E.success)
             .catch((value) => utils.E.left("file-system-make-temporary-directory", value));

@@ -31,6 +31,9 @@ reads a file and returns its binary content.
 ### [`readTextFile`](/en/v0/api/file/readTextFile)
 reads a text file and returns its content.
 
+### [`readStream`](/en/v0/api/file/readStream)
+reads a file as an async stream of binary chunks.
+
 ## Write
 
 ### [`writeFile`](/en/v0/api/file/writeFile)
@@ -38,6 +41,9 @@ writes binary content to a file.
 
 ### [`writeTextFile`](/en/v0/api/file/writeTextFile)
 writes text content to a file.
+
+### [`writeStream`](/en/v0/api/file/writeStream)
+writes an async stream of binary chunks to a file.
 
 ## Append
 

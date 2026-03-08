@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const setTime = implementor.implementFunction("setTime", {
     NODE: async (path, { accessTime, modifiedTime }) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.utimes(path, utils.D.toTimestamp(accessTime), utils.D.toTimestamp(modifiedTime))
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-set-time", value));

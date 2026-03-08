@@ -1,12 +1,12 @@
 import { E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/symlink/index.md}
  */
 const symlink = implementFunction("symlink", {
     NODE: async (oldPath, newPath, params) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.symlink(oldPath, newPath, params?.type)
             .then(E.ok)
             .catch((value) => E.left("file-system-symlink", value));

@@ -32,6 +32,8 @@ export { readJsonFile } from './readJsonFile.mjs';
 export { ensureFile } from './ensureFile.mjs';
 export { writeJsonFile } from './writeJsonFile.mjs';
 export { relocate } from './relocate.mjs';
+export { readStream } from './readStream.mjs';
+export { writeStream } from './writeStream.mjs';
 
 /**
  * {@include file/index.md}

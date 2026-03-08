@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const truncate = implementor.implementFunction("truncate", {
     NODE: async (path, size) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.truncate(path, size)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-truncate", value));

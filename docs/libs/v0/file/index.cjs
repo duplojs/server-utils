@@ -34,6 +34,8 @@ var readJsonFile = require('./readJsonFile.cjs');
 var ensureFile = require('./ensureFile.cjs');
 var writeJsonFile = require('./writeJsonFile.cjs');
 var relocate = require('./relocate.cjs');
+var readStream = require('./readStream.cjs');
+var writeStream = require('./writeStream.cjs');
 
 /**
  * {@include file/index.md}
@@ -76,3 +78,5 @@ exports.readJsonFile = readJsonFile.readJsonFile;
 exports.ensureFile = ensureFile.ensureFile;
 exports.writeJsonFile = writeJsonFile.writeJsonFile;
 exports.relocate = relocate.relocate;
+exports.readStream = readStream.readStream;
+exports.writeStream = writeStream.writeStream;

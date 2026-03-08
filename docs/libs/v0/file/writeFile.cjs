@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const writeFile = implementor.implementFunction("writeFile", {
     NODE: async (path, data) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.writeFile(path, data)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-write-file", value));

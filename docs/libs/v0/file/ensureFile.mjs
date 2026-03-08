@@ -1,12 +1,12 @@
 import { E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/ensureFile/index.md}
  */
 const ensureFile = implementFunction("ensureFile", {
     NODE: async (path) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.open(path, "a")
             .then((fh) => fh.close())
             .then(E.ok)

@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const copy = implementor.implementFunction("copy", {
     NODE: async (fromPath, toPath) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.cp(fromPath, toPath, { recursive: true })
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-copy", value));

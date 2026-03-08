@@ -1,12 +1,12 @@
 import { Path, E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/relocate/index.md}
  */
 const relocate = implementFunction("relocate", {
     NODE: async (fromPath, newParentPath) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         const baseName = Path.getBaseName(fromPath);
         if (!baseName) {
             return E.left("file-system-relocate", new Error(`Invalid base name ${fromPath}`));

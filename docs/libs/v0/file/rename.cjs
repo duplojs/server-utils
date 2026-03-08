@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const rename = implementor.implementFunction("rename", {
     NODE: async (path, newName) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         const parentPath = utils.Path.getParentFolderPath(path);
         if (!parentPath) {
             return utils.E.left("file-system-rename", new Error(`Invalid parent path ${parentPath}.`));

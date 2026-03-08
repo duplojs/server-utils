@@ -1,5 +1,5 @@
 import { E, isType } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 function calculatePermissions(permissions) {
     if (!permissions) {
@@ -26,7 +26,7 @@ function toMode(mode) {
  */
 const setMode = implementFunction("setMode", {
     NODE: async (path, mode) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.chmod(path, toMode(mode))
             .then(E.ok)
             .catch((value) => E.left("file-system-set-mode", value));

@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const readDirectory = implementor.implementFunction("readDirectory", {
     NODE: async (path, params) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readdir(path, { recursive: params?.recursive })
             .then(utils.E.success)
             .catch((value) => utils.E.left("file-system-read-directory", value));

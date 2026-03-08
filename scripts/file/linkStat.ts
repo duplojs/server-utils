@@ -1,5 +1,5 @@
 import { D, E, innerPipe } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { StatInfo } from "./stat";
 import type { Stats } from "node:fs";
 import type { FileSystemLeft } from "./types";
@@ -85,7 +85,7 @@ export const linkStat = implementFunction(
 	"linkStat",
 	{
 		NODE: async(path) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.lstat(path)
 				.then(
 					innerPipe(

@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const readFile = implementor.implementFunction("readFile", {
     NODE: async (path) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readFile(path)
             .then(utils.E.success)
             .catch((value) => utils.E.left("file-system-read-file", value));

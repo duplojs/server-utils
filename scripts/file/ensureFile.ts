@@ -1,5 +1,5 @@
 import { E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
@@ -17,7 +17,7 @@ export const ensureFile = implementFunction(
 	"ensureFile",
 	{
 		NODE: async(path: string) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 
 			return fs.open(path, "a")
 				.then((fh) => fh.close())

@@ -61,5 +61,5 @@ export declare function createFolderInterface(path: string): FolderInterface;
  * @namespace SF
  * 
  */
-export declare function isFolderInterface(input: unknown): input is FileInterface;
+export declare function isFolderInterface(input: unknown): input is FolderInterface;
 export {};

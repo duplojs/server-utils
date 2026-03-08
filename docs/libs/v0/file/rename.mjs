@@ -1,12 +1,12 @@
 import { Path, E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/rename/index.md}
  */
 const rename = implementFunction("rename", {
     NODE: async (path, newName) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         const parentPath = Path.getParentFolderPath(path);
         if (!parentPath) {
             return E.left("file-system-rename", new Error(`Invalid parent path ${parentPath}.`));

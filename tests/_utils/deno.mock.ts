@@ -9,6 +9,10 @@ interface DenoMock {
 	readTextFile?(path: string): Promise<string>;
 	writeFile?(path: string, data: Uint8Array, options?: { append?: boolean }): Promise<void>;
 	writeTextFile?(path: string, data: string, options?: { append?: boolean }): Promise<void>;
+	create?(path: string): Promise<{
+		write(chunk: Uint8Array): Promise<number> | number;
+		close(): void;
+	}>;
 	mkdir?(path: string, options?: { recursive?: boolean }): Promise<void>;
 	remove?(path: string, options?: { recursive?: boolean }): Promise<void>;
 	rename?(fromPath: string, toPath: string): Promise<void>;

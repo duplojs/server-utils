@@ -1,12 +1,12 @@
 import { E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/makeDirectory/index.md}
  */
 const makeDirectory = implementFunction("makeDirectory", {
     NODE: async (path, params) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.mkdir(path, {
             recursive: params?.recursive,
         })

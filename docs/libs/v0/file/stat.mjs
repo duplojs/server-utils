@@ -1,5 +1,5 @@
 import { innerPipe, E, D } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 function createStatInfoWithFsSource(source) {
     return {
@@ -68,7 +68,7 @@ function createStatInfoWithDeno(source) {
  */
 const stat = implementFunction("stat", {
     NODE: async (path) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.stat(path)
             .then(innerPipe(createStatInfoWithFsSource, E.success))
             .catch((value) => E.left("file-system-stat", value));

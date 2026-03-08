@@ -11,7 +11,7 @@ var unknownInterface = require('./unknownInterface.cjs');
  */
 const walkDirectory = implementor.implementFunction("walkDirectory", {
     NODE: async (path, params) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readdir(path, {
             recursive: params?.recursive ?? false,
             withFileTypes: true,

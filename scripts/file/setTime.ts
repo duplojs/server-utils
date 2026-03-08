@@ -1,5 +1,5 @@
 import { D, E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 interface SetTimeParams {
@@ -23,7 +23,7 @@ export const setTime = implementFunction(
 	"setTime",
 	{
 		NODE: async(path, { accessTime, modifiedTime }) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.utimes(
 				path,
 				D.toTimestamp(accessTime),

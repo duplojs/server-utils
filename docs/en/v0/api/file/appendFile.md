@@ -1,8 +1,8 @@
 ---
 outline: [2, 3]
 prev:
-  text: "writeTextFile"
-  link: "/en/v0/api/file/writeTextFile/"
+  text: "writeStream"
+  link: "/en/v0/api/file/writeStream/"
 next:
   text: "appendTextFile"
   link: "/en/v0/api/file/appendTextFile/"

@@ -1,5 +1,5 @@
 import { E, Path } from "@duplojs/utils";
-import { implementFunction, nodeCrypto, nodeFileSystem, nodeOs } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
@@ -15,9 +15,9 @@ export const makeTemporaryFile = implementFunction(
 	"makeTemporaryFile",
 	{
 		NODE: async(prefix, suffix) => {
-			const fs = await nodeFileSystem.value;
-			const os = await nodeOs.value;
-			const crypto = await nodeCrypto.value;
+			const fs = await import("node:fs/promises");
+			const os = await import("node:os");
+			const crypto = await import("node:crypto");
 
 			const fileTemporaryPath = Path.resolveRelative([
 				os.tmpdir(),

@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const appendTextFile = implementor.implementFunction("appendTextFile", {
     NODE: async (path, data) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.appendFile(path, data)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-append-text-file", value));

@@ -1,5 +1,5 @@
 import { E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
@@ -19,7 +19,7 @@ export const readTextFile = implementFunction(
 	"readTextFile",
 	{
 		NODE: async(path) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.readFile(path, { encoding: "utf-8" })
 				.then(E.success)
 				.catch((value) => E.left("file-system-read-text-file", value));

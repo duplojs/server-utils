@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const readLink = implementor.implementFunction("readLink", {
     NODE: async (path) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readlink(path, { encoding: "utf-8" })
             .then(utils.E.success)
             .catch((value) => utils.E.left("file-system-read-link", value));

@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const move = implementor.implementFunction("move", {
     NODE: async (fromPath, toPath) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.rename(fromPath, toPath)
             .then(utils.E.ok)
             .catch((value) => utils.E.left("file-system-move", value));

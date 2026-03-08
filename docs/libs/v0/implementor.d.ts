@@ -38,7 +38,4 @@ export declare function implementFunction<GenericFunctionName extends keyof Serv
     BUN?: ServerUtilsFunction[GenericFunctionName];
     DENO?: ServerUtilsFunction[GenericFunctionName];
 }): ServerUtilsFunction[GenericFunctionName];
-export declare const nodeFileSystem: import("@duplojs/utils").MemoizedPromise<typeof import("node:fs/promises")>;
-export declare const nodeCrypto: import("@duplojs/utils").MemoizedPromise<typeof import("node:crypto")>;
-export declare const nodeOs: import("@duplojs/utils").MemoizedPromise<typeof import("node:os")>;
 export {};

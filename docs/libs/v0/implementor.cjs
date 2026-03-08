@@ -2,7 +2,6 @@
 
 var utils = require('@duplojs/utils');
 
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 utils.createEnum(["BUN", "DENO", "NODE", "TEST"]);
 const SymbolEnvironmentStore = Symbol("environmentStore");
 const environmentStoreHandler = utils.createGlobalStore(SymbolEnvironmentStore, (() => {
@@ -55,12 +54,6 @@ function implementFunction(functionName, theFunctions) {
     };
     return (...args) => environmentFunctions[environmentStoreHandler.value](...args);
 }
-const nodeFileSystem = utils.memoPromise(() => import('node:fs/promises'));
-const nodeCrypto = utils.memoPromise(() => import('node:crypto'));
-const nodeOs = utils.memoPromise(() => import('node:os'));
 
 exports.implementFunction = implementFunction;
-exports.nodeCrypto = nodeCrypto;
-exports.nodeFileSystem = nodeFileSystem;
-exports.nodeOs = nodeOs;
 exports.setEnvironment = setEnvironment;

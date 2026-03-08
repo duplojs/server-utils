@@ -1,6 +1,5 @@
-import { createEnum, createGlobalStore, memoPromise } from '@duplojs/utils';
+import { createEnum, createGlobalStore } from '@duplojs/utils';
 
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 createEnum(["BUN", "DENO", "NODE", "TEST"]);
 const SymbolEnvironmentStore = Symbol("environmentStore");
 const environmentStoreHandler = createGlobalStore(SymbolEnvironmentStore, (() => {
@@ -53,8 +52,5 @@ function implementFunction(functionName, theFunctions) {
     };
     return (...args) => environmentFunctions[environmentStoreHandler.value](...args);
 }
-const nodeFileSystem = memoPromise(() => import('node:fs/promises'));
-const nodeCrypto = memoPromise(() => import('node:crypto'));
-const nodeOs = memoPromise(() => import('node:os'));
 
-export { TESTImplementation, implementFunction, nodeCrypto, nodeFileSystem, nodeOs, setEnvironment };
+export { TESTImplementation, implementFunction, setEnvironment };

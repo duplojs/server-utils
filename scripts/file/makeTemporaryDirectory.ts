@@ -1,5 +1,5 @@
 import { E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
@@ -15,7 +15,7 @@ export const makeTemporaryDirectory = implementFunction(
 	"makeTemporaryDirectory",
 	{
 		NODE: async(prefix) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.mkdtemp(prefix)
 				.then(E.success)
 				.catch((value) => E.left("file-system-make-temporary-directory", value));

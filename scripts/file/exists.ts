@@ -1,5 +1,5 @@
 import { E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
@@ -19,7 +19,7 @@ export const exists = implementFunction(
 	"exists",
 	{
 		NODE: async(path) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.access(path)
 				.then(E.ok)
 				.catch((value) => E.left("file-system-exists", value));

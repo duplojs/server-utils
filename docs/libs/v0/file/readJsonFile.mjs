@@ -1,12 +1,12 @@
 import { E } from '@duplojs/utils';
-import { implementFunction, nodeFileSystem } from '../implementor.mjs';
+import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include file/readJsonFile/index.md}
  */
 const readJsonFile = implementFunction("readJsonFile", {
     NODE: async (path) => {
-        const fs = await nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         return fs.readFile(path, { encoding: "utf-8" })
             .then(JSON.parse)
             .then(E.success)

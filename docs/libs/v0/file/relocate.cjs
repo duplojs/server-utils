@@ -8,7 +8,7 @@ var implementor = require('../implementor.cjs');
  */
 const relocate = implementor.implementFunction("relocate", {
     NODE: async (fromPath, newParentPath) => {
-        const fs = await implementor.nodeFileSystem.value;
+        const fs = await import('node:fs/promises');
         const baseName = utils.Path.getBaseName(fromPath);
         if (!baseName) {
             return utils.E.left("file-system-relocate", new Error(`Invalid base name ${fromPath}`));

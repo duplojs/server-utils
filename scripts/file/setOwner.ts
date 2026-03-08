@@ -1,5 +1,5 @@
 import { E } from "@duplojs/utils";
-import { implementFunction, nodeFileSystem } from "@scripts/implementor";
+import { implementFunction } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 interface SetOwnerParams {
@@ -23,7 +23,7 @@ export const setOwner = implementFunction(
 	"setOwner",
 	{
 		NODE: async(path, { userId, groupId }) => {
-			const fs = await nodeFileSystem.value;
+			const fs = await import("node:fs/promises");
 			return fs.chown(path, userId, groupId)
 				.then(E.ok)
 				.catch((value) => E.left("file-system-set-owner", value));

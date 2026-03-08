@@ -4,8 +4,8 @@ prev:
   text: "readFile"
   link: "/en/v0/api/file/readFile/"
 next:
-  text: "writeFile"
-  link: "/en/v0/api/file/writeFile/"
+  text: "readStream"
+  link: "/en/v0/api/file/readStream/"
 description: "Reads a text file and returns its content."
 ---
 
@@ -40,3 +40,4 @@ function readTextFile(
 ## See also
 
 - [`readFile`](/en/v0/api/file/readFile) - Reads a binary file.
+- [`readStream`](/en/v0/api/file/readStream) - Reads a file as an async byte stream.

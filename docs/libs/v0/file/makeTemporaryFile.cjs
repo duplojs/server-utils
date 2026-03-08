@@ -8,9 +8,9 @@ var implementor = require('../implementor.cjs');
  */
 const makeTemporaryFile = implementor.implementFunction("makeTemporaryFile", {
     NODE: async (prefix, suffix) => {
-        const fs = await implementor.nodeFileSystem.value;
-        const os = await implementor.nodeOs.value;
-        const crypto = await implementor.nodeCrypto.value;
+        const fs = await import('node:fs/promises');
+        const os = await import('node:os');
+        const crypto = await import('node:crypto');
         const fileTemporaryPath = utils.Path.resolveRelative([
             os.tmpdir(),
             `${prefix}${crypto.randomUUID()}${suffix ?? ""}`,

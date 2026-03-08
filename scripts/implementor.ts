@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+
 import { type AnyFunction, createEnum, createGlobalStore, type GetEnumValue, memoPromise } from "@duplojs/utils";
 
 export interface ServerUtilsFunction {}
@@ -96,7 +96,3 @@ export function implementFunction<
 
 	return (...args: unknown[]) => environmentFunctions[environmentStoreHandler.value](...args);
 }
-
-export const nodeFileSystem = memoPromise(() => import("node:fs/promises") as Promise<typeof import("node:fs/promises")>);
-export const nodeCrypto = memoPromise(() => import("node:crypto") as Promise<typeof import("node:crypto")>);
-export const nodeOs = memoPromise(() => import("node:os") as Promise<typeof import("node:os")>);
