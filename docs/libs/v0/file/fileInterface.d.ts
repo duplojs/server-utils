@@ -1,4 +1,4 @@
-import { type Kind, E } from "@duplojs/utils";
+import { type Kind, E, Path } from "@duplojs/utils";
 import { type StatInfo } from "./stat";
 import type { FileSystemLeft } from "./types";
 declare const fileInterfaceKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/fileInterface", unknown>>;
@@ -6,7 +6,7 @@ export interface FileInterface extends Kind<typeof fileInterfaceKind.definition>
     path: string;
     getName(): string | null;
     getMimeType(): string | null;
-    getExtension(): string | null;
+    getExtension(params?: Path.GetExtensionNameParams): string | null;
     getParentPath(): string | null;
     rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
     relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;
@@ -18,7 +18,7 @@ export interface FileInterface extends Kind<typeof fileInterfaceKind.definition>
 /**
  * Create a file interface with helper methods.
  * 
- * Return an object that exposes name, extension, and helper actions. (`getName()`, `getExtension()`, `getMimeType()`, `getParentPath()`, `rename(newName)`, `exists()`, `relocate(parentPath)`, `move(newPath)`, `remove()`, `stat()`)
+ * Return an object that exposes name, extension, and helper actions. (`getName()`, `getExtension(params?)`, `getMimeType()`, `getParentPath()`, `rename(newName)`, `exists()`, `relocate(parentPath)`, `move(newPath)`, `remove()`, `stat()`)
  * 
  * ```ts
  * import { SF } from "..";

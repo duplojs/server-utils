@@ -45,7 +45,7 @@ interface FileInterface {
   path: string;
   getName(): string | null;
   getMimeType(): string | null;
-  getExtension(): string | null;
+  getExtension(params?: { withDot?: boolean; }): string | null;
   getParentPath(): string | null;
   rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
   relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;

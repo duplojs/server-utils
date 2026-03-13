@@ -16,8 +16,9 @@ export declare namespace Printer {
         CYAN: "CYAN";
         gray: "gray";
         GRAY: "GRAY";
-        toTuple: () => ["red", "RED", "green", "GREEN", "yellow", "YELLOW", "blue", "BLUE", "magenta", "MAGENTA", "cyan", "CYAN", "gray", "GRAY"];
+        toTuple: () => readonly ["red", "RED", "green", "GREEN", "yellow", "YELLOW", "blue", "BLUE", "magenta", "MAGENTA", "cyan", "CYAN", "gray", "GRAY"];
         has: (value: string) => value is "red" | "RED" | "green" | "GREEN" | "yellow" | "YELLOW" | "blue" | "BLUE" | "magenta" | "MAGENTA" | "cyan" | "CYAN" | "gray" | "GRAY";
+        contract: <GenericContractValue extends "red" | "RED" | "green" | "GREEN" | "yellow" | "YELLOW" | "blue" | "BLUE" | "magenta" | "MAGENTA" | "cyan" | "CYAN" | "gray" | "GRAY">(...args: import("@duplojs/utils").IsEqual<GenericContractValue, "red" | "RED" | "green" | "GREEN" | "yellow" | "YELLOW" | "blue" | "BLUE" | "magenta" | "MAGENTA" | "cyan" | "CYAN" | "gray" | "GRAY"> extends true ? ["A value is duplicated."] : ["One of the values ​​is missing.", Exclude<GenericContractValue, "red" | "RED" | "green" | "GREEN" | "yellow" | "YELLOW" | "blue" | "BLUE" | "magenta" | "MAGENTA" | "cyan" | "CYAN" | "gray" | "GRAY">]) => /*elided*/ any;
     };
     type ColorEnum = GetEnumValue<typeof colorsEnum>;
     const tab: "\t";

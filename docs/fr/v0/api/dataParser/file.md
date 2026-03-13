@@ -24,7 +24,7 @@ Construit un parser pour les fichiers. `DServerDataParser.file()` garantit que l
 
 - `errorMessage` : message personnalisé injecté dans chaque `issue` lorsque l'entrée n'est pas un fichier ou ne respecte pas les contraintes.
 - `coerce` : `true` pour transformer un chemin en `FileInterface`. Par défaut `false`.
-- `mimeType?`: `string`, `string[]` ou `RegExp` appliqué au mime type du fichier.
+- `mimeType?`: `string`, `[string, ...string[]]` ou `RegExp` appliqué au mime type du fichier.
 - `minSize?`: `number` ou `BytesInString` (`${number}${"b" | "kb" | "mb"...}`) pour contraindre une taille minimale au fichier. Cette vérification est effectuée uniquement via `asyncParse`.
 - `maxSize?`: `number` ou `BytesInString` (`${number}${"b" | "kb" | "mb"...}`) pour contraindre une taille maximale au fichier. Cette vérification est effectuée uniquement via `asyncParse`.
 - `checkExist?`: `true` pour vérifier que le fichier existe réellement. Cette vérification est effectuée uniquement via `asyncParse`.

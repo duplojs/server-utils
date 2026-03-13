@@ -1,4 +1,4 @@
-import { type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type O, type NeverCoalescing } from "@duplojs/utils";
+import { type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type O, type NeverCoalescing, type AnyTuple } from "@duplojs/utils";
 import { type FileInterface } from "../../file";
 export interface DataParserFileCheckerCustom {
 }
@@ -22,10 +22,10 @@ export interface DataParserFile<GenericDefinition extends DataParserDefinitionFi
     ], GenericChecker>): DataParserFile<DP.AddCheckersToDefinition<GenericDefinition, GenericChecker>>;
 }
 export interface DataParserFileParams {
-    mimeType?: string | string[] | RegExp;
-    minSize?: number | BytesInString;
-    maxSize?: number | BytesInString;
-    checkExist?: boolean;
+    readonly mimeType?: string | AnyTuple<string> | RegExp;
+    readonly minSize?: number | BytesInString;
+    readonly maxSize?: number | BytesInString;
+    readonly checkExist?: boolean;
 }
 /**
  * Build a file parser.

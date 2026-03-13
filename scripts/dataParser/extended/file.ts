@@ -1,4 +1,4 @@
-import { type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type NeverCoalescing, createOverride } from "@duplojs/utils";
+import { type AnyTuple, type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type NeverCoalescing, createOverride } from "@duplojs/utils";
 import * as dataParsers from "../parsers";
 import { type FileInterface } from "@scripts/file";
 
@@ -49,7 +49,7 @@ export interface DataParserFileExtended<
 	>;
 
 	/** Set a mime type constraint on the parsed file. */
-	mimeType(value: string | string[] | RegExp): DataParserFileExtended<GenericDefinition>;
+	mimeType(value: string | AnyTuple<string> | RegExp): DataParserFileExtended<GenericDefinition>;
 
 	/**
 	 * Set the minimum file size.

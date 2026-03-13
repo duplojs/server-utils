@@ -1,4 +1,4 @@
-import { type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type NeverCoalescing } from "@duplojs/utils";
+import { type AnyTuple, type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type NeverCoalescing } from "@duplojs/utils";
 import * as dataParsers from "../parsers";
 import { type FileInterface } from "../../file";
 type _DataParserFileExtended<GenericDefinition extends dataParsers.DataParserDefinitionFile> = (Kind<typeof dataParsers.fileKind.definition> & DP.DataParserExtended<GenericDefinition, FileInterface, FileInterface>);
@@ -12,7 +12,7 @@ export interface DataParserFileExtended<GenericDefinition extends dataParsers.Da
     ], GenericChecker>): DataParserFileExtended<DP.AddCheckersToDefinition<GenericDefinition, GenericChecker>>;
     refine(theFunction: (input: DP.Output<this>) => boolean, definition?: Partial<Omit<DP.DataParserCheckerDefinitionRefine, "theFunction">>): DataParserFileExtended<DP.AddCheckersToDefinition<GenericDefinition, readonly [DP.CheckerRefineImplementation<DP.Output<this>>]>>;
     /** Set a mime type constraint on the parsed file. */
-    mimeType(value: string | string[] | RegExp): DataParserFileExtended<GenericDefinition>;
+    mimeType(value: string | AnyTuple<string> | RegExp): DataParserFileExtended<GenericDefinition>;
     /**
      * Set the minimum file size.
      * This check requires async validation through `asyncParse`.

@@ -6,8 +6,9 @@ export declare const SupportedEnvironment: {
     DENO: "DENO";
     NODE: "NODE";
     TEST: "TEST";
-    toTuple: () => ["BUN", "DENO", "NODE", "TEST"];
+    toTuple: () => readonly ["BUN", "DENO", "NODE", "TEST"];
     has: (value: string) => value is "BUN" | "DENO" | "NODE" | "TEST";
+    contract: <GenericContractValue extends "BUN" | "DENO" | "NODE" | "TEST">(...args: import("@duplojs/utils").IsEqual<GenericContractValue, "BUN" | "DENO" | "NODE" | "TEST"> extends true ? ["A value is duplicated."] : ["One of the values ​​is missing.", Exclude<GenericContractValue, "BUN" | "DENO" | "NODE" | "TEST">]) => /*elided*/ any;
 };
 export type SupportedEnvironment = GetEnumValue<typeof SupportedEnvironment>;
 declare const SymbolEnvironmentStore: unique symbol;

@@ -178,4 +178,11 @@ describe("fileInterface", () => {
 			expect(unwrap(result).path).toBe("/new/path/example.json");
 		}
 	});
+
+	it("getExtension name with dot", () => {
+		const file = DServerFile.createFileInterface("/tmp/file.txt");
+
+		expect(file.getExtension()).toBe("txt");
+		expect(file.getExtension({ withDot: true })).toBe(".txt");
+	});
 });

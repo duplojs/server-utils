@@ -16,7 +16,7 @@ export interface FileInterface extends Kind<
 	path: string;
 	getName(): string | null;
 	getMimeType(): string | null;
-	getExtension(): string | null;
+	getExtension(params?: Path.GetExtensionNameParams): string | null;
 	getParentPath(): string | null;
 	rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
 	relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;
@@ -36,8 +36,8 @@ export function createFileInterface(
 		return Path.getBaseName(path);
 	}
 
-	function getExtension() {
-		return Path.getExtensionName(path);
+	function getExtension(params?: Path.GetExtensionNameParams) {
+		return Path.getExtensionName(path, params);
 	}
 
 	function getMimeType() {

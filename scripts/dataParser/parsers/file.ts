@@ -1,4 +1,4 @@
-import { type BytesInString, createOverride, DP, E, stringToBytes, unwrap, type FixDeepFunctionInfer, type Kind, type O, type NeverCoalescing, toRegExp } from "@duplojs/utils";
+import { type BytesInString, createOverride, DP, E, stringToBytes, unwrap, type FixDeepFunctionInfer, type Kind, type O, type NeverCoalescing, toRegExp, type AnyTuple } from "@duplojs/utils";
 import { createFileInterface, isFileInterface, type FileInterface } from "@scripts/file";
 import { createDataParserKind } from "../kind";
 
@@ -63,10 +63,10 @@ export interface DataParserFile<
 }
 
 export interface DataParserFileParams {
-	mimeType?: string | string[] | RegExp;
-	minSize?: number | BytesInString;
-	maxSize?: number | BytesInString;
-	checkExist?: boolean;
+	readonly mimeType?: string | AnyTuple<string> | RegExp;
+	readonly minSize?: number | BytesInString;
+	readonly maxSize?: number | BytesInString;
+	readonly checkExist?: boolean;
 }
 
 /**

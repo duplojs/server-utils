@@ -17,8 +17,8 @@ function createFileInterface(path) {
     function getName() {
         return utils.Path.getBaseName(path);
     }
-    function getExtension() {
-        return utils.Path.getExtensionName(path);
+    function getExtension(params) {
+        return utils.Path.getExtensionName(path, params);
     }
     function getMimeType() {
         const extension = getExtension();
