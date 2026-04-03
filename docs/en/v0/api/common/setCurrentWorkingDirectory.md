@@ -12,12 +12,23 @@ next:
 # setCurrentWorkingDirectory
 
 Changes the current working directory.
+This version returns an `Either` result.
+If you prefer throwing behavior, use `setCurrentWorkingDirectoryOrThrow`.
 
 ## Example
 
 ```ts twoslash
 // @version: 0
 <!--@include: @/examples/v0/api/common/setCurrentWorkingDirectory/main.ts-->
+```
+
+## Other examples
+
+### Throw variant
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/common/setCurrentWorkingDirectory/otherExample.ts-->
 ```
 
 ## Syntax

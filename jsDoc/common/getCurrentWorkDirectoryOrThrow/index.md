@@ -6,4 +6,4 @@ Return the current path directly and throw if the runtime cannot read it.
 {@include common/getCurrentWorkDirectoryOrThrow/example.ts[3,11]}
 ```
 
-@see https://server-utils.duplojs.dev/en/v0/api/common/getCurrentWorkDirectoryOrThrow
+@see https://server-utils.duplojs.dev/en/v0/api/common/getCurrentWorkDirectory

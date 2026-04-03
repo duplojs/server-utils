@@ -33,7 +33,7 @@ charge les variables d'environnement depuis le runtime et des fichiers optionnel
 retourne le répertoire de travail courant pour le runtime actif. Version throw disponible: `getCurrentWorkDirectoryOrThrow`.
 
 ### [`setCurrentWorkingDirectory`](/fr/v0/api/common/setCurrentWorkingDirectory)
-change le répertoire de travail courant vers un dossier cible.
+change le répertoire de travail courant vers un dossier cible. Version throw disponible: `setCurrentWorkingDirectoryOrThrow`.
 
 ## Processus
 

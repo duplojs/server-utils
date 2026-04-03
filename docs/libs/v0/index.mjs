@@ -17,6 +17,7 @@ export { index$4 as SC };
 export { getCurrentWorkDirectory } from './common/getCurrentWorkDirectory.mjs';
 export { getCurrentWorkDirectoryOrThrow } from './common/getCurrentWorkDirectoryOrThrow.mjs';
 export { setCurrentWorkingDirectory } from './common/setCurrentWorkingDirectory.mjs';
+export { SetCurrentWorkingDirectoryError, setCurrentWorkingDirectoryOrThrow } from './common/setCurrentWorkingDirectoryOrThrow.mjs';
 export { environmentVariable } from './common/environmentVariable/index.mjs';
 export { EnvironmentVariableError, environmentVariableOrThrow } from './common/environmentVariableOrThrow.mjs';
 export { exitProcess } from './common/exitProcess.mjs';

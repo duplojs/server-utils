@@ -15,7 +15,9 @@ export { setEnvironment, TESTImplementation } from "./implementor";
  * What you will find in this namespace:
  * - `environmentVariable`
  * - `getCurrentWorkDirectory`
+ * - `getCurrentWorkDirectoryOrThrow`
  * - `setCurrentWorkingDirectory`
+ * - `setCurrentWorkingDirectoryOrThrow`
  * - `exitProcess`
  * - `getProcessArguments`
  * 

@@ -33,7 +33,7 @@ loads env variables from runtime and optional files, validates them, and returns
 returns the current working directory for the active runtime. Throw variant available: `getCurrentWorkDirectoryOrThrow`.
 
 ### [`setCurrentWorkingDirectory`](/en/v0/api/common/setCurrentWorkingDirectory)
-changes the current working directory to a target directory.
+changes the current working directory to a target directory. Throw variant available: `setCurrentWorkingDirectoryOrThrow`.
 
 ## Process
 

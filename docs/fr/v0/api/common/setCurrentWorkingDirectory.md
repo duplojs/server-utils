@@ -12,12 +12,23 @@ next:
 # setCurrentWorkingDirectory
 
 Change le répertoire de travail courant.
+Cette version retourne un résultat `Either`.
+Si vous préférez une version qui lance une erreur directement, utilisez `setCurrentWorkingDirectoryOrThrow`.
 
 ## Exemple
 
 ```ts twoslash
 // @version: 0
 <!--@include: @/examples/v0/api/common/setCurrentWorkingDirectory/main.ts-->
+```
+
+## Autres exemples
+
+### Version throw
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/common/setCurrentWorkingDirectory/otherExample.ts-->
 ```
 
 ## Syntaxe

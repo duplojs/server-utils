@@ -14,7 +14,9 @@
  * What you will find in this namespace:
  * - `environmentVariable`
  * - `getCurrentWorkDirectory`
+ * - `getCurrentWorkDirectoryOrThrow`
  * - `setCurrentWorkingDirectory`
+ * - `setCurrentWorkingDirectoryOrThrow`
  * - `exitProcess`
  * - `getProcessArguments`
  * 
@@ -24,6 +26,7 @@
 export * from "./getCurrentWorkDirectory";
 export * from "./getCurrentWorkDirectoryOrThrow";
 export * from "./setCurrentWorkingDirectory";
+export * from "./setCurrentWorkingDirectoryOrThrow";
 export * from "./environmentVariable";
 export * from "./environmentVariableOrThrow";
 export * from "./exitProcess";

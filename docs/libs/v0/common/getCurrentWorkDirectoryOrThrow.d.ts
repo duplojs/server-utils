@@ -15,7 +15,7 @@
  * // path: string
  * ```
  * 
- * @see https://server-utils.duplojs.dev/en/v0/api/common/getCurrentWorkDirectoryOrThrow
+ * @see https://server-utils.duplojs.dev/en/v0/api/common/getCurrentWorkDirectory
  * 
  */
 export declare const getCurrentWorkDirectoryOrThrow: () => string;
