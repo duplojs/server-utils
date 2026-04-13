@@ -10,7 +10,7 @@ exports[`node integration > command integration with nested help and execute > h
 		Seed a target
 		OPTIONS:
 		- force: -f, --force
-		   force execution
+		  force execution
 		SUBJECT:[string]"
 `;
 
@@ -25,7 +25,7 @@ exports[`node integration > command integration with nested help and execute > h
 			Seed a target
 			OPTIONS:
 			- force: -f, --force
-			   force execution
+			  force execution
 			SUBJECT:[string]"
 `;
 

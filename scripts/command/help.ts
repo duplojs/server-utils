@@ -1,8 +1,31 @@
-import { A, DP, hasSomeKinds, isType, justReturn, P, pipe } from "@duplojs/utils";
+import { A, DP, hasSomeKinds, isType, justReturn, P, pipe, Printer } from "@duplojs/utils";
 import type { Command } from "./create";
-import { Printer } from "./printer";
+import type { Option } from "./options";
 
-function formatSubject(subject: DP.DataParser): string {
+/**
+ * @internal
+ */
+export const render = Printer.render("");
+
+/**
+ * @internal
+ */
+export function colorizedOption(option: Option, color: Printer.Colors) {
+	return Printer.colorized(
+		pipe(
+			option.aliases,
+			A.map((alias) => `-${alias},`),
+			A.push(`--${option.name}`),
+			A.join(" "),
+		),
+		color,
+	);
+}
+
+/**
+ * @internal
+ */
+export function formatSubject(subject: DP.DataParser): string {
 	return P.match(subject)
 		.when(
 			DP.identifier(DP.stringKind),
@@ -78,76 +101,108 @@ function formatSubject(subject: DP.DataParser): string {
 		.otherwise(justReturn("unknown"));
 }
 
-export function logHelp(
+/**
+ * @internal
+ */
+export function renderCommandHelp(
 	command: Command,
-	depth = 0,
-) {
-	Printer.render(
-		[
-			Printer.indent(depth),
-			Printer.colorized("NAME:", "GREEN"),
-			command.name,
-		],
+	depth: number,
+): string[] {
+	const logs: string[] = [];
+
+	logs.push(
+		render(
+			[
+				Printer.indent(depth),
+				Printer.colorizedBold("NAME:", "green"),
+				command.name,
+			],
+		),
 	);
+
 	if (command.description) {
-		Printer.render(
-			[
-				Printer.indent(depth + 1),
-				Printer.colorized("DESCRIPTION:", "CYAN"),
-				Printer.back,
-				Printer.indent(depth + 1),
-				command.description,
-			],
+		logs.push(
+			Printer.renderParagraph(
+				[
+					render(
+						[
+							Printer.indent(depth + 1),
+							Printer.colorizedBold("DESCRIPTION:", "cyan"),
+						],
+					),
+					render(
+						[
+							Printer.indent(depth + 1),
+							command.description,
+						],
+					),
+				],
+			),
 		);
 	}
+
 	if (A.minElements(command.options, 1)) {
-		const optionLines: string[] = [];
-
-		command.options.forEach((option, index) => {
-			optionLines.push(
-				Printer.indent(depth + 1),
-				Printer.dash,
-				Printer.colorized(` ${option.name}: `, "cyan"),
-				Printer.colorizedOption(option, "gray"),
-			);
-
-			if (option.description) {
-				optionLines.push(
-					Printer.back,
-					Printer.indent(depth + 1),
-					`   ${option.description}`,
-				);
-			}
-
-			if (index < command.options.length - 1) {
-				optionLines.push(Printer.back);
-			}
-		});
-
-		Printer.render(
-			[
-				Printer.indent(depth + 1),
-				Printer.colorized("OPTIONS:", "BLUE"),
-				Printer.back,
-				...optionLines,
-			],
+		logs.push(
+			Printer.renderParagraph(
+				[
+					render(
+						[
+							Printer.indent(depth + 1),
+							Printer.colorizedBold("OPTIONS:", "blue"),
+						],
+					),
+					command.options.map(
+						(option) => Printer.renderParagraph(
+							[
+								render(
+									[
+										Printer.indent(depth + 1),
+										Printer.dash,
+										Printer.colorized(` ${option.name}: `, "cyan"),
+										colorizedOption(option, "gray"),
+									],
+								),
+								option.description && render(
+									[
+										Printer.indent(depth + 1),
+										`  ${option.description}`,
+									],
+								),
+							],
+						),
+					),
+				],
+			),
 		);
 	}
+
 	if (isType(command.subject, "array")) {
 		for (const childCommand of command.subject) {
-			logHelp(childCommand, depth + 1);
+			logs.push(...renderCommandHelp(childCommand, depth + 1));
 		}
 	} else if (DP.identifier(command.subject, DP.dataParserKind)) {
 		const formattedSubject = formatSubject(command.subject);
 
-		Printer.render(
-			[
-				Printer.indent(depth + 1),
-				Printer.colorized("SUBJECT:", "MAGENTA"),
-				hasSomeKinds(command.subject, [DP.tupleKind, DP.arrayKind])
-					? formattedSubject
-					: `<${formattedSubject}>`,
-			],
+		logs.push(
+			render(
+				[
+					Printer.indent(depth + 1),
+					Printer.colorizedBold("SUBJECT:", "magenta"),
+					hasSomeKinds(command.subject, [DP.tupleKind, DP.arrayKind])
+						? formattedSubject
+						: `<${formattedSubject}>`,
+				],
+			),
 		);
 	}
+
+	return logs;
+}
+
+export function logHelp(
+	command: Command,
+	depth = 0,
+) {
+	// eslint-disable-next-line no-console
+	console.log(Printer.renderParagraph(renderCommandHelp(command, depth)));
 }

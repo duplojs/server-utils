@@ -110,7 +110,12 @@ export function file<
 					|| self.definition.maxSize !== undefined
 					|| self.definition.minSize !== undefined
 				) {
-					return DP.SymbolDataParserErrorPromiseIssue;
+					return DP.addIssue(
+						error,
+						"async data parser",
+						data,
+						self.definition.errorMessage,
+					);
 				}
 
 				let fileInterface = data;
@@ -120,7 +125,12 @@ export function file<
 				}
 
 				if (!isFileInterface(fileInterface)) {
-					return DP.SymbolDataParserErrorIssue;
+					return DP.addIssue(
+						error,
+						"file",
+						fileInterface,
+						self.definition.errorMessage,
+					);
 				}
 
 				if (
@@ -130,8 +140,12 @@ export function file<
 						.mimeType
 						.test(fileInterface.getMimeType() ?? "")
 				) {
-					DP.addIssue(error, self, data, "Wrong mimeType.");
-					return DP.SymbolDataParserError;
+					return DP.addIssue(
+						error,
+						`file with mime type matching ${self.definition.mimeType.source}`,
+						fileInterface,
+						"Wrong mimeType.",
+					);
 				}
 
 				return fileInterface;
@@ -144,7 +158,12 @@ export function file<
 				}
 
 				if (!isFileInterface(fileInterface)) {
-					return DP.SymbolDataParserErrorIssue;
+					return DP.addIssue(
+						error,
+						"file",
+						fileInterface,
+						self.definition.errorMessage,
+					);
 				}
 
 				if (
@@ -154,8 +173,12 @@ export function file<
 						.mimeType
 						.test(fileInterface.getMimeType() ?? "")
 				) {
-					DP.addIssue(error, self, data, "Wrong mimeType.");
-					return DP.SymbolDataParserError;
+					return DP.addIssue(
+						error,
+						`file with mime type matching ${self.definition.mimeType.source}`,
+						fileInterface,
+						"Wrong mimeType.",
+					);
 				}
 
 				if (
@@ -166,31 +189,47 @@ export function file<
 					const resultStats = await fileInterface.stat();
 
 					if (E.isLeft(resultStats)) {
-						DP.addIssue(error, self, data, "File not exist.");
-						return DP.SymbolDataParserError;
+						return DP.addIssue(
+							error,
+							"existing file",
+							fileInterface,
+							"File not exist.",
+						);
 					}
 
 					const stat = unwrap(resultStats);
 
 					if (!stat.isFile) {
-						DP.addIssue(error, self, data, "Is not file.");
-						return DP.SymbolDataParserError;
+						return DP.addIssue(
+							error,
+							"file",
+							stat,
+							"Is not file.",
+						);
 					}
 
 					if (
 						self.definition.maxSize !== undefined
-					&& stat.sizeBytes > self.definition.maxSize
+						&& stat.sizeBytes > self.definition.maxSize
 					) {
-						DP.addIssue(error, self, data, "File is to large.");
-						return DP.SymbolDataParserError;
+						return DP.addIssue(
+							error,
+							`file with sizeBytes <= ${self.definition.maxSize}`,
+							stat.sizeBytes,
+							"File is to large.",
+						);
 					}
 
 					if (
 						self.definition.minSize !== undefined
-					&& stat.sizeBytes < self.definition.minSize
+						&& stat.sizeBytes < self.definition.minSize
 					) {
-						DP.addIssue(error, self, data, "File is to small.");
-						return DP.SymbolDataParserError;
+						return DP.addIssue(
+							error,
+							`file with sizeBytes >= ${self.definition.minSize}`,
+							stat.sizeBytes,
+							"File is to small.",
+						);
 					}
 				}
 
