@@ -1,5 +1,6 @@
 import { type ExpectType, DP, pipe, S } from "@duplojs/utils";
 import { DServerCommand } from "@scripts";
+import { createError, SymbolCommandError } from "@scripts/command/error";
 
 describe("createArrayOption", () => {
 	afterEach(() => {
@@ -16,7 +17,11 @@ describe("createArrayOption", () => {
 			"strict"
 		>;
 
-		const result = option.execute(["subject"]);
+		const result = option.execute(["subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type _checkResult = ExpectType<
 			typeof result.result,
@@ -31,7 +36,11 @@ describe("createArrayOption", () => {
 	it("parses comma separated inline values by default", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string());
 
-		const result = option.execute(["--tags=one,two", "subject"]);
+		const result = option.execute(["--tags=one,two", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type check = ExpectType<
 			typeof result,
@@ -49,34 +58,48 @@ describe("createArrayOption", () => {
 	it("parses next argument value with custom separator", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string(), { separator: "|" });
 
-		const result = option.execute(["--tags", "one|two", "subject"]);
+		const result = option.execute(["--tags", "one|two", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		expect(result.result).toEqual(["one", "two"]);
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("throws when required option is missing", () => {
+	it("returns command error when required option is missing", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string(), { required: true });
+		const error = createError("root");
 
-		expect(() => option.execute(["subject"])).toThrowError(DServerCommand.CommandOptionRequiredError);
+		expect(option.execute(["subject"], error)).toBe(SymbolCommandError);
+		expect(error.issues[0]?.expected).toBe("required option --tags");
 	});
 
-	it("throws when min checker is not satisfied", () => {
+	it("returns command error when min checker is not satisfied", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string(), { min: 2 });
+		const error = createError("root");
 
-		expect(() => option.execute(["--tags=one"])).toThrow();
+		expect(option.execute(["--tags=one"], error)).toBe(SymbolCommandError);
+		expect(error.issues[0]?.expected).toBe("array.length >= 2");
 	});
 
-	it("throws when max checker is exceeded", () => {
+	it("returns command error when max checker is exceeded", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string(), { max: 1 });
+		const error = createError("root");
 
-		expect(() => option.execute(["--tags=one,two"])).toThrow();
+		expect(option.execute(["--tags=one,two"], error)).toBe(SymbolCommandError);
+		expect(error.issues[0]?.expected).toBe("array.length <= 1");
 	});
 
 	it("supports aliases", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string(), { aliases: ["t"] });
 
-		const result = option.execute(["-t=one,two", "subject"]);
+		const result = option.execute(["-t=one,two", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		expect(result.result).toEqual(["one", "two"]);
 		expect(result.argumentRest).toEqual(["subject"]);
@@ -85,7 +108,11 @@ describe("createArrayOption", () => {
 	it("works when called from pipe", () => {
 		const option = DServerCommand.createArrayOption("tags", DP.string());
 
-		const result = pipe(["--tags=one,two"], option.execute);
+		const result = pipe(["--tags=one,two"], (args) => option.execute(args, createError("root")));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		expect(result.result).toEqual(["one", "two"]);
 	});
@@ -103,7 +130,11 @@ describe("createArrayOption", () => {
 			{ required: true },
 		);
 
-		const result = option.execute(["--sizes=duplo,js"]);
+		const result = option.execute(["--sizes=duplo,js"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type _CheckResult = ExpectType<
 			typeof result.result,

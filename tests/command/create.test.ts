@@ -100,9 +100,11 @@ describe("create", () => {
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("throws CommandManyArgumentsError when data parser subject receives many arguments", async() => {
+	it("renders command error when data parser subject receives many arguments", async() => {
 		setEnvironment("TEST");
-		TESTImplementation.set("exitProcess", vi.fn());
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("exitProcess", exitSpy);
 
 		const command = DServerCommand.create(
 			"root",
@@ -120,7 +122,13 @@ describe("create", () => {
 			},
 		);
 
-		await expect(command.execute(["one", "two"])).rejects.toThrowError(DServerCommand.CommandManyArgumentsError);
+		await command.execute(["one", "two"]);
+
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy.mock.calls[0]![0]).toContain("Command failed");
+		expect(errorSpy.mock.calls[0]![0]).toContain("subject");
+		expect(errorSpy.mock.calls[0]![0]).toContain("Expected exactly one subject argument, received 2.");
+		expect(exitSpy).toHaveBeenCalledWith(1);
 	});
 
 	it("runs help flow when help option is provided", async() => {
@@ -137,6 +145,36 @@ describe("create", () => {
 		await command.execute(["--help"]);
 
 		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("renders command error when help option is malformed", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			() => undefined,
+		);
+
+		await command.execute(["--help=true"]);
+
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy.mock.calls[0]![0]).toContain("option without value --help");
+		expect(exitSpy).toHaveBeenCalledWith(1);
+	});
+
+	it("does not print root error when malformed help is executed with a shared error", async() => {
+		setEnvironment("TEST");
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		const command = DServerCommand.create(
+			"root",
+			() => undefined,
+		);
+
+		await expect(command.execute(["--help=true"], DServerCommand.createError("parent"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
 	});
 
 	it("executes data parser subject branch with a single argument", async() => {
@@ -185,6 +223,95 @@ describe("create", () => {
 			subject: "a",
 		});
 		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("renders command error when tuple subject parsing fails", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.tuple([DP.number()]) as never,
+			},
+			() => undefined,
+		);
+
+		await command.execute(["bad"]);
+
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy.mock.calls[0]![0]).toContain("SUBJECT:");
+		expect(errorSpy.mock.calls[0]![0]).toContain("number");
+		expect(exitSpy).toHaveBeenCalledWith(1);
+	});
+
+	it("returns subject parse error without printing when tuple subject has a shared error", async() => {
+		setEnvironment("TEST");
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.tuple([DP.number()]) as never,
+			},
+			() => undefined,
+		);
+
+		await expect(command.execute(["bad"], DServerCommand.createError("parent"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+	});
+
+	it("renders command error when single subject parsing fails", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.number() as never,
+			},
+			() => undefined,
+		);
+
+		await command.execute(["bad"]);
+
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy.mock.calls[0]![0]).toContain("expected");
+		expect(errorSpy.mock.calls[0]![0]).toContain("number");
+		expect(exitSpy).toHaveBeenCalledWith(1);
+	});
+
+	it("returns many-arguments error without printing when single subject has a shared error", async() => {
+		setEnvironment("TEST");
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.string() as never,
+			},
+			() => undefined,
+		);
+
+		await expect(command.execute(["one", "two"], DServerCommand.createError("parent"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+	});
+
+	it("returns single subject parse error without printing when a shared error is provided", async() => {
+		setEnvironment("TEST");
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.number() as never,
+			},
+			() => undefined,
+		);
+
+		await expect(command.execute(["bad"], DServerCommand.createError("parent"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
 	});
 
 	it("infers typed params with array subject", async() => {
@@ -267,6 +394,78 @@ describe("create", () => {
 		expect(exitSpy).toHaveBeenNthCalledWith(2, 0);
 	});
 
+	it("renders command error when option value parsing fails", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				options: [DServerCommand.createOption("enabled", DP.boolean() as never)],
+			},
+			() => undefined,
+		);
+
+		await command.execute(["--enabled=yes"]);
+
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy.mock.calls[0]![0]).toContain("Command failed");
+		expect(errorSpy.mock.calls[0]![0]).toContain("OPTION:");
+		expect(errorSpy.mock.calls[0]![0]).toContain("--enabled");
+		expect(errorSpy.mock.calls[0]![0]).toContain("expected");
+		expect(exitSpy).toHaveBeenCalledWith(1);
+	});
+
+	it("stops option reduction after a first option error", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		const secondOptionSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				options: [
+					DServerCommand.createOption("enabled", DP.boolean() as never),
+					DServerCommand.initOption("later", () => {
+						secondOptionSpy();
+
+						return true;
+					}),
+				],
+			},
+			() => undefined,
+		);
+
+		await command.execute(["--enabled=yes"]);
+
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(secondOptionSpy).not.toHaveBeenCalled();
+		expect(exitSpy).toHaveBeenCalledWith(1);
+	});
+
+	it("does not capture user command execution errors", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("exitProcess", exitSpy);
+		const userError = new Error("user crash");
+
+		const command = DServerCommand.create(
+			"root",
+			() => {
+				throw userError;
+			},
+		);
+
+		await expect(command.execute([])).rejects.toThrow(userError);
+		expect(errorSpy).not.toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
+	});
+
 	it("executes matching child command when subject is a command list", async() => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
@@ -343,5 +542,34 @@ describe("create", () => {
 		expect(renderedHelp).toContain("child");
 		expect(renderedHelp).not.toContain("root");
 		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("renders root command error when a child command fails", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const child = DServerCommand.create(
+			"child",
+			{
+				options: [DServerCommand.createOption("enabled", DP.boolean() as never)],
+			},
+			() => undefined,
+		);
+		const root = DServerCommand.create(
+			"root",
+			{
+				subject: [child],
+			},
+			() => undefined,
+		);
+
+		await root.execute(["child", "--enabled=yes"]);
+
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy.mock.calls[0]![0]).toContain("COMMAND:");
+		expect(errorSpy.mock.calls[0]![0]).toContain("root child");
+		expect(exitSpy).toHaveBeenCalledWith(1);
 	});
 });

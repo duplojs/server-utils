@@ -1,6 +1,6 @@
 import { A, type RemoveKind, S, type Kind } from "@duplojs/utils";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
-import { CommandOptionValueLooksLikeOptionError, CommandOptionValueNotRequiredError } from "../errors";
+import { addIssue, type CommandError, SymbolCommandError } from "../error";
 
 const optionKind = createDuplojsServerUtilsKind("command-option");
 const regexOption = /^(?<dashes>-{1,2})(?<key>[A-Za-z0-9][A-Za-z0-9_-]*)(?:=(?<value>.*))?$/;
@@ -13,10 +13,15 @@ export interface Option<
 	readonly description: string | null;
 	readonly aliases: readonly string[];
 	readonly hasValue: boolean;
-	execute(args: readonly string[]): {
+	execute(
+		args: readonly string[],
+		error: CommandError,
+	):
+	| {
 		result: GenericExecuteOutputValue;
 		argumentRest: readonly string[];
-	};
+	}
+	| SymbolCommandError;
 }
 
 export interface InitOptionExecuteParams {
@@ -31,7 +36,8 @@ export function initOption<
 	name: GenericName,
 	execute: (
 		params: InitOptionExecuteParams,
-	) => GenericExecuteOutputValue,
+		error: CommandError,
+	) => GenericExecuteOutputValue | SymbolCommandError,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -40,7 +46,10 @@ export function initOption<
 ) {
 	const self: Option<GenericName, GenericExecuteOutputValue> = optionKind.setTo({
 		name,
-		execute: (args) => {
+		execute: (
+			args: readonly string[],
+			error: CommandError,
+		) => {
 			const result = A.reduce(
 				args,
 				A.reduceFrom(null),
@@ -66,13 +75,20 @@ export function initOption<
 			);
 
 			if (!result) {
+				const executeResult = execute(
+					{
+						isHere: false,
+						value: undefined,
+					},
+					error,
+				);
+
+				if (executeResult === SymbolCommandError) {
+					return SymbolCommandError;
+				}
+
 				return {
-					result: execute(
-						{
-							isHere: false,
-							value: undefined,
-						},
-					),
+					result: executeResult,
 					argumentRest: args,
 				};
 			} else if (self.hasValue) {
@@ -80,16 +96,32 @@ export function initOption<
 				const isOption = S.test(value ?? "", regexOption);
 
 				if (isOption) {
-					throw new CommandOptionValueLooksLikeOptionError(self.name, value);
+					return addIssue(
+						error,
+						{
+							type: "option",
+							target: self.name,
+							expected: `value for option --${self.name}`,
+							received: value,
+							message: `Missing value for option "${self.name}": received another option token instead of a value.`,
+						},
+					);
+				}
+
+				const executeResult = execute(
+					{
+						isHere: true,
+						value,
+					},
+					error,
+				);
+
+				if (executeResult === SymbolCommandError) {
+					return SymbolCommandError;
 				}
 
 				return {
-					result: execute(
-						{
-							isHere: true,
-							value,
-						},
-					),
+					result: executeResult,
 					argumentRest: A.spliceDelete(
 						args,
 						result.index,
@@ -99,16 +131,32 @@ export function initOption<
 					),
 				};
 			} else if (!self.hasValue && result.value !== undefined) {
-				throw new CommandOptionValueNotRequiredError(self.name);
+				return addIssue(
+					error,
+					{
+						type: "option",
+						target: self.name,
+						expected: `option without value --${self.name}`,
+						received: result.value,
+						message: `Option "${self.name}" does not accept a value.`,
+					},
+				);
+			}
+
+			const executeResult = execute(
+				{
+					isHere: true,
+					value: undefined,
+				},
+				error,
+			);
+
+			if (executeResult === SymbolCommandError) {
+				return SymbolCommandError;
 			}
 
 			return {
-				result: execute(
-					{
-						isHere: true,
-						value: undefined,
-					},
-				),
+				result: executeResult,
 				argumentRest: A.spliceDelete(args, result.index, 1),
 			};
 		},

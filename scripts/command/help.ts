@@ -1,26 +1,5 @@
 import { A, DP, hasSomeKinds, isType, justReturn, P, pipe, Printer } from "@duplojs/utils";
 import type { Command } from "./create";
-import type { Option } from "./options";
-
-/**
- * @internal
- */
-export const render = Printer.render("");
-
-/**
- * @internal
- */
-export function colorizedOption(option: Option, color: Printer.Colors) {
-	return Printer.colorized(
-		pipe(
-			option.aliases,
-			A.map((alias) => `-${alias},`),
-			A.push(`--${option.name}`),
-			A.join(" "),
-		),
-		color,
-	);
-}
 
 /**
  * @internal
@@ -111,31 +90,15 @@ export function renderCommandHelp(
 	const logs: string[] = [];
 
 	logs.push(
-		render(
-			[
-				Printer.indent(depth),
-				Printer.colorizedBold("NAME:", "green"),
-				command.name,
-			],
-		),
+		`${Printer.indent(depth)}${Printer.colorizedBold("NAME:", "green")}${command.name}`,
 	);
 
 	if (command.description) {
 		logs.push(
 			Printer.renderParagraph(
 				[
-					render(
-						[
-							Printer.indent(depth + 1),
-							Printer.colorizedBold("DESCRIPTION:", "cyan"),
-						],
-					),
-					render(
-						[
-							Printer.indent(depth + 1),
-							command.description,
-						],
-					),
+					`${Printer.indent(depth + 1)}${Printer.colorizedBold("DESCRIPTION:", "cyan")}`,
+					`${Printer.indent(depth + 1)}${command.description}`,
 				],
 			),
 		);
@@ -145,29 +108,30 @@ export function renderCommandHelp(
 		logs.push(
 			Printer.renderParagraph(
 				[
-					render(
-						[
-							Printer.indent(depth + 1),
-							Printer.colorizedBold("OPTIONS:", "blue"),
-						],
-					),
-					command.options.map(
+					`${Printer.indent(depth + 1)}${Printer.colorizedBold("OPTIONS:", "blue")}`,
+					A.map(
+						command.options,
 						(option) => Printer.renderParagraph(
 							[
-								render(
+								A.join(
 									[
 										Printer.indent(depth + 1),
 										Printer.dash,
 										Printer.colorized(` ${option.name}: `, "cyan"),
-										colorizedOption(option, "gray"),
+										Printer.colorized(
+											pipe(
+												option.aliases,
+												A.map((alias) => `-${alias},`),
+												A.push(`--${option.name}`),
+												A.join(" "),
+											),
+											"gray",
+										),
 									],
+									"",
 								),
-								option.description && render(
-									[
-										Printer.indent(depth + 1),
-										`  ${option.description}`,
-									],
-								),
+								option.description
+								&& `${Printer.indent(depth + 1)}  ${option.description}`,
 							],
 						),
 					),
@@ -184,7 +148,7 @@ export function renderCommandHelp(
 		const formattedSubject = formatSubject(command.subject);
 
 		logs.push(
-			render(
+			A.join(
 				[
 					Printer.indent(depth + 1),
 					Printer.colorizedBold("SUBJECT:", "magenta"),
@@ -192,6 +156,7 @@ export function renderCommandHelp(
 						? formattedSubject
 						: `<${formattedSubject}>`,
 				],
+				"",
 			),
 		);
 	}
@@ -204,5 +169,9 @@ export function logHelp(
 	depth = 0,
 ) {
 	// eslint-disable-next-line no-console
-	console.log(Printer.renderParagraph(renderCommandHelp(command, depth)));
+	console.log(
+		Printer.renderParagraph(
+			renderCommandHelp(command, depth),
+		),
+	);
 }
