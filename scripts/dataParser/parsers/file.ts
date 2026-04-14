@@ -128,7 +128,7 @@ export function file<
 					return DP.addIssue(
 						error,
 						"file",
-						fileInterface,
+						data,
 						self.definition.errorMessage,
 					);
 				}
@@ -143,7 +143,7 @@ export function file<
 					return DP.addIssue(
 						error,
 						`file with mime type matching ${self.definition.mimeType.source}`,
-						fileInterface,
+						data,
 						"Wrong mimeType.",
 					);
 				}
@@ -161,7 +161,7 @@ export function file<
 					return DP.addIssue(
 						error,
 						"file",
-						fileInterface,
+						data,
 						self.definition.errorMessage,
 					);
 				}
