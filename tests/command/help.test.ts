@@ -1,14 +1,13 @@
-import { DP } from "@duplojs/utils";
+import { type ExpectType, DP, Printer } from "@duplojs/utils";
 import { DServerCommand } from "@scripts";
 
-describe("logHelp", () => {
+describe("help", () => {
 	afterEach(() => {
 		vi.clearAllMocks();
 		vi.restoreAllMocks();
 	});
 
-	it("renders name, description, and options blocks", () => {
-		const renderSpy = vi.spyOn(DServerCommand.Printer, "render").mockImplementation(() => undefined);
+	it("renders name, description, options and subject blocks", () => {
 		const command = DServerCommand.create(
 			"root",
 			{
@@ -28,26 +27,49 @@ describe("logHelp", () => {
 						},
 					),
 				],
+				subject: DP.string(),
 			},
+			() => Promise.resolve(undefined),
+		);
+
+		const lines = DServerCommand.renderCommandHelp(command, 1);
+
+		type _CheckLines = ExpectType<
+			typeof lines,
+			string[],
+			"strict"
+		>;
+
+		expect(lines).toContain(
+			`${Printer.indent(1)}${Printer.colorizedBold("NAME:", "green")}root`,
+		);
+		expect(lines.join("\n")).toContain("Root command description");
+		expect(lines.join("\n")).toContain(Printer.colorizedBold("OPTIONS:", "blue"));
+		expect(lines.join("\n")).toContain("--silent");
+		expect(lines.join("\n")).toContain("Enable verbose mode");
+		expect(lines).toContain(
+			`${Printer.indent(2)}${Printer.colorizedBold("SUBJECT:", "magenta")}<string>`,
+		);
+	});
+
+	it("logs rendered help lines", () => {
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const command = DServerCommand.create(
+			"root",
 			() => Promise.resolve(undefined),
 		);
 
 		DServerCommand.logHelp(command, 1);
 
-		expect(renderSpy).toHaveBeenCalledTimes(3);
-		expect(renderSpy.mock.calls[0]![0]).toEqual([
-			DServerCommand.Printer.indent(1),
-			DServerCommand.Printer.colorized("NAME:", "GREEN"),
-			"root",
+		expect(logSpy).toHaveBeenCalledTimes(1);
+		expect(logSpy.mock.calls[0]).toEqual([
+			Printer.renderParagraph(
+				DServerCommand.renderCommandHelp(command, 1),
+			),
 		]);
-		expect(renderSpy.mock.calls[1]![0]).toContain("Root command description");
-		expect(renderSpy.mock.calls[2]![0]).toContain(DServerCommand.Printer.colorized("OPTIONS:", "BLUE"));
-		expect(renderSpy.mock.calls[2]![0].join("")).toContain("Enable verbose mode");
 	});
 
 	it("recursively renders child commands when subject is a command list", () => {
-		const renderSpy = vi.spyOn(DServerCommand.Printer, "render").mockImplementation(() => undefined);
-
 		const child = DServerCommand.create(
 			"child",
 			() => Promise.resolve(undefined),
@@ -60,52 +82,64 @@ describe("logHelp", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		DServerCommand.logHelp(root);
+		const lines = DServerCommand.renderCommandHelp(root, 0);
+		const output = lines.join("\n");
 
-		const renderedNames = renderSpy.mock.calls.map((call) => call[0]).flat();
+		expect(output).toContain("root");
+		expect(output).toContain("child");
+	});
 
-		expect(renderedNames).toContain("root");
-		expect(renderedNames).toContain("child");
+	it("renders tuple subjects without angle brackets", () => {
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.tuple([DP.string(), DP.coerce.number()]),
+			},
+			() => Promise.resolve(undefined),
+		);
+
+		expect(DServerCommand.renderCommandHelp(command, 0)).toContain(
+			`${Printer.indent(1)}${Printer.colorizedBold("SUBJECT:", "magenta")}[string, number]`,
+		);
 	});
 
 	it("formats supported subject data parser kinds", () => {
-		const renderSpy = vi.spyOn(DServerCommand.Printer, "render").mockImplementation(() => undefined);
 		const cases = [
 			{
 				subject: DP.string(),
-				expected: "<string>",
+				expected: "string",
 			},
 			{
 				subject: DP.number(),
-				expected: "<number>",
+				expected: "number",
 			},
 			{
 				subject: DP.bigint(),
-				expected: "<bigint>",
+				expected: "bigint",
 			},
 			{
 				subject: DP.date(),
-				expected: "<date>",
+				expected: "date",
 			},
 			{
 				subject: DP.time(),
-				expected: "<time>",
+				expected: "time",
 			},
 			{
 				subject: DP.nil(),
-				expected: "<null>",
+				expected: "null",
 			},
 			{
 				subject: DP.literal(["on", "off"] as const),
-				expected: "<on | off>",
+				expected: "on | off",
 			},
 			{
 				subject: DP.templateLiteral(["id-", DP.number()]),
-				expected: "<id-${number}>",
+				expected: "id-${number}",
 			},
 			{
 				subject: DP.union([DP.string(), DP.number()]),
-				expected: "<string | number>",
+				expected: "string | number",
 			},
 			{
 				subject: DP.array(DP.string()),
@@ -125,28 +159,12 @@ describe("logHelp", () => {
 			},
 			{
 				subject: DP.unknown(),
-				expected: "<unknown>",
+				expected: "unknown",
 			},
 		];
 
 		for (const testCase of cases) {
-			renderSpy.mockClear();
-			const command = DServerCommand.create(
-				"root",
-				{
-					subject: testCase.subject as never,
-				},
-				() => Promise.resolve(undefined),
-			);
-
-			DServerCommand.logHelp(command);
-
-			const subjectCall = renderSpy.mock.calls.find(
-				(call) => call[0].includes(DServerCommand.Printer.colorized("SUBJECT:", "MAGENTA")),
-			);
-
-			expect(subjectCall).toBeDefined();
-			expect(subjectCall![0]).toContain(testCase.expected);
+			expect(DServerCommand.formatSubject(testCase.subject)).toBe(testCase.expected);
 		}
 	});
 });

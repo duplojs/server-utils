@@ -1,5 +1,6 @@
 import { type ExpectType, DP, DPE, S } from "@duplojs/utils";
 import { DServerCommand } from "@scripts";
+import { createError, SymbolCommandError } from "@scripts/command/error";
 
 describe("createOption", () => {
 	afterEach(() => {
@@ -9,8 +10,11 @@ describe("createOption", () => {
 
 	it("returns undefined when optional option is missing", () => {
 		const option = DServerCommand.createOption("name", DP.string());
-
-		const result = option.execute(["subject"]);
+		const result = option.execute(["subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type _CheckResult = ExpectType<
 			typeof result.result,
@@ -24,8 +28,11 @@ describe("createOption", () => {
 
 	it("parses inline value for optional option", () => {
 		const option = DServerCommand.createOption("name", DP.string());
-
-		const result = option.execute(["--name=duplo", "subject"]);
+		const result = option.execute(["--name=duplo", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		expect(result.result).toBe("duplo");
 		expect(result.argumentRest).toEqual(["subject"]);
@@ -33,23 +40,31 @@ describe("createOption", () => {
 
 	it("parses next argument value for optional option", () => {
 		const option = DServerCommand.createOption("name", DP.string());
-
-		const result = option.execute(["--name", "duplo", "subject"]);
+		const result = option.execute(["--name", "duplo", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		expect(result.result).toBe("duplo");
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("throws when required option is missing", () => {
+	it("returns command error when required option is missing", () => {
 		const option = DServerCommand.createOption("name", DP.string(), { required: true });
+		const error = createError("root");
 
-		expect(() => option.execute(["subject"])).toThrowError(DServerCommand.CommandOptionRequiredError);
+		expect(option.execute(["subject"], error)).toBe(SymbolCommandError);
+		expect(error.issues[0]?.expected).toBe("required option --name");
 	});
 
 	it("parses value when required option is present", () => {
 		const option = DServerCommand.createOption("name", DP.string(), { required: true });
-
-		const result = option.execute(["--name=duplo", "subject"]);
+		const result = option.execute(["--name=duplo", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type _CheckResult = ExpectType<
 			typeof result.result,
@@ -61,10 +76,12 @@ describe("createOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("throws when value cannot be parsed by schema", () => {
+	it("returns command error when value cannot be parsed by schema", () => {
 		const option = DServerCommand.createOption("enabled", DP.boolean() as never);
+		const error = createError("root");
 
-		expect(() => option.execute(["--enabled=yes"])).toThrow();
+		expect(option.execute(["--enabled=yes"], error)).toBe(SymbolCommandError);
+		expect(error.issues[0]?.expected).toBe("boolean");
 	});
 
 	it("supports transform schema and keeps transformed output type", () => {
@@ -76,7 +93,11 @@ describe("createOption", () => {
 			),
 		);
 
-		const result = option.execute(["--size=duplo"]);
+		const result = option.execute(["--size=duplo"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type _CheckResult = ExpectType<
 			typeof result.result,
@@ -95,8 +116,13 @@ describe("createOption", () => {
 			),
 		);
 
-		const missingResult = option.execute(["subject"]);
-		const result = option.execute(["--name=PABLO"]);
+		const missingResult = option.execute(["subject"], createError("root"));
+		const result = option.execute(["--name=PABLO"], createError("root"));
+		expect(missingResult).not.toBe(SymbolCommandError);
+		expect(result).not.toBe(SymbolCommandError);
+		if (missingResult === SymbolCommandError || result === SymbolCommandError) {
+			return;
+		}
 
 		type _CheckMissingResult = ExpectType<
 			typeof missingResult.result,
@@ -122,7 +148,11 @@ describe("createOption", () => {
 			{ required: true },
 		);
 
-		const result = option.execute(["--name=guest"]);
+		const result = option.execute(["--name=guest"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type _CheckResult = ExpectType<
 			typeof result.result,
@@ -141,7 +171,11 @@ describe("createOption", () => {
 			{ required: true },
 		);
 
-		const result = optionOptionalRequired.execute(["--name=guest"]);
+		const result = optionOptionalRequired.execute(["--name=guest"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 		type _check = ExpectType<
 			typeof result.result,
 			string | undefined,
@@ -154,7 +188,11 @@ describe("createOption", () => {
 			DPE.string().optional(),
 		);
 
-		const result1 = optionOptionalNotRequired.execute(["--name=guest"]);
+		const result1 = optionOptionalNotRequired.execute(["--name=guest"], createError("root"));
+		expect(result1).not.toBe(SymbolCommandError);
+		if (result1 === SymbolCommandError) {
+			return;
+		}
 		type _check1 = ExpectType<
 			typeof result.result,
 			string | undefined,

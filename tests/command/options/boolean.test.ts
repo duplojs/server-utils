@@ -1,5 +1,6 @@
 import { type ExpectType, pipe } from "@duplojs/utils";
 import { DServerCommand } from "@scripts";
+import { createError, SymbolCommandError } from "@scripts/command/error";
 
 describe("createBooleanOption", () => {
 	afterEach(() => {
@@ -9,8 +10,11 @@ describe("createBooleanOption", () => {
 
 	it("returns false when option is missing", () => {
 		const option = DServerCommand.createBooleanOption("help");
-
-		const result = option.execute(["subject"]);
+		const result = option.execute(["subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		type _CheckResult = ExpectType<
 			typeof result.result,
@@ -24,8 +28,11 @@ describe("createBooleanOption", () => {
 
 	it("returns true when option is present", () => {
 		const option = DServerCommand.createBooleanOption("help");
-
-		const result = option.execute(["--help", "subject"]);
+		const result = option.execute(["--help", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		expect(result.result).toBe(true);
 		expect(result.argumentRest).toEqual(["subject"]);
@@ -33,16 +40,21 @@ describe("createBooleanOption", () => {
 
 	it("returns true when alias is present", () => {
 		const option = DServerCommand.createBooleanOption("help", { aliases: ["h"] });
-
-		const result = option.execute(["-h", "subject"]);
+		const result = option.execute(["-h", "subject"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
 
 		expect(result.result).toBe(true);
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("throws when a value is provided", () => {
+	it("returns command error when a value is provided", () => {
 		const option = DServerCommand.createBooleanOption("help");
+		const error = createError("root");
 
-		expect(() => option.execute(["--help=true"])).toThrowError(DServerCommand.CommandOptionValueNotRequiredError);
+		expect(option.execute(["--help=true"], error)).toBe(SymbolCommandError);
+		expect(error.issues[0]?.expected).toBe("option without value --help");
 	});
 });

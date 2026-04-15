@@ -1,7 +1,7 @@
-import { type A, DP, pipe, S } from "@duplojs/utils";
+import { type A, DP, E, pipe, S, unwrap } from "@duplojs/utils";
 import { initOption, type Option } from "./base";
 import type { EligibleDataParser } from "../types";
-import { CommandOptionRequiredError } from "../errors";
+import { addIssue, addDataParserError } from "../error";
 
 const defaultSeparator = ",";
 
@@ -88,16 +88,38 @@ export function createArrayOption(
 
 	return initOption(
 		name,
-		({ isHere, value }) => {
+		({ isHere, value }, error) => {
 			if (!isHere && params?.required) {
-				throw new CommandOptionRequiredError(name);
+				return addIssue(
+					error,
+					{
+						type: "option",
+						target: name,
+						expected: `required option --${name}`,
+						received: value,
+						message: `Option "${name}" is required.`,
+					},
+				);
 			}
 
 			const values = value !== undefined
 				? S.split(value, params?.separator ?? defaultSeparator)
 				: undefined;
 
-			return dataParser.parseOrThrow(values);
+			const result = dataParser.parse(values);
+
+			if (E.isLeft(result)) {
+				return addDataParserError(
+					error,
+					unwrap(result),
+					{
+						type: "option",
+						target: name,
+					},
+				);
+			}
+
+			return unwrap(result);
 		},
 		{
 			description: params?.description,

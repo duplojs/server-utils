@@ -8,7 +8,7 @@ Describe the behavior in one short paragraph.
 
 @remarks Optional extra detail.
 
-@see https://utils.duplojs.dev/en/v1/api/namespace/function
-@see [`Alias.or.Other`](https://server-utils.duplojs.dev/en/v1/api/namespace/other)
+@see https://server-utils.duplojs.dev/en/v0/api/namespace/function
+@see [`Alias.or.Other`](https://server-utils.duplojs.dev/en/v0/api/namespace/other)
 
 @namespace X
