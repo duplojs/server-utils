@@ -1,20 +1,21 @@
-import { type Kind } from "@duplojs/utils";
+import type { Kind } from "@duplojs/utils";
+import { type CommandError, SymbolCommandError } from "../error";
 declare const optionKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/command-option", unknown>>;
 export interface Option<GenericName extends string = string, GenericExecuteOutputValue extends unknown = unknown> extends Kind<typeof optionKind.definition> {
     readonly name: GenericName;
     readonly description: string | null;
     readonly aliases: readonly string[];
     readonly hasValue: boolean;
-    execute(args: readonly string[]): {
+    execute(args: readonly string[], error: CommandError): {
         result: GenericExecuteOutputValue;
         argumentRest: readonly string[];
-    };
+    } | SymbolCommandError;
 }
 export interface InitOptionExecuteParams {
     isHere: boolean;
     value: string | undefined;
 }
-export declare function initOption<GenericName extends string, GenericExecuteOutputValue extends unknown>(name: GenericName, execute: (params: InitOptionExecuteParams) => GenericExecuteOutputValue, params?: {
+export declare function initOption<GenericName extends string, GenericExecuteOutputValue extends unknown>(name: GenericName, execute: (params: InitOptionExecuteParams, error: CommandError) => GenericExecuteOutputValue | SymbolCommandError, params?: {
     description?: string;
     aliases?: readonly string[];
     hasValue?: boolean;

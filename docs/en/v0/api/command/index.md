@@ -28,6 +28,9 @@ import * as SC from "@duplojs/server-utils/command";
 ### [`exec`](/en/v0/api/command/exec)
 creates the root command, reads process arguments, and runs the command tree.
 
+### [`execOptions`](/en/v0/api/command/execOptions)
+only parses options from process arguments.
+
 ## Command builder
 
 ### [`create`](/en/v0/api/command/create)

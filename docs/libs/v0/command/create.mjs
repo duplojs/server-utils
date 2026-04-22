@@ -1,10 +1,22 @@
-import { A, O, DP } from '@duplojs/utils';
+import { unwrap } from '@duplojs/utils';
+import * as AA from '@duplojs/utils/array';
+import * as OO from '@duplojs/utils/object';
+import * as DDP from '@duplojs/utils/dataParser';
+import * as EE from '@duplojs/utils/either';
 import { createDuplojsServerUtilsKind } from '../kind.mjs';
-import { logHelp } from './help.mjs';
-import { CommandManyArgumentsError } from './errors.mjs';
-import { createBooleanOption } from './options/boolean.mjs';
 import { exitProcess } from '../common/exitProcess.mjs';
+import { createError, setErrorPath, popErrorPath, SymbolCommandError, addDataParserError, addIssue, interpretCommandError } from './error.mjs';
+import { logCommandHelp } from './help.mjs';
+import { createBooleanOption } from './options/boolean.mjs';
 
+function printError(commandError, error) {
+    if (!error) {
+        // eslint-disable-next-line no-console
+        console.error(interpretCommandError(commandError));
+        exitProcess(1);
+    }
+    return SymbolCommandError;
+}
 const commandKind = createDuplojsServerUtilsKind("command");
 const helpOption = createBooleanOption("help", { aliases: ["h"] });
 function create(...args) {
@@ -16,57 +28,96 @@ function create(...args) {
         description: params.description ?? null,
         options: params.options ?? [],
         subject: params.subject ?? null,
-        execute: async (args) => {
+        execute: async (args, error) => {
+            const commandError = error ?? createError(self.name);
+            const pathIndex = commandError.currentCommandPath.length;
             if (self.subject instanceof Array) {
                 for (const command of self.subject) {
                     if (args[0] === command.name) {
-                        await command.execute(A.shift(args));
-                        return;
+                        let result = undefined;
+                        setErrorPath(commandError, command.name, pathIndex);
+                        try {
+                            result = await command.execute(AA.shift(args), commandError);
+                        }
+                        finally {
+                            popErrorPath(commandError);
+                        }
+                        if (result === SymbolCommandError) {
+                            return printError(commandError, error);
+                        }
+                        return result;
                     }
                 }
             }
-            const help = helpOption.execute(args);
-            if (help.result) {
-                logHelp(self);
-                exitProcess(0);
-                return;
+            const help = helpOption.execute(args, commandError);
+            if (help === SymbolCommandError) {
+                return printError(commandError, error);
             }
-            const commandOptions = A.reduce(self.options, A.reduceFrom({
+            else if (help.result) {
+                logCommandHelp(self);
+                return void exitProcess(0);
+            }
+            const commandOptions = AA.reduce(self.options, AA.reduceFrom({
                 options: {},
                 restArgs: args,
-            }), ({ element: option, lastValue, next }) => {
-                const optionResult = option.execute(lastValue.restArgs);
+            }), ({ element: option, lastValue, next, exit }) => {
+                const optionResult = option.execute(lastValue.restArgs, commandError);
+                if (optionResult === SymbolCommandError) {
+                    return exit(SymbolCommandError);
+                }
                 return next({
-                    options: O.override(lastValue.options, {
+                    options: OO.override(lastValue.options, {
                         [option.name]: optionResult.result,
                     }),
                     restArgs: optionResult.argumentRest,
                 });
             });
+            if (commandOptions === SymbolCommandError) {
+                return printError(commandError, error);
+            }
             if (self.subject === null) {
                 await execute({ options: commandOptions.options });
             }
-            else if (DP.identifier(self.subject, DP.arrayKind)
-                || DP.identifier(self.subject, DP.tupleKind)) {
-                await execute({
-                    options: commandOptions.options,
-                    subject: self.subject.parseOrThrow(commandOptions.restArgs),
-                });
-            }
-            else if (DP.identifier(self.subject, DP.dataParserKind)) {
-                if (commandOptions.restArgs.length > 1) {
-                    throw new CommandManyArgumentsError(commandOptions.restArgs.length);
+            else if (DDP.identifier(self.subject, DDP.arrayKind)
+                || DDP.identifier(self.subject, DDP.tupleKind)) {
+                const subjectResult = self.subject.parse(commandOptions.restArgs);
+                if (EE.isLeft(subjectResult)) {
+                    addDataParserError(commandError, unwrap(subjectResult), {
+                        type: "subject",
+                    });
+                    return printError(commandError, error);
                 }
                 await execute({
                     options: commandOptions.options,
-                    subject: self.subject.parseOrThrow(commandOptions.restArgs),
+                    subject: unwrap(subjectResult),
+                });
+            }
+            else if (DDP.identifier(self.subject, DDP.dataParserKind)) {
+                if (commandOptions.restArgs.length > 1) {
+                    addIssue(commandError, {
+                        type: "command",
+                        expected: "exactly one subject argument",
+                        received: commandOptions.restArgs,
+                        message: `Expected exactly one subject argument, received ${commandOptions.restArgs.length}.`,
+                    });
+                    return printError(commandError, error);
+                }
+                const subjectResult = self.subject.parse(commandOptions.restArgs);
+                if (EE.isLeft(subjectResult)) {
+                    addDataParserError(commandError, unwrap(subjectResult), {
+                        type: "subject",
+                    });
+                    return printError(commandError, error);
+                }
+                await execute({
+                    options: commandOptions.options,
+                    subject: unwrap(subjectResult),
                 });
             }
             else {
                 await execute({});
             }
-            exitProcess(0);
-            return;
+            return void exitProcess(0);
         },
     });
     return self;

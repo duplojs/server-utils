@@ -1,4 +1,4 @@
-import { DP } from "@duplojs/utils";
+import * as DDP from "@duplojs/utils/dataParser";
 import { type Option } from "./base";
 import type { EligibleDataParser } from "../types";
 /**
@@ -44,8 +44,8 @@ export declare function createOption<GenericName extends string, GenericSchema e
     description?: string;
     aliases?: readonly string[];
     required: true;
-}): Option<GenericName, DP.Output<GenericSchema>>;
+}): Option<GenericName, DDP.Output<GenericSchema>>;
 export declare function createOption<GenericName extends string, GenericSchema extends EligibleDataParser>(name: GenericName, schema: GenericSchema, params?: {
     description?: string;
     aliases?: readonly string[];
-}): Option<GenericName, DP.Output<GenericSchema> | undefined>;
+}): Option<GenericName, DDP.Output<GenericSchema> | undefined>;

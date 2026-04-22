@@ -1,22 +1,27 @@
-import { A, isType, DP, hasSomeKinds, P, justReturn, pipe } from '@duplojs/utils';
-import { Printer } from './printer.mjs';
+import { justReturn, pipe, Printer, isType, hasSomeKinds } from '@duplojs/utils';
+import * as AA from '@duplojs/utils/array';
+import * as PP from '@duplojs/utils/pattern';
+import * as DDP from '@duplojs/utils/dataParser';
 
+/**
+ * @internal
+ */
 function formatSubject(subject) {
-    return P.match(subject)
-        .when(DP.identifier(DP.stringKind), justReturn("string"))
-        .when(DP.identifier(DP.numberKind), justReturn("number"))
-        .when(DP.identifier(DP.bigIntKind), justReturn("bigint"))
-        .when(DP.identifier(DP.dateKind), justReturn("date"))
-        .when(DP.identifier(DP.timeKind), justReturn("time"))
-        .when(DP.identifier(DP.nilKind), justReturn("null"))
-        .when(DP.identifier(DP.literalKind), (subject) => pipe(subject.definition.value, A.map(String), A.join(" | ")))
-        .when(DP.identifier(DP.templateLiteralKind), (subject) => pipe(subject.definition.template, A.map((part) => DP.identifier(part, DP.dataParserKind)
+    return PP.match(subject)
+        .when(DDP.identifier(DDP.stringKind), justReturn("string"))
+        .when(DDP.identifier(DDP.numberKind), justReturn("number"))
+        .when(DDP.identifier(DDP.bigIntKind), justReturn("bigint"))
+        .when(DDP.identifier(DDP.dateKind), justReturn("date"))
+        .when(DDP.identifier(DDP.timeKind), justReturn("time"))
+        .when(DDP.identifier(DDP.nilKind), justReturn("null"))
+        .when(DDP.identifier(DDP.literalKind), (subject) => pipe(subject.definition.value, AA.map(String), AA.join(" | ")))
+        .when(DDP.identifier(DDP.templateLiteralKind), (subject) => pipe(subject.definition.template, AA.map((part) => DDP.identifier(part, DDP.dataParserKind)
         ? `\${${formatSubject(part)}}`
-        : String(part)), A.join("")))
-        .when(DP.identifier(DP.unionKind), (subject) => pipe(subject.definition.options, A.map(formatSubject), A.join(" | ")))
-        .when(DP.identifier(DP.arrayKind), (subject) => `${formatSubject(subject.definition.element)}[]`)
-        .when(DP.identifier(DP.tupleKind), (subject) => {
-        const parts = pipe(subject.definition.shape, A.map(formatSubject), A.join(", "));
+        : String(part)), AA.join("")))
+        .when(DDP.identifier(DDP.unionKind), (subject) => pipe(subject.definition.options, AA.map(formatSubject), AA.join(" | ")))
+        .when(DDP.identifier(DDP.arrayKind), (subject) => `${formatSubject(subject.definition.element)}[]`)
+        .when(DDP.identifier(DDP.tupleKind), (subject) => {
+        const parts = pipe(subject.definition.shape, AA.map(formatSubject), AA.join(", "));
         const rest = subject.definition.rest
             ? `${parts ? ", " : ""}...${formatSubject(subject.definition.rest)}[]`
             : "";
@@ -24,54 +29,72 @@ function formatSubject(subject) {
     })
         .otherwise(justReturn("unknown"));
 }
-function logHelp(command, depth = 0) {
-    Printer.render([
-        Printer.indent(depth),
-        Printer.colorized("NAME:", "GREEN"),
-        command.name,
+/**
+ * @internal
+ */
+function renderOptionsHelp(options, depth) {
+    return Printer.renderParagraph([
+        `${Printer.indent(depth)}${Printer.colorizedBold("OPTIONS:", "blue")}`,
+        AA.map(options, (option) => Printer.renderParagraph([
+            AA.join([
+                Printer.indent(depth),
+                Printer.dash,
+                Printer.colorized(` ${option.name}: `, "cyan"),
+                Printer.colorized(pipe(option.aliases, AA.map((alias) => `-${alias},`), AA.push(`--${option.name}`), AA.join(" ")), "gray"),
+            ], ""),
+            option.description
+                && `${Printer.indent(depth)}  ${option.description}`,
+        ])),
     ]);
+}
+/**
+ * @internal
+ */
+function renderCommandHelp(command, depth) {
+    const logs = [];
+    logs.push(`${Printer.indent(depth)}${Printer.colorizedBold("NAME:", "green")}${command.name}`);
     if (command.description) {
-        Printer.render([
-            Printer.indent(depth + 1),
-            Printer.colorized("DESCRIPTION:", "CYAN"),
-            Printer.back,
-            Printer.indent(depth + 1),
-            command.description,
-        ]);
+        logs.push(Printer.renderParagraph([
+            `${Printer.indent(depth + 1)}${Printer.colorizedBold("DESCRIPTION:", "cyan")}`,
+            `${Printer.indent(depth + 1)}${command.description}`,
+        ]));
     }
-    if (A.minElements(command.options, 1)) {
-        const optionLines = [];
-        command.options.forEach((option, index) => {
-            optionLines.push(Printer.indent(depth + 1), Printer.dash, Printer.colorized(` ${option.name}: `, "cyan"), Printer.colorizedOption(option, "gray"));
-            if (option.description) {
-                optionLines.push(Printer.back, Printer.indent(depth + 1), `   ${option.description}`);
-            }
-            if (index < command.options.length - 1) {
-                optionLines.push(Printer.back);
-            }
-        });
-        Printer.render([
-            Printer.indent(depth + 1),
-            Printer.colorized("OPTIONS:", "BLUE"),
-            Printer.back,
-            ...optionLines,
-        ]);
+    if (AA.minElements(command.options, 1)) {
+        logs.push(renderOptionsHelp(command.options, depth + 1));
     }
     if (isType(command.subject, "array")) {
         for (const childCommand of command.subject) {
-            logHelp(childCommand, depth + 1);
+            logs.push(...renderCommandHelp(childCommand, depth + 1));
         }
     }
-    else if (DP.identifier(command.subject, DP.dataParserKind)) {
+    else if (DDP.identifier(command.subject, DDP.dataParserKind)) {
         const formattedSubject = formatSubject(command.subject);
-        Printer.render([
+        logs.push(AA.join([
             Printer.indent(depth + 1),
-            Printer.colorized("SUBJECT:", "MAGENTA"),
-            hasSomeKinds(command.subject, [DP.tupleKind, DP.arrayKind])
+            Printer.colorizedBold("SUBJECT:", "magenta"),
+            hasSomeKinds(command.subject, [DDP.tupleKind, DDP.arrayKind])
                 ? formattedSubject
                 : `<${formattedSubject}>`,
-        ]);
+        ], ""));
     }
+    return logs;
+}
+function logCommandHelp(command, depth = 0) {
+    // eslint-disable-next-line no-console
+    console.log(Printer.renderParagraph(renderCommandHelp(command, depth)));
+}
+/**
+ * @internal
+ */
+function renderExecOptionHelp(options, depth) {
+    return [
+        `${Printer.indent(depth)}${Printer.colorizedBold("OPTION HELP", "green")}`,
+        renderOptionsHelp(options, depth + 1),
+    ];
+}
+function logExecOptionHelp(options, depth = 0) {
+    // eslint-disable-next-line no-console
+    console.log(Printer.renderParagraph(renderExecOptionHelp(options, depth)));
 }
 
-export { logHelp };
+export { formatSubject, logCommandHelp, logExecOptionHelp, renderCommandHelp, renderExecOptionHelp, renderOptionsHelp };

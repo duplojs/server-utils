@@ -1,6 +1,6 @@
-import { type AnyFunction, type MaybePromise } from "@duplojs/utils";
+import type { AnyFunction, MaybePromise } from "@duplojs/utils";
 import { type CreateCommandExecuteParams, type CreateCommandParams, type Subject, create } from "./create";
-import { type Option } from "./options";
+import type { Option } from "./options";
 import { getProcessArguments } from "@scripts/common";
 
 /**

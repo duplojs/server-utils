@@ -29,6 +29,7 @@ export default [
 		files: ["jsDoc/**/*.ts", "docs/examples/**/*.ts"],
 		rules: {
 			"@stylistic/js/line-comment-position": "off",
+			"@stylistic/js/no-multiple-empty-lines": "off",
 		},
 	},
 	{

@@ -1,2 +1,4 @@
 import type { Command } from "./create";
-export declare function logHelp(command: Command, depth?: number): void;
+import type { Option } from "./options";
+export declare function logCommandHelp(command: Command, depth?: number): void;
+export declare function logExecOptionHelp(options: readonly Option[], depth?: number): void;

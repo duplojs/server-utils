@@ -1,4 +1,5 @@
-import { type A, DP } from "@duplojs/utils";
+import * as DDP from "@duplojs/utils/dataParser";
+import type * as AA from "@duplojs/utils/array";
 import { type Option } from "./base";
 import type { EligibleDataParser } from "../types";
 /**
@@ -52,8 +53,8 @@ export declare function createArrayOption<GenericName extends string, GenericSch
     required: true;
     separator?: string;
 }): Option<GenericName, [
-    ...A.CreateTuple<DP.Output<GenericSchema>, GenericMinValues>,
-    ...DP.Output<GenericSchema>[]
+    ...AA.CreateTuple<DDP.Output<GenericSchema>, GenericMinValues>,
+    ...DDP.Output<GenericSchema>[]
 ]>;
 export declare function createArrayOption<GenericName extends string, GenericSchema extends EligibleDataParser, GenericMinValues extends number>(name: GenericName, schema: GenericSchema, params?: {
     description?: string;
@@ -62,6 +63,6 @@ export declare function createArrayOption<GenericName extends string, GenericSch
     max?: number;
     separator?: string;
 }): Option<GenericName, [
-    ...A.CreateTuple<DP.Output<GenericSchema>, GenericMinValues>,
-    ...DP.Output<GenericSchema>[]
+    ...AA.CreateTuple<DDP.Output<GenericSchema>, GenericMinValues>,
+    ...DDP.Output<GenericSchema>[]
 ] | undefined>;
