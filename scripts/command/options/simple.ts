@@ -1,4 +1,6 @@
-import { DP, E, unwrap } from "@duplojs/utils";
+import { unwrap } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
+import * as DDP from "@duplojs/utils/dataParser";
 import { initOption, type Option } from "./base";
 import type { EligibleDataParser } from "../types";
 import { addIssue, addDataParserError } from "../error";
@@ -17,7 +19,7 @@ export function createOption<
 		aliases?: readonly string[];
 		required: true;
 	},
-): Option<GenericName, DP.Output<GenericSchema>>;
+): Option<GenericName, DDP.Output<GenericSchema>>;
 
 export function createOption<
 	GenericName extends string,
@@ -29,11 +31,11 @@ export function createOption<
 		description?: string;
 		aliases?: readonly string[];
 	},
-): Option<GenericName, DP.Output<GenericSchema> | undefined>;
+): Option<GenericName, DDP.Output<GenericSchema> | undefined>;
 
 export function createOption(
 	name: string,
-	schema: DP.DataParser,
+	schema: DDP.DataParser,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -42,7 +44,7 @@ export function createOption(
 ) {
 	const dataParser = params?.required
 		? schema
-		: DP.optional(schema);
+		: DDP.optional(schema);
 
 	return initOption(
 		name,
@@ -62,7 +64,7 @@ export function createOption(
 
 			const result = dataParser.parse(value);
 
-			if (E.isLeft(result)) {
+			if (EE.isLeft(result)) {
 				return addDataParserError(
 					error,
 					unwrap(result),

@@ -59,12 +59,47 @@ describe("help", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		DServerCommand.logHelp(command, 1);
+		DServerCommand.logCommandHelp(command, 1);
 
 		expect(logSpy).toHaveBeenCalledTimes(1);
 		expect(logSpy.mock.calls[0]).toEqual([
 			Printer.renderParagraph(
 				DServerCommand.renderCommandHelp(command, 1),
+			),
+		]);
+	});
+
+	it("renders execOption help with a dedicated title and options block", () => {
+		const lines = DServerCommand.renderExecOptionHelp(
+			[
+				DServerCommand.createBooleanOption("help", { aliases: ["h"] }),
+				DServerCommand.createBooleanOption("verbose", {
+					aliases: ["v"],
+					description: "Enable verbose mode",
+				}),
+			],
+			1,
+		);
+
+		expect(lines).toContain(
+			`${Printer.indent(1)}${Printer.colorizedBold("OPTION HELP", "green")}`,
+		);
+		expect(lines.join("\n")).toContain(Printer.colorizedBold("OPTIONS:", "blue"));
+		expect(lines.join("\n")).toContain("--help");
+		expect(lines.join("\n")).toContain("--verbose");
+		expect(lines.join("\n")).toContain("Enable verbose mode");
+	});
+
+	it("logs execOption help lines", () => {
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const options = [DServerCommand.createBooleanOption("help", { aliases: ["h"] })];
+
+		DServerCommand.logExecOptionHelp(options, 1);
+
+		expect(logSpy).toHaveBeenCalledTimes(1);
+		expect(logSpy.mock.calls[0]).toEqual([
+			Printer.renderParagraph(
+				DServerCommand.renderExecOptionHelp(options, 1),
 			),
 		]);
 	});

@@ -1,4 +1,8 @@
-import { type A, DP, E, pipe, S, unwrap } from "@duplojs/utils";
+import { pipe, unwrap } from "@duplojs/utils";
+import * as SS from "@duplojs/utils/string";
+import * as DDP from "@duplojs/utils/dataParser";
+import type * as AA from "@duplojs/utils/array";
+import * as EE from "@duplojs/utils/either";
 import { initOption, type Option } from "./base";
 import type { EligibleDataParser } from "../types";
 import { addIssue, addDataParserError } from "../error";
@@ -26,11 +30,11 @@ export function createArrayOption<
 ): Option<
 	GenericName,
 	[
-		...A.CreateTuple<
-			DP.Output<GenericSchema>,
+		...AA.CreateTuple<
+			DDP.Output<GenericSchema>,
 			GenericMinValues
 		>,
-		...DP.Output<GenericSchema>[],
+		...DDP.Output<GenericSchema>[],
 	]
 >;
 
@@ -51,18 +55,18 @@ export function createArrayOption<
 ): Option<
 	GenericName,
 	| [
-		...A.CreateTuple<
-			DP.Output<GenericSchema>,
+		...AA.CreateTuple<
+			DDP.Output<GenericSchema>,
 			GenericMinValues
 		>,
-		...DP.Output<GenericSchema>[],
+		...DDP.Output<GenericSchema>[],
 	]
 	| undefined
 >;
 
 export function createArrayOption(
 	name: string,
-	schema: DP.DataParser,
+	schema: DDP.DataParser,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -74,16 +78,16 @@ export function createArrayOption(
 ) {
 	const dataParser = pipe(
 		schema,
-		DP.array,
+		DDP.array,
 		(schema) => params?.min
-			? schema.addChecker(DP.checkerArrayMin(params.min))
+			? schema.addChecker(DDP.checkerArrayMin(params.min))
 			: schema,
 		(schema) => params?.max
-			? schema.addChecker(DP.checkerArrayMax(params.max))
+			? schema.addChecker(DDP.checkerArrayMax(params.max))
 			: schema,
 		(schema) => params?.required
 			? schema
-			: DP.optional(schema),
+			: DDP.optional(schema),
 	);
 
 	return initOption(
@@ -103,12 +107,12 @@ export function createArrayOption(
 			}
 
 			const values = value !== undefined
-				? S.split(value, params?.separator ?? defaultSeparator)
+				? SS.split(value, params?.separator ?? defaultSeparator)
 				: undefined;
 
 			const result = dataParser.parse(values);
 
-			if (E.isLeft(result)) {
+			if (EE.isLeft(result)) {
 				return addDataParserError(
 					error,
 					unwrap(result),

@@ -1,25 +1,29 @@
-import { type SimplifyTopLevel, type Kind, type AnyFunction, type RemoveKind, A, DP, E, unwrap, type MaybePromise, O } from "@duplojs/utils";
+import { type SimplifyTopLevel, type Kind, type AnyFunction, type RemoveKind, unwrap, type MaybePromise } from "@duplojs/utils";
+import * as AA from "@duplojs/utils/array";
+import * as OO from "@duplojs/utils/object";
+import * as DDP from "@duplojs/utils/dataParser";
+import * as EE from "@duplojs/utils/either";
 import { createBooleanOption, type Option } from "./options";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import type { EligibleDataParser } from "./types";
 import { exitProcess } from "@scripts/common/exitProcess";
-import { addIssue, addDataParserError, createError, interpretError, popErrorPath, setErrorPath, SymbolCommandError, type CommandError } from "./error";
-import { logHelp } from "./help";
+import { addIssue, addDataParserError, createError, interpretCommandError, popErrorPath, setErrorPath, SymbolCommandError, type CommandError } from "./error";
+import { logCommandHelp } from "./help";
 
 export type Subject = (
 	| EligibleDataParser
-	| DP.DataParserArray<
+	| DDP.DataParserArray<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionArray, "element">
+			& Omit<DDP.DataParserDefinitionArray, "element">
 			& {
 				readonly element: EligibleDataParser;
 			}
 		>
 	>
-	| DP.AdvancedContract<
-		DP.DataParserTuple<
+	| DDP.AdvancedContract<
+		DDP.DataParserTuple<
 			SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionTuple, "shape" | "rest">
+			& Omit<DDP.DataParserDefinitionTuple, "shape" | "rest">
 			& {
 				readonly shape: readonly [
 					EligibleDataParser,
@@ -35,7 +39,7 @@ export type Subject = (
 function printError(commandError: CommandError, error?: CommandError): SymbolCommandError {
 	if (!error) {
 		// eslint-disable-next-line no-console
-		console.error(interpretError(commandError));
+		console.error(interpretCommandError(commandError));
 		exitProcess(1);
 	}
 
@@ -80,7 +84,7 @@ export interface CreateCommandExecuteParams<
 			SymbolCommandError
 		>["result"]
 	};
-	subject: DP.Output<GenericSubject>;
+	subject: DDP.Output<GenericSubject>;
 }
 
 /**
@@ -129,7 +133,7 @@ export function create(
 
 							setErrorPath(commandError, command.name, pathIndex);
 							try {
-								result = await command.execute(A.shift(args), commandError);
+								result = await command.execute(AA.shift(args), commandError);
 							} finally {
 								popErrorPath(commandError);
 							}
@@ -148,13 +152,13 @@ export function create(
 				if (help === SymbolCommandError) {
 					return printError(commandError, error);
 				} else if (help.result) {
-					logHelp(self);
+					logCommandHelp(self);
 					return void exitProcess(0);
 				}
 
-				const commandOptions = A.reduce(
+				const commandOptions = AA.reduce(
 					self.options,
-					A.reduceFrom<{
+					AA.reduceFrom<{
 						options: Record<string, unknown>;
 						restArgs: readonly string[];
 					}>({
@@ -169,7 +173,7 @@ export function create(
 						}
 
 						return next({
-							options: O.override(
+							options: OO.override(
 								lastValue.options,
 								{
 									[option.name]: optionResult.result,
@@ -187,12 +191,12 @@ export function create(
 				if (self.subject === null) {
 					await execute({ options: commandOptions.options });
 				} else if (
-					DP.identifier(self.subject, DP.arrayKind)
-					|| DP.identifier(self.subject, DP.tupleKind)
+					DDP.identifier(self.subject, DDP.arrayKind)
+					|| DDP.identifier(self.subject, DDP.tupleKind)
 				) {
 					const subjectResult = self.subject.parse(commandOptions.restArgs);
 
-					if (E.isLeft(subjectResult)) {
+					if (EE.isLeft(subjectResult)) {
 						addDataParserError(
 							commandError,
 							unwrap(subjectResult),
@@ -208,7 +212,7 @@ export function create(
 						options: commandOptions.options,
 						subject: unwrap(subjectResult),
 					});
-				} else if (DP.identifier(self.subject, DP.dataParserKind)) {
+				} else if (DDP.identifier(self.subject, DDP.dataParserKind)) {
 					if (commandOptions.restArgs.length > 1) {
 						addIssue(
 							commandError,
@@ -225,7 +229,7 @@ export function create(
 
 					const subjectResult = self.subject.parse(commandOptions.restArgs);
 
-					if (E.isLeft(subjectResult)) {
+					if (EE.isLeft(subjectResult)) {
 						addDataParserError(
 							commandError,
 							unwrap(subjectResult),

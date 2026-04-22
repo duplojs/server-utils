@@ -1,4 +1,5 @@
-import { type DP, Printer } from "@duplojs/utils";
+import { Printer } from "@duplojs/utils";
+import type * as DDP from "@duplojs/utils/dataParser";
 
 export interface CommandErrorIssue {
 	readonly type: "command" | "option" | "subject";
@@ -61,7 +62,7 @@ export function popErrorPath(
 
 export function addDataParserError(
 	error: CommandError,
-	parseError: DP.DataParserError,
+	parseError: DDP.DataParserError,
 	params: {
 		type: "option" | "subject";
 		target?: string;
@@ -84,7 +85,7 @@ export function addDataParserError(
 	return SymbolCommandError;
 }
 
-export function interpretError(
+export function interpretCommandError(
 	error: CommandError,
 ): string {
 	return Printer.renderParagraph(
@@ -118,6 +119,44 @@ export function interpretError(
 							[
 								Printer.indent(1),
 								Printer.colorizedBold("SUBJECT:", "magenta"),
+							],
+							"",
+						),
+						Printer.renderLine(
+							[
+								Printer.colorizedBold("✖", "red"),
+								issue.parserPath && Printer.colorizedBold(issue.parserPath, "cyan"),
+								"expected",
+								Printer.colorized(issue.expected, "green"),
+								"but received",
+								Printer.colorized(Printer.stringify(issue.received), "red"),
+							],
+						),
+						issue.message !== undefined && `${Printer.indent(1)}↳ ${issue.message}`,
+					],
+				),
+			),
+			error.issues.length === 0 && "No issue found",
+		],
+	);
+}
+
+export function interpretExecOptionError(
+	error: CommandError,
+): string {
+	return Printer.renderParagraph(
+		[
+			Printer.colorizedBold("Invalid options", "red"),
+			error.issues.map(
+				(issue) => Printer.renderParagraph(
+					[
+						issue.type === "option"
+						&& issue.target
+						&& Printer.render(
+							[
+								Printer.indent(1),
+								Printer.colorizedBold("OPTION: ", "magenta"),
+								`--${issue.target}`,
 							],
 							"",
 						),
