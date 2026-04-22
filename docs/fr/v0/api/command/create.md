@@ -1,8 +1,8 @@
 ---
 outline: [2, 3]
 prev:
-  text: "exec"
-  link: "/fr/v0/api/command/exec"
+  text: "execOptions"
+  link: "/fr/v0/api/command/execOptions"
 next:
   text: "createBooleanOption"
   link: "/fr/v0/api/command/createBooleanOption"

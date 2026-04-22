@@ -1,6 +1,6 @@
-import { type MaybePromise } from "@duplojs/utils";
+import type { MaybePromise } from "@duplojs/utils";
 import { type CreateCommandExecuteParams, type CreateCommandParams, type Subject } from "./create";
-import { type Option } from "./options";
+import type { Option } from "./options";
 /**
  * Execute a root command from process arguments.
  * 

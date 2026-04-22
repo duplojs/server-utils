@@ -1,9 +1,11 @@
-import { type SimplifyTopLevel, type Kind, DP, type MaybePromise } from "@duplojs/utils";
+import { type SimplifyTopLevel, type Kind, type MaybePromise } from "@duplojs/utils";
+import * as DDP from "@duplojs/utils/dataParser";
 import { type Option } from "./options";
 import type { EligibleDataParser } from "./types";
-export type Subject = (EligibleDataParser | DP.DataParserArray<SimplifyTopLevel<Omit<DP.DataParserDefinitionArray, "element"> & {
+import { SymbolCommandError, type CommandError } from "./error";
+export type Subject = (EligibleDataParser | DDP.DataParserArray<SimplifyTopLevel<Omit<DDP.DataParserDefinitionArray, "element"> & {
     readonly element: EligibleDataParser;
-}>> | DP.AdvancedContract<DP.DataParserTuple<SimplifyTopLevel<Omit<DP.DataParserDefinitionTuple, "shape" | "rest"> & {
+}>> | DDP.AdvancedContract<DDP.DataParserTuple<SimplifyTopLevel<Omit<DDP.DataParserDefinitionTuple, "shape" | "rest"> & {
     readonly shape: readonly [
         EligibleDataParser,
         ...EligibleDataParser[]
@@ -16,7 +18,7 @@ export interface Command extends Kind<typeof commandKind.definition> {
     readonly description: string | null;
     readonly subject: Subject | null | readonly Command[];
     readonly options: readonly Option[];
-    execute(args: readonly string[]): MaybePromise<void>;
+    execute(args: readonly string[], error?: CommandError): Promise<undefined | SymbolCommandError>;
 }
 export interface CreateCommandParams<GenericOptions extends readonly Option[] = [], GenericSubject extends Subject = Subject> {
     description?: string;
@@ -25,11 +27,11 @@ export interface CreateCommandParams<GenericOptions extends readonly Option[] = 
 }
 export interface CreateCommandExecuteParams<GenericOptions extends readonly Option[], GenericSubject extends Subject> {
     options: {
-        [GenericOptionName in GenericOptions[number]["name"]]: ReturnType<Extract<GenericOptions[number], {
+        [GenericOptionName in GenericOptions[number]["name"]]: Exclude<ReturnType<Extract<GenericOptions[number], {
             name: GenericOptionName;
-        }>["execute"]>["result"];
+        }>["execute"]>, SymbolCommandError>["result"];
     };
-    subject: DP.Output<GenericSubject>;
+    subject: DDP.Output<GenericSubject>;
 }
 /**
  * Create a command node.

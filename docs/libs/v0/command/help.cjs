@@ -1,24 +1,50 @@
 'use strict';
 
 var utils = require('@duplojs/utils');
-var printer = require('./printer.cjs');
+var AA = require('@duplojs/utils/array');
+var PP = require('@duplojs/utils/pattern');
+var DDP = require('@duplojs/utils/dataParser');
 
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var AA__namespace = /*#__PURE__*/_interopNamespaceDefault(AA);
+var PP__namespace = /*#__PURE__*/_interopNamespaceDefault(PP);
+var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
+
+/**
+ * @internal
+ */
 function formatSubject(subject) {
-    return utils.P.match(subject)
-        .when(utils.DP.identifier(utils.DP.stringKind), utils.justReturn("string"))
-        .when(utils.DP.identifier(utils.DP.numberKind), utils.justReturn("number"))
-        .when(utils.DP.identifier(utils.DP.bigIntKind), utils.justReturn("bigint"))
-        .when(utils.DP.identifier(utils.DP.dateKind), utils.justReturn("date"))
-        .when(utils.DP.identifier(utils.DP.timeKind), utils.justReturn("time"))
-        .when(utils.DP.identifier(utils.DP.nilKind), utils.justReturn("null"))
-        .when(utils.DP.identifier(utils.DP.literalKind), (subject) => utils.pipe(subject.definition.value, utils.A.map(String), utils.A.join(" | ")))
-        .when(utils.DP.identifier(utils.DP.templateLiteralKind), (subject) => utils.pipe(subject.definition.template, utils.A.map((part) => utils.DP.identifier(part, utils.DP.dataParserKind)
+    return PP__namespace.match(subject)
+        .when(DDP__namespace.identifier(DDP__namespace.stringKind), utils.justReturn("string"))
+        .when(DDP__namespace.identifier(DDP__namespace.numberKind), utils.justReturn("number"))
+        .when(DDP__namespace.identifier(DDP__namespace.bigIntKind), utils.justReturn("bigint"))
+        .when(DDP__namespace.identifier(DDP__namespace.dateKind), utils.justReturn("date"))
+        .when(DDP__namespace.identifier(DDP__namespace.timeKind), utils.justReturn("time"))
+        .when(DDP__namespace.identifier(DDP__namespace.nilKind), utils.justReturn("null"))
+        .when(DDP__namespace.identifier(DDP__namespace.literalKind), (subject) => utils.pipe(subject.definition.value, AA__namespace.map(String), AA__namespace.join(" | ")))
+        .when(DDP__namespace.identifier(DDP__namespace.templateLiteralKind), (subject) => utils.pipe(subject.definition.template, AA__namespace.map((part) => DDP__namespace.identifier(part, DDP__namespace.dataParserKind)
         ? `\${${formatSubject(part)}}`
-        : String(part)), utils.A.join("")))
-        .when(utils.DP.identifier(utils.DP.unionKind), (subject) => utils.pipe(subject.definition.options, utils.A.map(formatSubject), utils.A.join(" | ")))
-        .when(utils.DP.identifier(utils.DP.arrayKind), (subject) => `${formatSubject(subject.definition.element)}[]`)
-        .when(utils.DP.identifier(utils.DP.tupleKind), (subject) => {
-        const parts = utils.pipe(subject.definition.shape, utils.A.map(formatSubject), utils.A.join(", "));
+        : String(part)), AA__namespace.join("")))
+        .when(DDP__namespace.identifier(DDP__namespace.unionKind), (subject) => utils.pipe(subject.definition.options, AA__namespace.map(formatSubject), AA__namespace.join(" | ")))
+        .when(DDP__namespace.identifier(DDP__namespace.arrayKind), (subject) => `${formatSubject(subject.definition.element)}[]`)
+        .when(DDP__namespace.identifier(DDP__namespace.tupleKind), (subject) => {
+        const parts = utils.pipe(subject.definition.shape, AA__namespace.map(formatSubject), AA__namespace.join(", "));
         const rest = subject.definition.rest
             ? `${parts ? ", " : ""}...${formatSubject(subject.definition.rest)}[]`
             : "";
@@ -26,54 +52,77 @@ function formatSubject(subject) {
     })
         .otherwise(utils.justReturn("unknown"));
 }
-function logHelp(command, depth = 0) {
-    printer.Printer.render([
-        printer.Printer.indent(depth),
-        printer.Printer.colorized("NAME:", "GREEN"),
-        command.name,
+/**
+ * @internal
+ */
+function renderOptionsHelp(options, depth) {
+    return utils.Printer.renderParagraph([
+        `${utils.Printer.indent(depth)}${utils.Printer.colorizedBold("OPTIONS:", "blue")}`,
+        AA__namespace.map(options, (option) => utils.Printer.renderParagraph([
+            AA__namespace.join([
+                utils.Printer.indent(depth),
+                utils.Printer.dash,
+                utils.Printer.colorized(` ${option.name}: `, "cyan"),
+                utils.Printer.colorized(utils.pipe(option.aliases, AA__namespace.map((alias) => `-${alias},`), AA__namespace.push(`--${option.name}`), AA__namespace.join(" ")), "gray"),
+            ], ""),
+            option.description
+                && `${utils.Printer.indent(depth)}  ${option.description}`,
+        ])),
     ]);
+}
+/**
+ * @internal
+ */
+function renderCommandHelp(command, depth) {
+    const logs = [];
+    logs.push(`${utils.Printer.indent(depth)}${utils.Printer.colorizedBold("NAME:", "green")}${command.name}`);
     if (command.description) {
-        printer.Printer.render([
-            printer.Printer.indent(depth + 1),
-            printer.Printer.colorized("DESCRIPTION:", "CYAN"),
-            printer.Printer.back,
-            printer.Printer.indent(depth + 1),
-            command.description,
-        ]);
+        logs.push(utils.Printer.renderParagraph([
+            `${utils.Printer.indent(depth + 1)}${utils.Printer.colorizedBold("DESCRIPTION:", "cyan")}`,
+            `${utils.Printer.indent(depth + 1)}${command.description}`,
+        ]));
     }
-    if (utils.A.minElements(command.options, 1)) {
-        const optionLines = [];
-        command.options.forEach((option, index) => {
-            optionLines.push(printer.Printer.indent(depth + 1), printer.Printer.dash, printer.Printer.colorized(` ${option.name}: `, "cyan"), printer.Printer.colorizedOption(option, "gray"));
-            if (option.description) {
-                optionLines.push(printer.Printer.back, printer.Printer.indent(depth + 1), `   ${option.description}`);
-            }
-            if (index < command.options.length - 1) {
-                optionLines.push(printer.Printer.back);
-            }
-        });
-        printer.Printer.render([
-            printer.Printer.indent(depth + 1),
-            printer.Printer.colorized("OPTIONS:", "BLUE"),
-            printer.Printer.back,
-            ...optionLines,
-        ]);
+    if (AA__namespace.minElements(command.options, 1)) {
+        logs.push(renderOptionsHelp(command.options, depth + 1));
     }
     if (utils.isType(command.subject, "array")) {
         for (const childCommand of command.subject) {
-            logHelp(childCommand, depth + 1);
+            logs.push(...renderCommandHelp(childCommand, depth + 1));
         }
     }
-    else if (utils.DP.identifier(command.subject, utils.DP.dataParserKind)) {
+    else if (DDP__namespace.identifier(command.subject, DDP__namespace.dataParserKind)) {
         const formattedSubject = formatSubject(command.subject);
-        printer.Printer.render([
-            printer.Printer.indent(depth + 1),
-            printer.Printer.colorized("SUBJECT:", "MAGENTA"),
-            utils.hasSomeKinds(command.subject, [utils.DP.tupleKind, utils.DP.arrayKind])
+        logs.push(AA__namespace.join([
+            utils.Printer.indent(depth + 1),
+            utils.Printer.colorizedBold("SUBJECT:", "magenta"),
+            utils.hasSomeKinds(command.subject, [DDP__namespace.tupleKind, DDP__namespace.arrayKind])
                 ? formattedSubject
                 : `<${formattedSubject}>`,
-        ]);
+        ], ""));
     }
+    return logs;
+}
+function logCommandHelp(command, depth = 0) {
+    // eslint-disable-next-line no-console
+    console.log(utils.Printer.renderParagraph(renderCommandHelp(command, depth)));
+}
+/**
+ * @internal
+ */
+function renderExecOptionHelp(options, depth) {
+    return [
+        `${utils.Printer.indent(depth)}${utils.Printer.colorizedBold("OPTION HELP", "green")}`,
+        renderOptionsHelp(options, depth + 1),
+    ];
+}
+function logExecOptionHelp(options, depth = 0) {
+    // eslint-disable-next-line no-console
+    console.log(utils.Printer.renderParagraph(renderExecOptionHelp(options, depth)));
 }
 
-exports.logHelp = logHelp;
+exports.formatSubject = formatSubject;
+exports.logCommandHelp = logCommandHelp;
+exports.logExecOptionHelp = logExecOptionHelp;
+exports.renderCommandHelp = renderCommandHelp;
+exports.renderExecOptionHelp = renderExecOptionHelp;
+exports.renderOptionsHelp = renderOptionsHelp;

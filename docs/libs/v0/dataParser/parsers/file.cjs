@@ -28,22 +28,21 @@ function file(params, definition) {
             if (self.definition.checkExist
                 || self.definition.maxSize !== undefined
                 || self.definition.minSize !== undefined) {
-                return utils.DP.SymbolDataParserErrorPromiseIssue;
+                return utils.DP.addIssue(error, "async data parser", data, self.definition.errorMessage);
             }
             let fileInterface$1 = data;
             if (self.definition.coerce && typeof fileInterface$1 === "string") {
                 fileInterface$1 = fileInterface.createFileInterface(fileInterface$1);
             }
             if (!fileInterface.isFileInterface(fileInterface$1)) {
-                return utils.DP.SymbolDataParserErrorIssue;
+                return utils.DP.addIssue(error, "file", data, self.definition.errorMessage);
             }
             if (self.definition.mimeType
                 && !self
                     .definition
                     .mimeType
                     .test(fileInterface$1.getMimeType() ?? "")) {
-                utils.DP.addIssue(error, self, data, "Wrong mimeType.");
-                return utils.DP.SymbolDataParserError;
+                return utils.DP.addIssue(error, `file with mime type matching ${self.definition.mimeType.source}`, data, "Wrong mimeType.");
             }
             return fileInterface$1;
         },
@@ -53,38 +52,33 @@ function file(params, definition) {
                 fileInterface$1 = fileInterface.createFileInterface(fileInterface$1);
             }
             if (!fileInterface.isFileInterface(fileInterface$1)) {
-                return utils.DP.SymbolDataParserErrorIssue;
+                return utils.DP.addIssue(error, "file", data, self.definition.errorMessage);
             }
             if (self.definition.mimeType
                 && !self
                     .definition
                     .mimeType
                     .test(fileInterface$1.getMimeType() ?? "")) {
-                utils.DP.addIssue(error, self, data, "Wrong mimeType.");
-                return utils.DP.SymbolDataParserError;
+                return utils.DP.addIssue(error, `file with mime type matching ${self.definition.mimeType.source}`, fileInterface$1, "Wrong mimeType.");
             }
             if (self.definition.checkExist
                 || self.definition.maxSize !== undefined
                 || self.definition.minSize !== undefined) {
                 const resultStats = await fileInterface$1.stat();
                 if (utils.E.isLeft(resultStats)) {
-                    utils.DP.addIssue(error, self, data, "File not exist.");
-                    return utils.DP.SymbolDataParserError;
+                    return utils.DP.addIssue(error, "existing file", fileInterface$1, "File not exist.");
                 }
                 const stat = utils.unwrap(resultStats);
                 if (!stat.isFile) {
-                    utils.DP.addIssue(error, self, data, "Is not file.");
-                    return utils.DP.SymbolDataParserError;
+                    return utils.DP.addIssue(error, "file", stat, "Is not file.");
                 }
                 if (self.definition.maxSize !== undefined
                     && stat.sizeBytes > self.definition.maxSize) {
-                    utils.DP.addIssue(error, self, data, "File is to large.");
-                    return utils.DP.SymbolDataParserError;
+                    return utils.DP.addIssue(error, `file with sizeBytes <= ${self.definition.maxSize}`, stat.sizeBytes, "File is to large.");
                 }
                 if (self.definition.minSize !== undefined
                     && stat.sizeBytes < self.definition.minSize) {
-                    utils.DP.addIssue(error, self, data, "File is to small.");
-                    return utils.DP.SymbolDataParserError;
+                    return utils.DP.addIssue(error, `file with sizeBytes >= ${self.definition.minSize}`, stat.sizeBytes, "File is to small.");
                 }
             }
             return fileInterface$1;

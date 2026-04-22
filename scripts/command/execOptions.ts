@@ -1,3 +1,4 @@
+import type { SimplifyTopLevel } from "@duplojs/utils";
 import * as AA from "@duplojs/utils/array";
 import * as OO from "@duplojs/utils/object";
 import { createError, interpretExecOptionError, SymbolCommandError } from "./error";
@@ -5,22 +6,22 @@ import { logExecOptionHelp } from "./help";
 import { createBooleanOption, type Option } from "./options";
 import { exitProcess, getProcessArguments } from "@scripts/common";
 
-type ComputeResult<
-	GenericOptions extends [Option, ...Option[]],
-> = {
-	[GenericOptionName in GenericOptions[number]["name"]]: Exclude<
-		ReturnType<
-			Extract<
-				GenericOptions[number],
-				{ name: GenericOptionName }
-			>["execute"]
-		>,
-		SymbolCommandError
-	>["result"]
-};
-
 const helpOption = createBooleanOption("help", { aliases: ["h"] });
 
+type ComputeResult<
+	GenericOptions extends [Option, ...Option[]],
+> = SimplifyTopLevel<{
+	[GenericOption in GenericOptions[number] as GenericOption extends Option<infer GenericName, unknown>
+		? GenericName
+		: never
+	]: GenericOption extends Option<string, infer GenericResult>
+		? GenericResult
+		: never
+}>;
+
+/**
+ * {@include command/execOptions/index.md}
+ */
 export function execOptions<
 	GenericOptions extends [Option, ...Option[]],
 >(

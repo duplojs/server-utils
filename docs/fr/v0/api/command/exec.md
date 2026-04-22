@@ -4,8 +4,8 @@ prev:
   text: "Command"
   link: "/fr/v0/api/command/"
 next:
-  text: "create"
-  link: "/fr/v0/api/command/create"
+  text: "execOptions"
+  link: "/fr/v0/api/command/execOptions"
 description: "Lance une commande CLI à partir des arguments du runtime."
 ---
 
