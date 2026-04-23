@@ -1,59 +1,25 @@
-import type { DP, SimplifyTopLevel } from "@duplojs/utils";
+import type { SimplifyTopLevel } from "@duplojs/utils";
+import type * as DDP from "@duplojs/utils/dataParser";
 
 export type EligibleDataParser = (
-	| DP.DataParserString
-	| DP.DataParserNumber<
+	| DDP.DataParserString
+	| DDP.DataParserNumber
+	| DDP.DataParserBigInt
+	| DDP.DataParserDate
+	| DDP.DataParserTime
+	| DDP.DataParserNil
+	| DDP.DataParserTemplateLiteral
+	| DDP.DataParserLiteral<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionNumber, "coerce">
-			& {
-				readonly coerce: true;
-			}
-		>
-	>
-	| DP.DataParserBigInt<
-		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionBigInt, "coerce">
-			& {
-				readonly coerce: true;
-			}
-		>
-	>
-	| DP.DataParserDate<
-		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionDate, "coerce">
-			& {
-				readonly coerce: true;
-			}
-		>
-	>
-	| DP.DataParserTime<
-		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionTime, "coerce">
-			& {
-				readonly coerce: true;
-			}
-		>
-	>
-	| DP.DataParserLiteral<
-		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionLiteral, "value">
+			& Omit<DDP.DataParserDefinitionLiteral, "value">
 			& {
 				readonly value: readonly string[];
 			}
 		>
 	>
-	| DP.DataParserNil<
+	| DDP.DataParserUnion<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionNil, "coerce">
-			& {
-				readonly coerce: true;
-			}
-		>
-	>
-	| DP.DataParserTemplateLiteral
-	| DP.DataParserUnion<
-		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionUnion, "options">
+			& Omit<DDP.DataParserDefinitionUnion, "options">
 			& {
 				readonly options: readonly [
 					EligibleDataParser,
@@ -62,26 +28,26 @@ export type EligibleDataParser = (
 			}
 		>
 	>
-	| DP.DataParserTransform<
+	| DDP.DataParserTransform<
 		SimplifyTopLevel<
-				& Omit<DP.DataParserDefinitionTransform, "inner">
+				& Omit<DDP.DataParserDefinitionTransform, "inner">
 				& {
 					readonly inner: EligibleDataParser;
 				}
 		>
 	>
-	| DP.DataParserPipe<
+	| DDP.DataParserPipe<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionPipe, "input" | "output">
+			& Omit<DDP.DataParserDefinitionPipe, "input" | "output">
 			& {
 				readonly input: EligibleDataParser;
 				readonly output: EligibleDataParser;
 			}
 		>
 	>
-	| DP.DataParserOptional<
+	| DDP.DataParserOptional<
 		SimplifyTopLevel<
-			& Omit<DP.DataParserDefinitionOptional, "inner">
+			& Omit<DDP.DataParserDefinitionOptional, "inner">
 			& {
 				readonly inner: EligibleDataParser;
 			}

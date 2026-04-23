@@ -1,17 +1,18 @@
-import { type SimplifyTopLevel, type Kind, type AnyFunction, type RemoveKind, unwrap, type MaybePromise } from "@duplojs/utils";
+import { hasSomeKinds, type SimplifyTopLevel, type Kind, type AnyFunction, type RemoveKind, unwrap, type MaybePromise } from "@duplojs/utils";
 import * as AA from "@duplojs/utils/array";
 import * as OO from "@duplojs/utils/object";
 import * as DDP from "@duplojs/utils/dataParser";
 import * as EE from "@duplojs/utils/either";
+import * as CC from "@duplojs/utils/clean";
 import { createBooleanOption, type Option } from "./options";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
-import type { EligibleDataParser } from "./types";
+import type { EligibleCleanType, EligibleContract, EligibleDataParser, ComputeEligibleCleanType } from "./types";
 import { exitProcess } from "@scripts/common/exitProcess";
 import { addIssue, addDataParserError, createError, interpretCommandError, popErrorPath, setErrorPath, SymbolCommandError, type CommandError } from "./error";
 import { logCommandHelp } from "./help";
 
 export type Subject = (
-	| EligibleDataParser
+	| EligibleContract
 	| DDP.DataParserArray<
 		SimplifyTopLevel<
 			& Omit<DDP.DataParserDefinitionArray, "element">
@@ -35,6 +36,70 @@ export type Subject = (
 		>
 	>
 );
+
+type ComputeSubject<
+	GenericSubject extends Subject,
+> = [GenericSubject] extends [DDP.DataParser]
+	? DDP.Output<GenericSubject>
+	: [GenericSubject] extends [EligibleCleanType]
+		? ComputeEligibleCleanType<GenericSubject>
+		: never;
+
+function commandSubjectToDataParser(contract: Subject): DDP.DataParser {
+	if (
+		hasSomeKinds(contract, [
+			DDP.stringKind,
+			DDP.numberKind,
+			DDP.bigIntKind,
+			DDP.dateKind,
+			DDP.timeKind,
+			DDP.nilKind,
+		])
+	) {
+		const clone = contract.clone();
+
+		(clone.definition.coerce as any) = true;
+
+		return clone;
+	}
+
+	if (DDP.identifier(contract, DDP.arrayKind)) {
+		return DDP.array(
+			commandSubjectToDataParser(contract.definition.element),
+			contract.definition,
+		);
+	}
+
+	if (DDP.identifier(contract, DDP.tupleKind)) {
+		return DDP.tuple(
+			contract.definition.shape.map(
+				(part) => commandSubjectToDataParser(part),
+			) as [DDP.DataParser, ...DDP.DataParser[]],
+			{
+				...contract.definition,
+				rest: contract.definition.rest
+					? commandSubjectToDataParser(contract.definition.rest)
+					: undefined,
+			},
+		);
+	}
+
+	if (DDP.identifier(contract, DDP.dataParserKind)) {
+		return contract;
+	}
+
+	return (
+		CC.toMapDataParser as (
+			innerContract: unknown,
+			params?: {
+				coerce?: boolean;
+			},
+		) => DDP.Contract<unknown, unknown>
+	)(
+		contract,
+		{ coerce: true },
+	);
+}
 
 function printError(commandError: CommandError, error?: CommandError): SymbolCommandError {
 	if (!error) {
@@ -84,7 +149,7 @@ export interface CreateCommandExecuteParams<
 			SymbolCommandError
 		>["result"]
 	};
-	subject: DDP.Output<GenericSubject>;
+	subject: ComputeSubject<GenericSubject>;
 }
 
 /**
@@ -116,12 +181,19 @@ export function create(
 		? [args[0], {}, args[1]]
 		: args;
 
+	const subject = (
+		params.subject
+		&& !(params.subject instanceof Array)
+			? commandSubjectToDataParser(params.subject)
+			: params.subject
+	) ?? null;
+
 	const self: Command = commandKind.setTo(
 		{
 			name,
 			description: params.description ?? null,
 			options: params.options ?? [],
-			subject: params.subject ?? null,
+			subject: subject as Command["subject"],
 			execute: async(args, error?) => {
 				const commandError = error ?? createError(self.name);
 				const pathIndex = commandError.currentCommandPath.length;
@@ -227,7 +299,9 @@ export function create(
 						return printError(commandError, error);
 					}
 
-					const subjectResult = self.subject.parse(commandOptions.restArgs);
+					const subjectResult = self.subject.parse(
+						commandOptions.restArgs[0],
+					);
 
 					if (EE.isLeft(subjectResult)) {
 						addDataParserError(
