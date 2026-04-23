@@ -1,4 +1,5 @@
-import { E, kindHeritage } from "@duplojs/utils";
+import { kindHeritage } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import { setCurrentWorkingDirectory } from "./setCurrentWorkingDirectory";
 
@@ -22,7 +23,7 @@ export function setCurrentWorkingDirectoryOrThrow<
 ): void {
 	const result = setCurrentWorkingDirectory(path);
 
-	if (E.isLeft(result)) {
+	if (EE.isLeft(result)) {
 		throw new SetCurrentWorkingDirectoryError();
 	}
 

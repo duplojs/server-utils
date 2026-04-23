@@ -1,9 +1,10 @@
-import { E, pipe } from "@duplojs/utils";
+import { pipe } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction } from "@scripts/implementor";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
-		getCurrentWorkDirectory(): E.Error<unknown> | E.Success<string>;
+		getCurrentWorkDirectory(): EE.Error<unknown> | EE.Success<string>;
 		getCurrentWorkDirectoryOrThrow(): string;
 	}
 }
@@ -15,12 +16,12 @@ export const getCurrentWorkDirectory = implementFunction(
 	"getCurrentWorkDirectory",
 	{
 		NODE: () => pipe(
-			E.safeCallback(() => E.success(process.cwd())),
-			E.whenIsLeft(E.error),
+			EE.safeCallback(() => EE.success(process.cwd())),
+			EE.whenIsLeft(EE.error),
 		),
 		DENO: () => pipe(
-			E.safeCallback(() => E.success(Deno.cwd())),
-			E.whenIsLeft(E.error),
+			EE.safeCallback(() => EE.success(Deno.cwd())),
+			EE.whenIsLeft(EE.error),
 		),
 	},
 );

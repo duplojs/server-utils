@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -8,7 +8,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string,
 		>(
 			path: GenericPath,
-		): Promise<FileSystemLeft<"exists"> | E.Ok>;
+		): Promise<FileSystemLeft<"exists"> | EE.Ok>;
 	}
 }
 
@@ -21,20 +21,20 @@ export const exists = implementFunction(
 		NODE: async(path) => {
 			const fs = await nodeFileSystem.value;
 			return fs.access(path)
-				.then(E.ok)
-				.catch((value) => E.left("file-system-exists", value));
+				.then(EE.ok)
+				.catch((value) => EE.left("file-system-exists", value));
 		},
 		DENO: (path) => Deno
 			.stat(path)
-			.then(E.ok)
-			.catch((value) => E.left("file-system-exists", value)),
+			.then(EE.ok)
+			.catch((value) => EE.left("file-system-exists", value)),
 		BUN: (path) => Bun.file(path)
 			.exists()
 			.then(
 				(value) => value
-					? E.ok()
-					: E.left("file-system-exists", new Error("Path does not exist")),
+					? EE.ok()
+					: EE.left("file-system-exists", new Error("Path does not exist")),
 			)
-			.catch((value) => E.left("file-system-exists", value)),
+			.catch((value) => EE.left("file-system-exists", value)),
 	},
 );

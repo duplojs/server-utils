@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -7,7 +7,7 @@ declare module "@scripts/implementor" {
 		writeTextFile(
 			path: string,
 			data: string,
-		): Promise<FileSystemLeft<"write-text-file"> | E.Ok>;
+		): Promise<FileSystemLeft<"write-text-file"> | EE.Ok>;
 	}
 }
 
@@ -24,20 +24,20 @@ export const writeTextFile = implementFunction(
 				data,
 				{ encoding: "utf-8" },
 			)
-				.then(E.ok)
-				.catch((value) => E.left("file-system-write-text-file", value));
+				.then(EE.ok)
+				.catch((value) => EE.left("file-system-write-text-file", value));
 		},
 		DENO: (path, data) => Deno
 			.writeTextFile(
 				path,
 				data,
 			)
-			.then(E.ok)
-			.catch((value) => E.left("file-system-write-text-file", value)),
+			.then(EE.ok)
+			.catch((value) => EE.left("file-system-write-text-file", value)),
 		BUN: (path, data) => Bun
 			.file(path)
 			.write(data)
-			.then(E.ok)
-			.catch((value) => E.left("file-system-write-text-file", value)),
+			.then(EE.ok)
+			.catch((value) => EE.left("file-system-write-text-file", value)),
 	},
 );

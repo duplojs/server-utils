@@ -1,4 +1,5 @@
-import { E, Path } from "@duplojs/utils";
+import { Path } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -7,7 +8,7 @@ declare module "@scripts/implementor" {
 		relocate(
 			fromPath: string,
 			toPath: string,
-		): Promise<FileSystemLeft<"relocate"> | E.Success<string>>;
+		): Promise<FileSystemLeft<"relocate"> | EE.Success<string>>;
 	}
 }
 
@@ -22,7 +23,7 @@ export const relocate = implementFunction(
 			const baseName = Path.getBaseName(fromPath);
 
 			if (!baseName) {
-				return E.left("file-system-relocate", new Error(`Invalid base name ${fromPath}`));
+				return EE.left("file-system-relocate", new Error(`Invalid base name ${fromPath}`));
 			}
 
 			const newPath = Path.resolveRelative([newParentPath, baseName]);
@@ -31,14 +32,14 @@ export const relocate = implementFunction(
 				fromPath,
 				newPath,
 			)
-				.then(() => E.success(newPath))
-				.catch((value) => E.left("file-system-relocate", value));
+				.then(() => EE.success(newPath))
+				.catch((value) => EE.left("file-system-relocate", value));
 		},
 		DENO: (fromPath, newParentPath) => {
 			const baseName = Path.getBaseName(fromPath);
 
 			if (!baseName) {
-				return Promise.resolve(E.left("file-system-relocate", new Error(`Invalid base name ${fromPath}`)));
+				return Promise.resolve(EE.left("file-system-relocate", new Error(`Invalid base name ${fromPath}`)));
 			}
 
 			const newPath = Path.resolveRelative([newParentPath, baseName]);
@@ -47,8 +48,8 @@ export const relocate = implementFunction(
 				fromPath,
 				newPath,
 			)
-				.then(() => E.success(newPath))
-				.catch((value) => E.left("file-system-relocate", value));
+				.then(() => EE.success(newPath))
+				.catch((value) => EE.left("file-system-relocate", value));
 		},
 	},
 );
