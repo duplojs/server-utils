@@ -1,4 +1,5 @@
-import { asyncPipe, E, pipe } from "@duplojs/utils";
+import { asyncPipe, pipe } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -12,7 +13,7 @@ declare module "@scripts/implementor" {
 			path: string,
 			data: unknown,
 			params?: WriteJsonFile
-		): Promise<FileSystemLeft<"write-json-file"> | E.Ok>;
+		): Promise<FileSystemLeft<"write-json-file"> | EE.Ok>;
 	}
 }
 
@@ -25,63 +26,63 @@ export const writeJsonFile = implementFunction(
 		NODE: async(path, data, params) => {
 			const fs = await nodeFileSystem.value;
 			return pipe(
-				E.safeCallback(
+				EE.safeCallback(
 					() => JSON.stringify(
 						data,
 						null,
 						params?.space,
 					),
 				),
-				E.whenIsRight(
+				EE.whenIsRight(
 					(value) => fs.writeFile(
 						path,
 						value,
 						{ encoding: "utf-8" },
 					)
-						.then(E.ok)
-						.catch((value) => E.left("file-system-write-json-file", value)),
+						.then(EE.ok)
+						.catch((value) => EE.left("file-system-write-json-file", value)),
 				),
-				E.whenIsLeft(
-					(value) => E.left("file-system-write-json-file", value),
+				EE.whenIsLeft(
+					(value) => EE.left("file-system-write-json-file", value),
 				),
 			);
 		},
 		DENO: (path, data, params) => asyncPipe(
-			E.safeCallback(
+			EE.safeCallback(
 				() => JSON.stringify(
 					data,
 					null,
 					params?.space,
 				),
 			),
-			E.whenIsRight(
+			EE.whenIsRight(
 				(value) => Deno.writeTextFile(
 					path,
 					value,
 				)
-					.then(E.ok)
-					.catch((value) => E.left("file-system-write-json-file", value)),
+					.then(EE.ok)
+					.catch((value) => EE.left("file-system-write-json-file", value)),
 			),
-			E.whenIsLeft(
-				(value) => E.left("file-system-write-json-file", value),
+			EE.whenIsLeft(
+				(value) => EE.left("file-system-write-json-file", value),
 			),
 		),
 		BUN: (path, data, params) => asyncPipe(
-			E.safeCallback(
+			EE.safeCallback(
 				() => JSON.stringify(
 					data,
 					null,
 					params?.space,
 				),
 			),
-			E.whenIsRight(
+			EE.whenIsRight(
 				(value) => Bun.file(path)
 					.write(value)
-					.then(E.ok)
-					.catch((value) => E.left("file-system-write-json-file", value)),
+					.then(EE.ok)
+					.catch((value) => EE.left("file-system-write-json-file", value)),
 			),
-			E.whenIsLeft(
-				(value) => E.left("file-system-write-json-file", value),
+			EE.whenIsLeft(
+				(value) => EE.left("file-system-write-json-file", value),
 			),
 		),
 	},

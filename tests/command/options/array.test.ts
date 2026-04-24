@@ -1,4 +1,4 @@
-import { type ExpectType, DP, pipe, S } from "@duplojs/utils";
+import { type ExpectType, C, DP, pipe, S, unwrap } from "@duplojs/utils";
 import { DServerCommand } from "@scripts";
 import { createError, SymbolCommandError } from "@scripts/command/error";
 
@@ -144,5 +144,77 @@ describe("createArrayOption", () => {
 
 		expect(result.result).toEqual([5, 2]);
 		expect(result.argumentRest).toEqual([]);
+	});
+
+	it("supports clean handler contracts with typed array output", () => {
+		const numberOption = DServerCommand.createArrayOption(
+			"counts",
+			C.Number,
+			{
+				required: true,
+				min: 1,
+			},
+		);
+
+		const numberResult = numberOption.execute(["--counts=42,43"], createError("root"));
+		expect(numberResult).not.toBe(SymbolCommandError);
+		if (numberResult === SymbolCommandError) {
+			return;
+		}
+
+		type _checkNumberResult = ExpectType<
+			typeof numberResult.result,
+			[C.Number, ...C.Number[]],
+			"strict"
+		>;
+
+		const UserId = C.createNewType(
+			"userId",
+			DP.number(),
+		);
+		const userOption = DServerCommand.createArrayOption(
+			"users",
+			UserId,
+			{ required: true },
+		);
+
+		const userResult = userOption.execute(["--users=1,2"], createError("root"));
+		expect(userResult).not.toBe(SymbolCommandError);
+		if (userResult === SymbolCommandError) {
+			return;
+		}
+
+		type _checkUserResult = ExpectType<
+			typeof userResult.result,
+			C.GetNewType<typeof UserId>[],
+			"strict"
+		>;
+
+		expect(numberResult.result.map(unwrap)).toEqual([42, 43]);
+		expect(userResult.result.map(unwrap)).toEqual([1, 2]);
+	});
+
+	it("supports clean entity property definition contracts with typed array output", () => {
+		const option = DServerCommand.createArrayOption(
+			"roles",
+			C.entityPropertyDefinitionTools.union(
+				C.entityPropertyDefinitionTools.identifier("admin"),
+				C.entityPropertyDefinitionTools.identifier("client"),
+			),
+		);
+
+		const result = option.execute(["--roles=admin,client"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
+
+		type _checkResult = ExpectType<
+			typeof result.result,
+			("admin" | "client")[] | undefined,
+			"strict"
+		>;
+
+		expect(result.result).toEqual(["admin", "client"]);
 	});
 });

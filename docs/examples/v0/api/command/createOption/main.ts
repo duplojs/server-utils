@@ -1,5 +1,7 @@
 import { SC } from "@duplojs/server-utils";
-import { DP, type ExpectType } from "@duplojs/utils";
+import { C, DP, type ExpectType } from "@duplojs/utils";
+
+const UserId = C.createNewType("user-id", DP.number(), C.Positive);
 
 const command = SC.create(
 	"serve",
@@ -8,13 +10,15 @@ const command = SC.create(
 			SC.createOption("host", DP.string()),
 			SC.createOption(
 				"port",
-				DP.coerce.number(),
+				DP.number(),
 				{ required: true },
 			),
 			SC.createOption(
 				"environment",
 				DP.literal(["dev", "prod"]),
 			),
+			SC.createOption("email", C.Email),
+			SC.createOption("userId", UserId),
 		],
 	},
 	({ options }) => {
@@ -24,6 +28,8 @@ const command = SC.create(
 				host: string | undefined;
 				port: number;
 				environment: "dev" | "prod" | undefined;
+				email: C.Email | undefined;
+				userId: C.GetNewType<typeof UserId> | undefined;
 			},
 			"strict"
 		>;
@@ -35,4 +41,6 @@ await command.execute([
 	"0.0.0.0",
 	"--port=8080",
 	"--environment=prod",
+	"--email=dev@duplojs.dev",
+	"--userId=42",
 ]);

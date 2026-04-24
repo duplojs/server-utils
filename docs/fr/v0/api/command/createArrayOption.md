@@ -6,7 +6,7 @@ prev:
 next:
   text: "Référence API"
   link: "/fr/v0/api/"
-description: "Crée une option qui parse une liste séparée en tableau typé."
+description: "Crée une option qui parse une liste délimitée vers un tableau typé depuis un DataParser ou un contrat clean."
 ---
 
 # createArrayOption
@@ -25,11 +25,11 @@ Crée une option qui parse une liste séparée en tableau typé.
 ```typescript
 function createArrayOption<
   GenericName extends string,
-  GenericSchema extends EligibleDataParser,
+  GenericContract extends EligibleContract,
   GenericMinValues extends number
 >(
   name: GenericName,
-  schema: GenericSchema,
+  contract: GenericContract,
   params: {
     description?: string
     aliases?: readonly string[]
@@ -41,18 +41,18 @@ function createArrayOption<
 ): Option<
   GenericName,
   [
-    ...A.CreateTuple<DP.Output<GenericSchema>, GenericMinValues>,
-    ...DP.Output<GenericSchema>[]
+    ...A.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
+    ...ComputeOptionContract<GenericContract>[]
   ]
 >
 
 function createArrayOption<
   GenericName extends string,
-  GenericSchema extends EligibleDataParser,
+  GenericContract extends EligibleContract,
   GenericMinValues extends number
 >(
   name: GenericName,
-  schema: GenericSchema,
+  contract: GenericContract,
   params?: {
     description?: string
     aliases?: readonly string[]
@@ -63,8 +63,8 @@ function createArrayOption<
 ): Option<
   GenericName,
   | [
-      ...A.CreateTuple<DP.Output<GenericSchema>, GenericMinValues>,
-      ...DP.Output<GenericSchema>[]
+      ...A.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
+      ...ComputeOptionContract<GenericContract>[]
     ]
   | undefined
 >
@@ -73,7 +73,7 @@ function createArrayOption<
 ## Paramètres
 
 - `name` (`string`) : nom de l'option utilisé comme `--name`.
-- `schema` (`EligibleDataParser`) : parseur de chaque élément du tableau.
+- `contract` (`EligibleContract`) : parseur ou contrat clean pour chaque élément du tableau.
 - `params` (optionnel) : métadonnées et contraintes de tableau.
 - `params.required` (`true`, optionnel) : déclenche une erreur si l'option est absente.
 - `params.min` (`number`, optionnel) : nombre minimal de valeurs.
@@ -86,6 +86,10 @@ function createArrayOption<
 
 - Mode requis: `Option<GenericName, [..items]>`.
 - Mode optionnel: `Option<GenericName, [..items] | undefined>`.
+
+## Notes
+
+- Les parsers primitifs et les contrats clean primitifs sont coercés automatiquement depuis l'entrée CLI en chaîne.
 
 ## Voir aussi
 

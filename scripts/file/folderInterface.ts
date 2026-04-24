@@ -1,4 +1,5 @@
-import { asyncPipe, E, innerPipe, Path, type Kind } from "@duplojs/utils";
+import { asyncPipe, innerPipe, Path, type Kind } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import { move } from "./move";
 import { exists } from "./exists";
@@ -20,14 +21,14 @@ export interface FolderInterface extends Kind<
 	path: string;
 	getName(): string | null;
 	getParentPath(): string | null;
-	rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FolderInterface>>;
-	exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
-	relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FolderInterface>>;
-	move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FolderInterface>>;
-	remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
-	getChildren(): Promise<FileSystemLeft<"read-directory"> | E.Success<string[]>>;
-	stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
-	walk(): Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
+	rename(newName: string): Promise<FileSystemLeft<"rename"> | EE.Success<FolderInterface>>;
+	exists(): Promise<FileSystemLeft<"exists"> | EE.Ok>;
+	relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | EE.Success<FolderInterface>>;
+	move(newPath: string): Promise<FileSystemLeft<"move"> | EE.Success<FolderInterface>>;
+	remove(): Promise<FileSystemLeft<"remove"> | EE.Ok>;
+	getChildren(): Promise<FileSystemLeft<"read-directory"> | EE.Success<string[]>>;
+	stat(): Promise<FileSystemLeft<"stat"> | EE.Success<StatInfo>>;
+	walk(): Promise<FileSystemLeft<"walk-directory"> | EE.Success<Generator<FolderInterface | FileInterface | UnknownInterface>>>;
 }
 
 /**
@@ -45,10 +46,10 @@ export function createFolderInterface(path: string): FolderInterface {
 	function localRename(newName: string) {
 		return asyncPipe(
 			rename(path, newName),
-			E.whenIsRight(
+			EE.whenIsRight(
 				innerPipe(
 					createFolderInterface,
-					E.success,
+					EE.success,
 				),
 			),
 		);
@@ -57,10 +58,10 @@ export function createFolderInterface(path: string): FolderInterface {
 	function localRelocate(newParentPath: string) {
 		return asyncPipe(
 			relocate(path, newParentPath),
-			E.whenIsRight(
+			EE.whenIsRight(
 				innerPipe(
 					createFolderInterface,
-					E.success,
+					EE.success,
 				),
 			),
 		);
@@ -69,8 +70,8 @@ export function createFolderInterface(path: string): FolderInterface {
 	function localMove(newPath: string) {
 		return asyncPipe(
 			move(path, newPath),
-			E.whenIsRight(
-				() => E.success(
+			EE.whenIsRight(
+				() => EE.success(
 					createFolderInterface(newPath),
 				),
 			),

@@ -6,12 +6,12 @@ prev:
 next:
   text: "createArrayOption"
   link: "/fr/v0/api/command/createArrayOption"
-description: "Crée une option avec une valeur unique parsée via un schéma DataParser."
+description: "Crée une option à valeur unique depuis un DataParser ou un contrat clean."
 ---
 
 # createOption
 
-Crée une option avec une valeur unique parsée via un schéma DataParser.
+Crée une option à valeur unique depuis un DataParser ou un contrat clean.
 
 ## Exemple
 
@@ -25,34 +25,36 @@ Crée une option avec une valeur unique parsée via un schéma DataParser.
 ```typescript
 function createOption<
   GenericName extends string,
-  GenericSchema extends EligibleDataParser
+  GenericContract extends EligibleContract,
+  GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>
 >(
   name: GenericName,
-  schema: GenericSchema,
+  contract: GenericContract,
   params: {
     description?: string
     aliases?: readonly string[]
     required: true
   }
-): Option<GenericName, DP.Output<GenericSchema>>
+): Option<GenericName, GenericOutput>
 
 function createOption<
   GenericName extends string,
-  GenericSchema extends EligibleDataParser
+  GenericContract extends EligibleContract,
+  GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>
 >(
   name: GenericName,
-  schema: GenericSchema,
+  contract: GenericContract,
   params?: {
     description?: string
     aliases?: readonly string[]
   }
-): Option<GenericName, DP.Output<GenericSchema> | undefined>
+): Option<GenericName, GenericOutput | undefined>
 ```
 
 ## Paramètres
 
 - `name` (`string`) : nom de l'option utilisé comme `--name`.
-- `schema` (`EligibleDataParser`) : parseur utilisé pour valider/transformer la valeur.
+- `contract` (`EligibleContract`) : parseur ou contrat clean utilisé pour valider/transformer la valeur.
 - `params` (optionnel) : métadonnées d'option et comportement d'obligation.
 - `params.required` (`true`, optionnel) : déclenche une erreur si l'option est absente.
 - `params.description` (`string`, optionnel) : description dans le help.
@@ -60,8 +62,12 @@ function createOption<
 
 ## Valeur de retour
 
-- `Option<GenericName, DP.Output<GenericSchema>>` quand `required: true`.
-- `Option<GenericName, DP.Output<GenericSchema> | undefined>` sinon.
+- `Option<GenericName, GenericOutput>` quand `required: true`.
+- `Option<GenericName, GenericOutput | undefined>` sinon.
+
+## Notes
+
+- Les parsers primitifs et les contrats clean primitifs sont coercés automatiquement depuis l'entrée CLI en chaîne.
 
 ## Voir aussi
 

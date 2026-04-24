@@ -1,4 +1,7 @@
-import { type BytesInString, createOverride, DP, E, stringToBytes, unwrap, type FixDeepFunctionInfer, type Kind, type O, type NeverCoalescing, toRegExp, type AnyTuple } from "@duplojs/utils";
+import { type BytesInString, createOverride, stringToBytes, unwrap, type FixDeepFunctionInfer, type Kind, type NeverCoalescing, toRegExp, type AnyTuple } from "@duplojs/utils";
+import * as DDP from "@duplojs/utils/dataParser";
+import type * as OO from "@duplojs/utils/object";
+import * as EE from "@duplojs/utils/either";
 import { createFileInterface, isFileInterface, type FileInterface } from "@scripts/file";
 import { createDataParserKind } from "../kind";
 
@@ -7,15 +10,15 @@ export interface DataParserFileCheckerCustom {}
 export type DataParserFileCheckers = (
 	// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 	| DataParserFileCheckerCustom[
-		O.GetPropsWithValueExtends<
+		OO.GetPropsWithValueExtends<
 			DataParserFileCheckerCustom,
-			DP.DataParserChecker
+			DDP.DataParserChecker
 		>
 	]
-	| DP.CheckerRefineImplementation<FileInterface>
+	| DDP.CheckerRefineImplementation<FileInterface>
 );
 
-export interface DataParserDefinitionFile extends DP.DataParserDefinition<
+export interface DataParserDefinitionFile extends DDP.DataParserDefinition<
 	DataParserFileCheckers
 > {
 	readonly coerce: boolean;
@@ -30,7 +33,7 @@ export const fileKind = createDataParserKind("file");
 type _DataParserFile<
 	GenericDefinition extends DataParserDefinitionFile,
 > = (
-	& DP.DataParser<
+	& DDP.DataParser<
 		GenericDefinition,
 		FileInterface,
 		FileInterface
@@ -55,7 +58,7 @@ export interface DataParserFile<
 			GenericChecker
 		>
 	): DataParserFile<
-		DP.AddCheckersToDefinition<
+		DDP.AddCheckersToDefinition<
 			GenericDefinition,
 			GenericChecker
 		>
@@ -81,12 +84,12 @@ export function file<
 	params?: DataParserFileParams,
 	definition?: GenericDefinition,
 ): DataParserFile<
-		DP.MergeDefinition<
+		DDP.MergeDefinition<
 			DataParserDefinitionFile,
 			NeverCoalescing<GenericDefinition, {}>
 		>
 	> {
-	const self = DP.dataParserInit<DataParserFile>(
+	const self = DDP.dataParserInit<DataParserFile>(
 		fileKind,
 		{
 			errorMessage: definition?.errorMessage,
@@ -110,7 +113,7 @@ export function file<
 					|| self.definition.maxSize !== undefined
 					|| self.definition.minSize !== undefined
 				) {
-					return DP.addIssue(
+					return DDP.addIssue(
 						error,
 						"async data parser",
 						data,
@@ -125,7 +128,7 @@ export function file<
 				}
 
 				if (!isFileInterface(fileInterface)) {
-					return DP.addIssue(
+					return DDP.addIssue(
 						error,
 						"file",
 						data,
@@ -140,7 +143,7 @@ export function file<
 						.mimeType
 						.test(fileInterface.getMimeType() ?? "")
 				) {
-					return DP.addIssue(
+					return DDP.addIssue(
 						error,
 						`file with mime type matching ${self.definition.mimeType.source}`,
 						data,
@@ -158,7 +161,7 @@ export function file<
 				}
 
 				if (!isFileInterface(fileInterface)) {
-					return DP.addIssue(
+					return DDP.addIssue(
 						error,
 						"file",
 						data,
@@ -173,7 +176,7 @@ export function file<
 						.mimeType
 						.test(fileInterface.getMimeType() ?? "")
 				) {
-					return DP.addIssue(
+					return DDP.addIssue(
 						error,
 						`file with mime type matching ${self.definition.mimeType.source}`,
 						fileInterface,
@@ -188,8 +191,8 @@ export function file<
 				) {
 					const resultStats = await fileInterface.stat();
 
-					if (E.isLeft(resultStats)) {
-						return DP.addIssue(
+					if (EE.isLeft(resultStats)) {
+						return DDP.addIssue(
 							error,
 							"existing file",
 							fileInterface,
@@ -200,7 +203,7 @@ export function file<
 					const stat = unwrap(resultStats);
 
 					if (!stat.isFile) {
-						return DP.addIssue(
+						return DDP.addIssue(
 							error,
 							"file",
 							stat,
@@ -212,7 +215,7 @@ export function file<
 						self.definition.maxSize !== undefined
 						&& stat.sizeBytes > self.definition.maxSize
 					) {
-						return DP.addIssue(
+						return DDP.addIssue(
 							error,
 							`file with sizeBytes <= ${self.definition.maxSize}`,
 							stat.sizeBytes,
@@ -224,7 +227,7 @@ export function file<
 						self.definition.minSize !== undefined
 						&& stat.sizeBytes < self.definition.minSize
 					) {
-						return DP.addIssue(
+						return DDP.addIssue(
 							error,
 							`file with sizeBytes >= ${self.definition.minSize}`,
 							stat.sizeBytes,

@@ -1,4 +1,7 @@
-import { innerPipe, E, P, G } from "@duplojs/utils";
+import { innerPipe } from "@duplojs/utils";
+import * as GG from "@duplojs/utils/generator";
+import * as EE from "@duplojs/utils/either";
+import * as PP from "@duplojs/utils/pattern";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import { type FileInterface, createFileInterface } from "./fileInterface";
 import { type FolderInterface, createFolderInterface } from "./folderInterface";
@@ -18,7 +21,7 @@ declare module "@scripts/implementor" {
 			params?: WalkDirectoryParams,
 		): Promise<
 			FileSystemLeft<"walk-directory">
-			| E.Success<
+			| EE.Success<
 				Generator<FileInterface | FolderInterface | UnknownInterface>
 			>
 		>;
@@ -43,31 +46,31 @@ export const walkDirectory = implementFunction(
 			)
 				.then(
 					innerPipe(
-						G.map(
+						GG.map(
 							innerPipe(
-								P.when(
+								PP.when(
 									(dirent) => dirent.isFile(),
 									({ parentPath, name }) => createFileInterface(
 										`${parentPath}/${name}`,
 									),
 								),
-								P.when(
+								PP.when(
 									(dirent) => dirent.isDirectory(),
 									({ parentPath, name }) => createFolderInterface(
 										`${parentPath}/${name}`,
 									),
 								),
-								P.otherwise(
+								PP.otherwise(
 									({ parentPath, name }) => createUnknownInterface(
 										`${parentPath}/${name}`,
 									),
 								),
 							),
 						),
-						E.success,
+						EE.success,
 					),
 				)
-				.catch((value) => E.left("file-system-walk-directory", value));
+				.catch((value) => EE.left("file-system-walk-directory", value));
 		},
 	},
 );

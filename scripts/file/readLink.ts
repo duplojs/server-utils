@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -8,7 +8,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string,
 		>(
 			path: GenericPath
-		): Promise<FileSystemLeft<"read-link"> | E.Success<string>>;
+		): Promise<FileSystemLeft<"read-link"> | EE.Success<string>>;
 	}
 }
 
@@ -24,12 +24,12 @@ export const readLink = implementFunction(
 				path,
 				{ encoding: "utf-8" },
 			)
-				.then(E.success)
-				.catch((value) => E.left("file-system-read-link", value));
+				.then(EE.success)
+				.catch((value) => EE.left("file-system-read-link", value));
 		},
 		DENO: (path) => Deno
 			.readLink(path)
-			.then(E.success)
-			.catch((value) => E.left("file-system-read-link", value)),
+			.then(EE.success)
+			.catch((value) => EE.left("file-system-read-link", value)),
 	},
 );
