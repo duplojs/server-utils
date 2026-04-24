@@ -1,5 +1,5 @@
 import type * as AA from "@duplojs/utils/array";
-import type { Option } from "./base";
+import { type Option } from "./base";
 import type { EligibleContract } from "../types";
 import type { ComputeOptionContract } from "./types";
 /**

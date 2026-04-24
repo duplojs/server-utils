@@ -22,5 +22,8 @@
 	"deno.enablePaths": ["integration/deno"],
 	"deno.disablePaths": ["dist", "node_modules"],
 	"deno.config": "./integration/deno/deno.json",
-	"js/ts.tsdk.path": "node_modules/typescript/lib"
+	"js/ts.tsdk.path": "node_modules/typescript/lib",
+	"cSpell.words": [
+		"vitest"
+	]
 }

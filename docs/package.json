@@ -4,13 +4,20 @@
    "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "test:types": "./.commands/test-types.sh"
   },
+  "workspaces": [
+    "libs/**"
+  ],
   "devDependencies": {
     "@shikijs/vitepress-twoslash": "3.21.0",
+    "@types/web": "^0.0.344",
     "@vue/tsconfig": "0.8.1",
-    "vitepress": "^2.0.0-alpha.15",
+    "vitepress": "^2.0.0-alpha.16",
+    "@server-utils/v0": "file:libs/v0",
     "vitepress-plugin-group-icons": "1.7.1",
     "vue": "3.5.27"
   }
 }
+ 
