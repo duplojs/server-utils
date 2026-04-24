@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        exists<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"exists"> | E.Ok>;
+        exists<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"exists"> | EE.Ok>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const exists: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"exists"> | E.Ok>;
+export declare const exists: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"exists"> | EE.Ok>;

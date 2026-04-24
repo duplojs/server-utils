@@ -1,4 +1,5 @@
-import { D, E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
+import * as DD from "@duplojs/utils/date";
 import type { FileSystemLeft } from "./types";
 export interface StatInfo {
     /** Type of entry */
@@ -8,10 +9,10 @@ export interface StatInfo {
     /** Size in bytes */
     sizeBytes: number;
     /** Timestamps */
-    modifiedAt: D.TheDate | null;
-    accessedAt: D.TheDate | null;
-    createdAt: D.TheDate | null;
-    changedAt: D.TheDate | null;
+    modifiedAt: DD.TheDate | null;
+    accessedAt: DD.TheDate | null;
+    createdAt: DD.TheDate | null;
+    changedAt: DD.TheDate | null;
     /** Unix/FS identifiers */
     deviceId: number;
     inode: number | null;
@@ -33,7 +34,7 @@ export interface StatInfo {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        stat<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+        stat<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"stat"> | EE.Success<StatInfo>>;
     }
 }
 /**
@@ -52,4 +53,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const stat: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+export declare const stat: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"stat"> | EE.Success<StatInfo>>;

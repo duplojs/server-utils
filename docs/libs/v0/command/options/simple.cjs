@@ -1,8 +1,9 @@
 'use strict';
 
 var utils = require('@duplojs/utils');
-var EE = require('@duplojs/utils/either');
 var DDP = require('@duplojs/utils/dataParser');
+var EE = require('@duplojs/utils/either');
+var CC = require('@duplojs/utils/clean');
 var base = require('./base.cjs');
 var error = require('../error.cjs');
 
@@ -23,13 +24,33 @@ function _interopNamespaceDefault(e) {
     return Object.freeze(n);
 }
 
-var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
 var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
+var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
+var CC__namespace = /*#__PURE__*/_interopNamespaceDefault(CC);
 
-function createOption(name, schema, params) {
+function createOption(name, contract, params) {
+    let computeDataParser = undefined;
+    if (utils.hasSomeKinds(contract, [
+        DDP__namespace.stringKind,
+        DDP__namespace.numberKind,
+        DDP__namespace.bigIntKind,
+        DDP__namespace.dateKind,
+        DDP__namespace.timeKind,
+        DDP__namespace.nilKind,
+    ])) {
+        const clone = contract.clone();
+        clone.definition.coerce = true;
+        computeDataParser = clone;
+    }
+    else if (DDP__namespace.identifier(contract, DDP__namespace.dataParserKind)) {
+        computeDataParser = contract;
+    }
+    else {
+        computeDataParser = CC__namespace.toMapDataParser(contract, { coerce: true });
+    }
     const dataParser = params?.required
-        ? schema
-        : DDP__namespace.optional(schema);
+        ? computeDataParser
+        : DDP__namespace.optional(computeDataParser);
     return base.initOption(name, ({ isHere, value }, error$1) => {
         if (!isHere && params?.required) {
             return error.addIssue(error$1, {

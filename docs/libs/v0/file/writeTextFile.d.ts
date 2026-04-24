@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        writeTextFile(path: string, data: string): Promise<FileSystemLeft<"write-text-file"> | E.Ok>;
+        writeTextFile(path: string, data: string): Promise<FileSystemLeft<"write-text-file"> | EE.Ok>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const writeTextFile: (path: string, data: string) => Promise<FileSystemLeft<"write-text-file"> | E.Ok>;
+export declare const writeTextFile: (path: string, data: string) => Promise<FileSystemLeft<"write-text-file"> | EE.Ok>;

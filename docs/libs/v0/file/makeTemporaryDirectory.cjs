@@ -1,7 +1,26 @@
 'use strict';
 
-var utils = require('@duplojs/utils');
+var EE = require('@duplojs/utils/either');
 var implementor = require('../implementor.cjs');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
 
 /**
  * {@include file/makeTemporaryDirectory/index.md}
@@ -10,12 +29,12 @@ const makeTemporaryDirectory = implementor.implementFunction("makeTemporaryDirec
     NODE: async (prefix) => {
         const fs = await implementor.nodeFileSystem.value;
         return fs.mkdtemp(prefix)
-            .then(utils.E.success)
-            .catch((value) => utils.E.left("file-system-make-temporary-directory", value));
+            .then(EE__namespace.success)
+            .catch((value) => EE__namespace.left("file-system-make-temporary-directory", value));
     },
     DENO: (prefix) => Deno.makeTempDir({ prefix })
-        .then(utils.E.success)
-        .catch((value) => utils.E.left("file-system-make-temporary-directory", value)),
+        .then(EE__namespace.success)
+        .catch((value) => EE__namespace.left("file-system-make-temporary-directory", value)),
 });
 
 exports.makeTemporaryDirectory = makeTemporaryDirectory;

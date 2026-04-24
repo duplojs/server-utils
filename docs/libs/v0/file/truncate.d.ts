@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        truncate<GenericPath extends string>(path: GenericPath, size?: number): Promise<FileSystemLeft<"truncate"> | E.Ok>;
+        truncate<GenericPath extends string>(path: GenericPath, size?: number): Promise<FileSystemLeft<"truncate"> | EE.Ok>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const truncate: <GenericPath extends string>(path: GenericPath, size?: number) => Promise<FileSystemLeft<"truncate"> | E.Ok>;
+export declare const truncate: <GenericPath extends string>(path: GenericPath, size?: number) => Promise<FileSystemLeft<"truncate"> | EE.Ok>;

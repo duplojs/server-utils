@@ -1,4 +1,5 @@
-import { asyncPipe, E, innerPipe, Path } from '@duplojs/utils';
+import { asyncPipe, innerPipe, Path } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { createDuplojsServerUtilsKind } from '../kind.mjs';
 import { move } from './move.mjs';
 import { exists } from './exists.mjs';
@@ -21,13 +22,13 @@ function createFolderInterface(path) {
         return Path.getParentFolderPath(path);
     }
     function localRename(newName) {
-        return asyncPipe(rename(path, newName), E.whenIsRight(innerPipe(createFolderInterface, E.success)));
+        return asyncPipe(rename(path, newName), EE.whenIsRight(innerPipe(createFolderInterface, EE.success)));
     }
     function localRelocate(newParentPath) {
-        return asyncPipe(relocate(path, newParentPath), E.whenIsRight(innerPipe(createFolderInterface, E.success)));
+        return asyncPipe(relocate(path, newParentPath), EE.whenIsRight(innerPipe(createFolderInterface, EE.success)));
     }
     function localMove(newPath) {
-        return asyncPipe(move(path, newPath), E.whenIsRight(() => E.success(createFolderInterface(newPath))));
+        return asyncPipe(move(path, newPath), EE.whenIsRight(() => EE.success(createFolderInterface(newPath))));
     }
     function localExists() {
         return exists(path);

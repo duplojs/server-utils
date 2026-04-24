@@ -1,14 +1,12 @@
-import * as DDP from "@duplojs/utils/dataParser";
 import { type Option } from "./base";
-import type { EligibleDataParser } from "../types";
+import type { EligibleContract } from "../types";
+import type { ComputeOptionContract } from "./types";
 /**
  * Create an option with a single parsed value.
  * 
- * Use a DataParser schema to parse and validate the option value from `--name=value` or `--name value`.
+ * Use a DataParser or a clean contract to parse and validate the option value from `--name=value` or `--name value`.
  * 
  * ```ts
- * const port = SC.createOption("port", DP.string());
- * 
  * const name = SC.createOption(
  * 	"name",
  * 	DP.string(),
@@ -23,29 +21,40 @@ import type { EligibleDataParser } from "../types";
  * 	DP.literal(["dev", "prod"]),
  * );
  * 
+ * const UserId = C.createNewType("user-id", DP.number(), C.Positive);
+ * const userId = SC.createOption("userId", UserId);
+ * 
+ * const port = SC.createOption("port", DP.number());
+ * const email = SC.createOption("email", C.Email);
+ * 
  * SC.create(
  * 	"serve",
  * 	{
- * 		options: [port, name, mode],
+ * 		options: [port, name, mode, email, userId],
  * 	},
- * 	({ options: { port, name, mode } }) => {
- * 		// port: string | undefined
+ * 	({ options: { port, name, mode, email, userId } }) => {
+ * 		// port: number | undefined
  * 		// name: string
+ * 		// mode: "dev" | "prod" | undefined
+ * 		// email: C.Email | undefined
+ * 		// userId: C.GetNewType<typeof UserId> | undefined
+ * 	},
+ * );
  * ```
  * 
  * @remarks
- * Set `required: true` to throw when the option is missing.
+ * Primitive parsers and clean primitive contracts are coerced from CLI string input automatically.
  * 
  * @see https://server-utils.duplojs.dev/en/v0/api/command/createOption
  * @namespace SC
  * 
  */
-export declare function createOption<GenericName extends string, GenericSchema extends EligibleDataParser>(name: GenericName, schema: GenericSchema, params: {
+export declare function createOption<GenericName extends string, GenericContract extends EligibleContract, GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>>(name: GenericName, contract: GenericContract, params: {
     description?: string;
     aliases?: readonly string[];
     required: true;
-}): Option<GenericName, DDP.Output<GenericSchema>>;
-export declare function createOption<GenericName extends string, GenericSchema extends EligibleDataParser>(name: GenericName, schema: GenericSchema, params?: {
+}): Option<GenericName, GenericOutput>;
+export declare function createOption<GenericName extends string, GenericContract extends EligibleContract, GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>>(name: GenericName, contract: GenericContract, params?: {
     description?: string;
     aliases?: readonly string[];
-}): Option<GenericName, DDP.Output<GenericSchema> | undefined>;
+}): Option<GenericName, GenericOutput | undefined>;

@@ -1,12 +1,13 @@
-import { type DP, E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
+import type * as DDP from "@duplojs/utils/dataParser";
 import type * as SF from "../file";
 import { type EnvironmentVariableParams } from "./environmentVariable";
 declare const EnvironmentVariableError_base: new (params: {
     "@DuplojsServerUtils/environment-variable-error"?: unknown;
 }, parentParams: readonly [message?: string | undefined, options?: ErrorOptions | undefined]) => Error & import("@duplojs/utils").Kind<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/environment-variable-error", unknown>, unknown> & import("@duplojs/utils").Kind<import("@duplojs/utils").KindDefinition<"environment-variable-error", unknown>, unknown>;
 export declare class EnvironmentVariableError extends EnvironmentVariableError_base {
-    error: SF.FileSystemLeft<"read-text-file"> | E.Error<DP.DataParserError>;
-    constructor(error: SF.FileSystemLeft<"read-text-file"> | E.Error<DP.DataParserError>);
+    error: SF.FileSystemLeft<"read-text-file"> | EE.Error<DDP.DataParserError>;
+    constructor(error: SF.FileSystemLeft<"read-text-file"> | EE.Error<DDP.DataParserError>);
 }
 /**
  * Load and validate environment variables or throw.
@@ -55,5 +56,5 @@ export declare class EnvironmentVariableError extends EnvironmentVariableError_b
  * @see https://server-utils.duplojs.dev/en/v0/api/common/environmentVariableOrThrow
  * @see https://server-utils.duplojs.dev/en/v0/api/common/environmentVariable
  */
-export declare function environmentVariableOrThrow<GenericShape extends DP.DataParserObjectShape>(shape: GenericShape, params?: EnvironmentVariableParams): Promise<DP.DataParserObjectShapeOutput<GenericShape>>;
+export declare function environmentVariableOrThrow<GenericShape extends DDP.DataParserObjectShape>(shape: GenericShape, params?: EnvironmentVariableParams): Promise<DDP.DataParserObjectShapeOutput<GenericShape>>;
 export {};

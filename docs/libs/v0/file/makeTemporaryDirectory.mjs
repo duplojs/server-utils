@@ -1,4 +1,4 @@
-import { E } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -8,12 +8,12 @@ const makeTemporaryDirectory = implementFunction("makeTemporaryDirectory", {
     NODE: async (prefix) => {
         const fs = await nodeFileSystem.value;
         return fs.mkdtemp(prefix)
-            .then(E.success)
-            .catch((value) => E.left("file-system-make-temporary-directory", value));
+            .then(EE.success)
+            .catch((value) => EE.left("file-system-make-temporary-directory", value));
     },
     DENO: (prefix) => Deno.makeTempDir({ prefix })
-        .then(E.success)
-        .catch((value) => E.left("file-system-make-temporary-directory", value)),
+        .then(EE.success)
+        .catch((value) => EE.left("file-system-make-temporary-directory", value)),
 });
 
 export { makeTemporaryDirectory };

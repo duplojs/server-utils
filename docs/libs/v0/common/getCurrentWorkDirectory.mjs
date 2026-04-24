@@ -1,12 +1,13 @@
-import { pipe, E } from '@duplojs/utils';
+import { pipe } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include common/getCurrentWorkDirectory/index.md}
  */
 const getCurrentWorkDirectory = implementFunction("getCurrentWorkDirectory", {
-    NODE: () => pipe(E.safeCallback(() => E.success(process.cwd())), E.whenIsLeft(E.error)),
-    DENO: () => pipe(E.safeCallback(() => E.success(Deno.cwd())), E.whenIsLeft(E.error)),
+    NODE: () => pipe(EE.safeCallback(() => EE.success(process.cwd())), EE.whenIsLeft(EE.error)),
+    DENO: () => pipe(EE.safeCallback(() => EE.success(Deno.cwd())), EE.whenIsLeft(EE.error)),
 });
 
 export { getCurrentWorkDirectory };

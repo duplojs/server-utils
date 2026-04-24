@@ -1,11 +1,11 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 interface RemoveDirectoryParams {
     recursive?: boolean;
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        remove<GenericPath extends string>(path: GenericPath, params?: RemoveDirectoryParams): Promise<FileSystemLeft<"remove"> | E.Ok>;
+        remove<GenericPath extends string>(path: GenericPath, params?: RemoveDirectoryParams): Promise<FileSystemLeft<"remove"> | EE.Ok>;
     }
 }
 /**
@@ -24,5 +24,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const remove: <GenericPath extends string>(path: GenericPath, params?: RemoveDirectoryParams) => Promise<FileSystemLeft<"remove"> | E.Ok>;
+export declare const remove: <GenericPath extends string>(path: GenericPath, params?: RemoveDirectoryParams) => Promise<FileSystemLeft<"remove"> | EE.Ok>;
 export {};

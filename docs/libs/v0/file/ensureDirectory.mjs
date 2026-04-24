@@ -1,4 +1,4 @@
-import { E } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -10,14 +10,14 @@ const ensureDirectory = implementFunction("ensureDirectory", {
         return fs.mkdir(path, {
             recursive: true,
         })
-            .then(E.ok)
-            .catch((value) => E.left("file-system-ensure-directory", value));
+            .then(EE.ok)
+            .catch((value) => EE.left("file-system-ensure-directory", value));
     },
     DENO: (path) => Deno.mkdir(path, {
         recursive: true,
     })
-        .then(E.ok)
-        .catch((value) => E.left("file-system-ensure-directory", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-ensure-directory", value)),
 });
 
 export { ensureDirectory };

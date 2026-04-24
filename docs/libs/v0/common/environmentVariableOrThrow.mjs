@@ -1,4 +1,5 @@
-import { kindHeritage, E, unwrap } from '@duplojs/utils';
+import { kindHeritage, unwrap } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { createDuplojsServerUtilsKind } from '../kind.mjs';
 import { environmentVariable } from './environmentVariable/index.mjs';
 
@@ -14,7 +15,7 @@ class EnvironmentVariableError extends kindHeritage("environment-variable-error"
  */
 async function environmentVariableOrThrow(shape, params) {
     const result = await environmentVariable(shape, params);
-    if (E.isLeft(result)) {
+    if (EE.isLeft(result)) {
         throw new EnvironmentVariableError(result);
     }
     return unwrap(result);

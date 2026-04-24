@@ -1,9 +1,9 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { StatInfo } from "./stat";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        linkStat<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"link-stat"> | E.Success<StatInfo>>;
+        linkStat<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"link-stat"> | EE.Success<StatInfo>>;
     }
 }
 /**
@@ -22,4 +22,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const linkStat: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"link-stat"> | E.Success<StatInfo>>;
+export declare const linkStat: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"link-stat"> | EE.Success<StatInfo>>;

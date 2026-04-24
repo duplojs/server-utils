@@ -1,4 +1,5 @@
-import { type E, type Kind } from "@duplojs/utils";
+import { type Kind } from "@duplojs/utils";
+import type * as EE from "@duplojs/utils/either";
 import { type StatInfo } from "./stat";
 import type { FileSystemLeft } from "./types";
 declare const unknownInterfaceKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/unknownInterface", unknown>>;
@@ -6,8 +7,8 @@ export interface UnknownInterface extends Kind<typeof unknownInterfaceKind.defin
     path: string;
     getName(): string | null;
     getParentPath(): string | null;
-    stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
-    exist(): Promise<FileSystemLeft<"exists"> | E.Ok>;
+    stat(): Promise<FileSystemLeft<"stat"> | EE.Success<StatInfo>>;
+    exist(): Promise<FileSystemLeft<"exists"> | EE.Ok>;
 }
 /**
  * Create an interface for an unknown path type.

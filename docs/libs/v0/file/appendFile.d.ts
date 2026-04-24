@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        appendFile(path: string, data: Uint8Array): Promise<FileSystemLeft<"append-file"> | E.Ok>;
+        appendFile(path: string, data: Uint8Array): Promise<FileSystemLeft<"append-file"> | EE.Ok>;
     }
 }
 /**
@@ -28,4 +28,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const appendFile: (path: string, data: Uint8Array) => Promise<FileSystemLeft<"append-file"> | E.Ok>;
+export declare const appendFile: (path: string, data: Uint8Array) => Promise<FileSystemLeft<"append-file"> | EE.Ok>;

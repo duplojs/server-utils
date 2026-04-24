@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        ensureDirectory<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"ensure-directory"> | E.Ok>;
+        ensureDirectory<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"ensure-directory"> | EE.Ok>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const ensureDirectory: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"ensure-directory"> | E.Ok>;
+export declare const ensureDirectory: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"ensure-directory"> | EE.Ok>;

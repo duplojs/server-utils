@@ -5,6 +5,7 @@ var AA = require('@duplojs/utils/array');
 var OO = require('@duplojs/utils/object');
 var DDP = require('@duplojs/utils/dataParser');
 var EE = require('@duplojs/utils/either');
+var CC = require('@duplojs/utils/clean');
 var kind = require('../kind.cjs');
 var exitProcess = require('../common/exitProcess.cjs');
 var error = require('./error.cjs');
@@ -32,7 +33,37 @@ var AA__namespace = /*#__PURE__*/_interopNamespaceDefault(AA);
 var OO__namespace = /*#__PURE__*/_interopNamespaceDefault(OO);
 var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
 var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
+var CC__namespace = /*#__PURE__*/_interopNamespaceDefault(CC);
 
+function commandSubjectToDataParser(contract) {
+    if (utils.hasSomeKinds(contract, [
+        DDP__namespace.stringKind,
+        DDP__namespace.numberKind,
+        DDP__namespace.bigIntKind,
+        DDP__namespace.dateKind,
+        DDP__namespace.timeKind,
+        DDP__namespace.nilKind,
+    ])) {
+        const clone = contract.clone();
+        clone.definition.coerce = true;
+        return clone;
+    }
+    if (DDP__namespace.identifier(contract, DDP__namespace.arrayKind)) {
+        return DDP__namespace.array(commandSubjectToDataParser(contract.definition.element), contract.definition);
+    }
+    if (DDP__namespace.identifier(contract, DDP__namespace.tupleKind)) {
+        return DDP__namespace.tuple(contract.definition.shape.map((part) => commandSubjectToDataParser(part)), {
+            ...contract.definition,
+            rest: contract.definition.rest
+                ? commandSubjectToDataParser(contract.definition.rest)
+                : undefined,
+        });
+    }
+    if (DDP__namespace.identifier(contract, DDP__namespace.dataParserKind)) {
+        return contract;
+    }
+    return CC__namespace.toMapDataParser(contract, { coerce: true });
+}
 function printError(commandError, error$1) {
     if (!error$1) {
         // eslint-disable-next-line no-console
@@ -47,11 +78,15 @@ function create(...args) {
     const [name, params, execute] = args.length === 2
         ? [args[0], {}, args[1]]
         : args;
+    const subject = (params.subject
+        && !(params.subject instanceof Array)
+        ? commandSubjectToDataParser(params.subject)
+        : params.subject) ?? null;
     const self = commandKind.setTo({
         name,
         description: params.description ?? null,
         options: params.options ?? [],
-        subject: params.subject ?? null,
+        subject: subject,
         execute: async (args, error$1) => {
             const commandError = error$1 ?? error.createError(self.name);
             const pathIndex = commandError.currentCommandPath.length;
@@ -126,7 +161,7 @@ function create(...args) {
                     });
                     return printError(commandError, error$1);
                 }
-                const subjectResult = self.subject.parse(commandOptions.restArgs);
+                const subjectResult = self.subject.parse(commandOptions.restArgs[0]);
                 if (EE__namespace.isLeft(subjectResult)) {
                     error.addDataParserError(commandError, utils.unwrap(subjectResult), {
                         type: "subject",

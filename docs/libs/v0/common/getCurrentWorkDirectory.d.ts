@@ -1,7 +1,7 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        getCurrentWorkDirectory(): E.Error<unknown> | E.Success<string>;
+        getCurrentWorkDirectory(): EE.Error<unknown> | EE.Success<string>;
         getCurrentWorkDirectoryOrThrow(): string;
     }
 }
@@ -26,4 +26,4 @@ declare module "../implementor" {
  * @see https://server-utils.duplojs.dev/en/v0/api/common/getCurrentWorkDirectory
  * 
  */
-export declare const getCurrentWorkDirectory: () => E.Error<unknown> | E.Success<string>;
+export declare const getCurrentWorkDirectory: () => EE.Error<unknown> | EE.Success<string>;

@@ -1,7 +1,29 @@
 'use strict';
 
 var utils = require('@duplojs/utils');
+var EE = require('@duplojs/utils/either');
+var DD = require('@duplojs/utils/date');
 var implementor = require('../implementor.cjs');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
+var DD__namespace = /*#__PURE__*/_interopNamespaceDefault(DD);
 
 function createStatInfoWithFsSource(source) {
     return {
@@ -9,10 +31,10 @@ function createStatInfoWithFsSource(source) {
         isDirectory: source.isDirectory(),
         isSymlink: source.isSymbolicLink(),
         sizeBytes: source.size,
-        modifiedAt: utils.D.isSafeTimestamp(source.mtime.getTime()) ? utils.D.createOrThrow(source.mtime) : null,
-        accessedAt: utils.D.isSafeTimestamp(source.atime.getTime()) ? utils.D.createOrThrow(source.atime) : null,
-        createdAt: utils.D.isSafeTimestamp(source.birthtime.getTime()) ? utils.D.createOrThrow(source.birthtime) : null,
-        changedAt: utils.D.isSafeTimestamp(source.ctime.getTime()) ? utils.D.createOrThrow(source.ctime) : null,
+        modifiedAt: DD__namespace.isSafeTimestamp(source.mtime.getTime()) ? DD__namespace.createOrThrow(source.mtime) : null,
+        accessedAt: DD__namespace.isSafeTimestamp(source.atime.getTime()) ? DD__namespace.createOrThrow(source.atime) : null,
+        createdAt: DD__namespace.isSafeTimestamp(source.birthtime.getTime()) ? DD__namespace.createOrThrow(source.birthtime) : null,
+        changedAt: DD__namespace.isSafeTimestamp(source.ctime.getTime()) ? DD__namespace.createOrThrow(source.ctime) : null,
         deviceId: source.dev,
         inode: source.ino,
         permissionsMode: source.mode,
@@ -35,20 +57,20 @@ function createStatInfoWithDeno(source) {
         isSymlink: source.isSymlink,
         sizeBytes: source.size,
         modifiedAt: source.mtime
-            && utils.D.isSafeTimestamp(source.mtime.getTime())
-            ? utils.D.createOrThrow(source.mtime)
+            && DD__namespace.isSafeTimestamp(source.mtime.getTime())
+            ? DD__namespace.createOrThrow(source.mtime)
             : null,
         accessedAt: source.atime
-            && utils.D.isSafeTimestamp(source.atime.getTime())
-            ? utils.D.createOrThrow(source.atime)
+            && DD__namespace.isSafeTimestamp(source.atime.getTime())
+            ? DD__namespace.createOrThrow(source.atime)
             : null,
         createdAt: source.birthtime
-            && utils.D.isSafeTimestamp(source.birthtime.getTime())
-            ? utils.D.createOrThrow(source.birthtime)
+            && DD__namespace.isSafeTimestamp(source.birthtime.getTime())
+            ? DD__namespace.createOrThrow(source.birthtime)
             : null,
         changedAt: source.ctime
-            && utils.D.isSafeTimestamp(source.ctime.getTime())
-            ? utils.D.createOrThrow(source.ctime)
+            && DD__namespace.isSafeTimestamp(source.ctime.getTime())
+            ? DD__namespace.createOrThrow(source.ctime)
             : null,
         deviceId: source.dev,
         inode: source.ino,
@@ -72,13 +94,13 @@ const linkStat = implementor.implementFunction("linkStat", {
     NODE: async (path) => {
         const fs = await implementor.nodeFileSystem.value;
         return fs.lstat(path)
-            .then(utils.innerPipe(createStatInfoWithFsSource, utils.E.success))
-            .catch((value) => utils.E.left("file-system-link-stat", value));
+            .then(utils.innerPipe(createStatInfoWithFsSource, EE__namespace.success))
+            .catch((value) => EE__namespace.left("file-system-link-stat", value));
     },
     DENO: (path) => Deno
         .lstat(path)
-        .then(utils.innerPipe(createStatInfoWithDeno, utils.E.success))
-        .catch((value) => utils.E.left("file-system-link-stat", value)),
+        .then(utils.innerPipe(createStatInfoWithDeno, EE__namespace.success))
+        .catch((value) => EE__namespace.left("file-system-link-stat", value)),
 });
 
 exports.linkStat = linkStat;

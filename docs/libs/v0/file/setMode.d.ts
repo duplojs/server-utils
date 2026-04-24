@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 interface Permissions {
     read?: boolean;
@@ -16,7 +16,7 @@ interface ModeObject {
 type SetMode = ModeObject | number;
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        setMode(path: string, mode: SetMode): Promise<FileSystemLeft<"set-mode"> | E.Ok>;
+        setMode(path: string, mode: SetMode): Promise<FileSystemLeft<"set-mode"> | EE.Ok>;
     }
 }
 /**
@@ -42,5 +42,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const setMode: (path: string, mode: SetMode) => Promise<FileSystemLeft<"set-mode"> | E.Ok>;
+export declare const setMode: (path: string, mode: SetMode) => Promise<FileSystemLeft<"set-mode"> | EE.Ok>;
 export {};

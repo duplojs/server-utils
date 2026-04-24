@@ -1,12 +1,14 @@
-import { pipe, when, instanceOf, E, P } from '@duplojs/utils';
+import { pipe, when, instanceOf } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
+import * as PP from '@duplojs/utils/pattern';
 import { implementFunction } from '../implementor.mjs';
 
 /**
  * {@include common/setCurrentWorkingDirectory/index.md}
  */
 const setCurrentWorkingDirectory = implementFunction("setCurrentWorkingDirectory", {
-    NODE: (path) => pipe(path, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (path) => E.safeCallback(() => void process.chdir(path)), P.when(E.isLeft, E.fail), P.otherwise(E.ok)),
-    DENO: (path) => pipe(path, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (path) => E.safeCallback(() => void Deno.chdir(path)), P.when(E.isLeft, E.fail), P.otherwise(E.ok)),
+    NODE: (path) => pipe(path, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (path) => EE.safeCallback(() => void process.chdir(path)), PP.when(EE.isLeft, EE.fail), PP.otherwise(EE.ok)),
+    DENO: (path) => pipe(path, when(instanceOf(URL), ({ pathname }) => decodeURIComponent(pathname)), (path) => EE.safeCallback(() => void Deno.chdir(path)), PP.when(EE.isLeft, EE.fail), PP.otherwise(EE.ok)),
 });
 
 export { setCurrentWorkingDirectory };

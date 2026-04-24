@@ -1,4 +1,5 @@
-import { E, isType } from '@duplojs/utils';
+import { isType } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 function calculatePermissions(permissions) {
@@ -28,13 +29,13 @@ const setMode = implementFunction("setMode", {
     NODE: async (path, mode) => {
         const fs = await nodeFileSystem.value;
         return fs.chmod(path, toMode(mode))
-            .then(E.ok)
-            .catch((value) => E.left("file-system-set-mode", value));
+            .then(EE.ok)
+            .catch((value) => EE.left("file-system-set-mode", value));
     },
     DENO: (path, mode) => Deno
         .chmod(path, toMode(mode))
-        .then(E.ok)
-        .catch((value) => E.left("file-system-set-mode", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-set-mode", value)),
 });
 
 export { setMode };

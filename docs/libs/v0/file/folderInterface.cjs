@@ -1,6 +1,7 @@
 'use strict';
 
 var utils = require('@duplojs/utils');
+var EE = require('@duplojs/utils/either');
 var kind = require('../kind.cjs');
 var move = require('./move.cjs');
 var exists = require('./exists.cjs');
@@ -10,6 +11,25 @@ var readDirectory = require('./readDirectory.cjs');
 var stat = require('./stat.cjs');
 var walkDirectory = require('./walkDirectory.cjs');
 var relocate = require('./relocate.cjs');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
 
 const folderInterfaceKind = kind.createDuplojsServerUtilsKind("folderInterface");
 /**
@@ -23,13 +43,13 @@ function createFolderInterface(path) {
         return utils.Path.getParentFolderPath(path);
     }
     function localRename(newName) {
-        return utils.asyncPipe(rename.rename(path, newName), utils.E.whenIsRight(utils.innerPipe(createFolderInterface, utils.E.success)));
+        return utils.asyncPipe(rename.rename(path, newName), EE__namespace.whenIsRight(utils.innerPipe(createFolderInterface, EE__namespace.success)));
     }
     function localRelocate(newParentPath) {
-        return utils.asyncPipe(relocate.relocate(path, newParentPath), utils.E.whenIsRight(utils.innerPipe(createFolderInterface, utils.E.success)));
+        return utils.asyncPipe(relocate.relocate(path, newParentPath), EE__namespace.whenIsRight(utils.innerPipe(createFolderInterface, EE__namespace.success)));
     }
     function localMove(newPath) {
-        return utils.asyncPipe(move.move(path, newPath), utils.E.whenIsRight(() => utils.E.success(createFolderInterface(newPath))));
+        return utils.asyncPipe(move.move(path, newPath), EE__namespace.whenIsRight(() => EE__namespace.success(createFolderInterface(newPath))));
     }
     function localExists() {
         return exists.exists(path);

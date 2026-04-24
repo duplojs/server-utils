@@ -1,11 +1,12 @@
-import { DP, createOverride } from '@duplojs/utils';
+import { createOverride } from '@duplojs/utils';
+import * as DDP from '@duplojs/utils/dataParser';
 import { file as file$1 } from '../parsers/file.mjs';
 
 /**
  * {@include dataParserExtended/file/index.md}
  */
 function file(params, definition) {
-    const self = DP.dataParserExtendedInit(file$1(params, definition), {
+    const self = DDP.dataParserExtendedInit(file$1(params, definition), {
         mimeType(self, value) {
             return file({
                 mimeType: value,

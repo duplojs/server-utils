@@ -1,5 +1,7 @@
 import { SC } from "@duplojs/server-utils";
-import { DP, type ExpectType } from "@duplojs/utils";
+import { C, DP, type ExpectType } from "@duplojs/utils";
+
+const UserId = C.createNewType("user-id", DP.number(), C.Positive);
 
 const command = SC.create(
 	"batch",
@@ -18,6 +20,8 @@ const command = SC.create(
 					separator: ";",
 				},
 			),
+			SC.createArrayOption("emails", C.Email),
+			SC.createArrayOption("userIds", UserId),
 		],
 	},
 	({ options }) => {
@@ -26,6 +30,8 @@ const command = SC.create(
 			{
 				tags: string[] | undefined;
 				files: [string, ...string[]];
+				emails: C.Email[] | undefined;
+				userIds: C.GetNewType<typeof UserId>[] | undefined;
 			},
 			"strict"
 		>;
@@ -35,4 +41,6 @@ const command = SC.create(
 await command.execute([
 	"--tags=api,docs",
 	"--files=src/a.ts;src/b.ts",
+	"--emails=dev@duplojs.dev,ops@duplojs.dev",
+	"--userIds=1,2",
 ]);

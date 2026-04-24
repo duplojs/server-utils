@@ -1,4 +1,5 @@
-import { E, Path } from '@duplojs/utils';
+import { Path } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem, nodeOs, nodeCrypto } from '../implementor.mjs';
 
 /**
@@ -15,15 +16,15 @@ const makeTemporaryFile = implementFunction("makeTemporaryFile", {
         ]);
         return fs.open(fileTemporaryPath, "wx")
             .then((fh) => fh.close())
-            .then(() => E.success(fileTemporaryPath))
-            .catch((value) => E.left("file-system-make-temporary-file", value));
+            .then(() => EE.success(fileTemporaryPath))
+            .catch((value) => EE.left("file-system-make-temporary-file", value));
     },
     DENO: (prefix, suffix) => Deno.makeTempFile({
         prefix,
         suffix,
     })
-        .then(E.success)
-        .catch((value) => E.left("file-system-make-temporary-file", value)),
+        .then(EE.success)
+        .catch((value) => EE.left("file-system-make-temporary-file", value)),
 });
 
 export { makeTemporaryFile };

@@ -4,6 +4,7 @@ var utils = require('@duplojs/utils');
 var SS = require('@duplojs/utils/string');
 var DDP = require('@duplojs/utils/dataParser');
 var EE = require('@duplojs/utils/either');
+var CC = require('@duplojs/utils/clean');
 var base = require('./base.cjs');
 var error = require('../error.cjs');
 
@@ -27,10 +28,30 @@ function _interopNamespaceDefault(e) {
 var SS__namespace = /*#__PURE__*/_interopNamespaceDefault(SS);
 var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
 var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
+var CC__namespace = /*#__PURE__*/_interopNamespaceDefault(CC);
 
 const defaultSeparator = ",";
-function createArrayOption(name, schema, params) {
-    const dataParser = utils.pipe(schema, DDP__namespace.array, (schema) => params?.min
+function createArrayOption(name, contract, params) {
+    let computeDataParser = undefined;
+    if (utils.hasSomeKinds(contract, [
+        DDP__namespace.stringKind,
+        DDP__namespace.numberKind,
+        DDP__namespace.bigIntKind,
+        DDP__namespace.dateKind,
+        DDP__namespace.timeKind,
+        DDP__namespace.nilKind,
+    ])) {
+        const clone = contract.clone();
+        clone.definition.coerce = true;
+        computeDataParser = clone;
+    }
+    else if (DDP__namespace.identifier(contract, DDP__namespace.dataParserKind)) {
+        computeDataParser = contract;
+    }
+    else {
+        computeDataParser = CC__namespace.toMapDataParser(contract, { coerce: true });
+    }
+    const dataParser = utils.pipe(computeDataParser, DDP__namespace.array, (schema) => params?.min
         ? schema.addChecker(DDP__namespace.checkerArrayMin(params.min))
         : schema, (schema) => params?.max
         ? schema.addChecker(DDP__namespace.checkerArrayMax(params.max))

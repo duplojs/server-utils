@@ -1,11 +1,11 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 interface MakeDirectoryParams {
     recursive?: boolean;
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        makeDirectory<GenericPath extends string>(path: GenericPath, params?: MakeDirectoryParams): Promise<FileSystemLeft<"make-directory"> | E.Ok>;
+        makeDirectory<GenericPath extends string>(path: GenericPath, params?: MakeDirectoryParams): Promise<FileSystemLeft<"make-directory"> | EE.Ok>;
     }
 }
 /**
@@ -24,5 +24,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const makeDirectory: <GenericPath extends string>(path: GenericPath, params?: MakeDirectoryParams) => Promise<FileSystemLeft<"make-directory"> | E.Ok>;
+export declare const makeDirectory: <GenericPath extends string>(path: GenericPath, params?: MakeDirectoryParams) => Promise<FileSystemLeft<"make-directory"> | EE.Ok>;
 export {};

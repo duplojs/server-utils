@@ -1,4 +1,6 @@
-import { innerPipe, E, D } from '@duplojs/utils';
+import { innerPipe } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
+import * as DD from '@duplojs/utils/date';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 function createStatInfoWithFsSource(source) {
@@ -7,10 +9,10 @@ function createStatInfoWithFsSource(source) {
         isDirectory: source.isDirectory(),
         isSymlink: source.isSymbolicLink(),
         sizeBytes: source.size,
-        modifiedAt: D.isSafeTimestamp(source.mtime.getTime()) ? D.createOrThrow(source.mtime) : null,
-        accessedAt: D.isSafeTimestamp(source.atime.getTime()) ? D.createOrThrow(source.atime) : null,
-        createdAt: D.isSafeTimestamp(source.birthtime.getTime()) ? D.createOrThrow(source.birthtime) : null,
-        changedAt: D.isSafeTimestamp(source.ctime.getTime()) ? D.createOrThrow(source.ctime) : null,
+        modifiedAt: DD.isSafeTimestamp(source.mtime.getTime()) ? DD.createOrThrow(source.mtime) : null,
+        accessedAt: DD.isSafeTimestamp(source.atime.getTime()) ? DD.createOrThrow(source.atime) : null,
+        createdAt: DD.isSafeTimestamp(source.birthtime.getTime()) ? DD.createOrThrow(source.birthtime) : null,
+        changedAt: DD.isSafeTimestamp(source.ctime.getTime()) ? DD.createOrThrow(source.ctime) : null,
         deviceId: source.dev,
         inode: source.ino,
         permissionsMode: source.mode,
@@ -33,20 +35,20 @@ function createStatInfoWithDeno(source) {
         isSymlink: source.isSymlink,
         sizeBytes: source.size,
         modifiedAt: source.mtime
-            && D.isSafeTimestamp(source.mtime.getTime())
-            ? D.createOrThrow(source.mtime)
+            && DD.isSafeTimestamp(source.mtime.getTime())
+            ? DD.createOrThrow(source.mtime)
             : null,
         accessedAt: source.atime
-            && D.isSafeTimestamp(source.atime.getTime())
-            ? D.createOrThrow(source.atime)
+            && DD.isSafeTimestamp(source.atime.getTime())
+            ? DD.createOrThrow(source.atime)
             : null,
         createdAt: source.birthtime
-            && D.isSafeTimestamp(source.birthtime.getTime())
-            ? D.createOrThrow(source.birthtime)
+            && DD.isSafeTimestamp(source.birthtime.getTime())
+            ? DD.createOrThrow(source.birthtime)
             : null,
         changedAt: source.ctime
-            && D.isSafeTimestamp(source.ctime.getTime())
-            ? D.createOrThrow(source.ctime)
+            && DD.isSafeTimestamp(source.ctime.getTime())
+            ? DD.createOrThrow(source.ctime)
             : null,
         deviceId: source.dev,
         inode: source.ino,
@@ -70,17 +72,17 @@ const stat = implementFunction("stat", {
     NODE: async (path) => {
         const fs = await nodeFileSystem.value;
         return fs.stat(path)
-            .then(innerPipe(createStatInfoWithFsSource, E.success))
-            .catch((value) => E.left("file-system-stat", value));
+            .then(innerPipe(createStatInfoWithFsSource, EE.success))
+            .catch((value) => EE.left("file-system-stat", value));
     },
     DENO: (path) => Deno
         .stat(path)
-        .then(innerPipe(createStatInfoWithDeno, E.success))
-        .catch((value) => E.left("file-system-stat", value)),
+        .then(innerPipe(createStatInfoWithDeno, EE.success))
+        .catch((value) => EE.left("file-system-stat", value)),
     BUN: (path) => Bun.file(path)
         .stat()
-        .then(innerPipe(createStatInfoWithFsSource, E.success))
-        .catch((value) => E.left("file-system-stat", value)),
+        .then(innerPipe(createStatInfoWithFsSource, EE.success))
+        .catch((value) => EE.left("file-system-stat", value)),
 });
 
 export { stat };

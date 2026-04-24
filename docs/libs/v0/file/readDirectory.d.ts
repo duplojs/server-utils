@@ -1,11 +1,11 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 interface ReadDirectoryParams {
     recursive?: boolean;
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        readDirectory<GenericPath extends string>(path: GenericPath, params?: ReadDirectoryParams): Promise<FileSystemLeft<"read-directory"> | E.Success<string[]>>;
+        readDirectory<GenericPath extends string>(path: GenericPath, params?: ReadDirectoryParams): Promise<FileSystemLeft<"read-directory"> | EE.Success<string[]>>;
     }
 }
 /**
@@ -24,5 +24,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const readDirectory: <GenericPath extends string>(path: GenericPath, params?: ReadDirectoryParams) => Promise<FileSystemLeft<"read-directory"> | E.Success<string[]>>;
+export declare const readDirectory: <GenericPath extends string>(path: GenericPath, params?: ReadDirectoryParams) => Promise<FileSystemLeft<"read-directory"> | EE.Success<string[]>>;
 export {};

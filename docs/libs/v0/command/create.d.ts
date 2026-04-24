@@ -1,9 +1,9 @@
 import { type SimplifyTopLevel, type Kind, type MaybePromise } from "@duplojs/utils";
 import * as DDP from "@duplojs/utils/dataParser";
 import { type Option } from "./options";
-import type { EligibleDataParser } from "./types";
+import type { EligibleCleanType, EligibleContract, EligibleDataParser, ComputeEligibleCleanType } from "./types";
 import { SymbolCommandError, type CommandError } from "./error";
-export type Subject = (EligibleDataParser | DDP.DataParserArray<SimplifyTopLevel<Omit<DDP.DataParserDefinitionArray, "element"> & {
+export type Subject = (EligibleContract | DDP.DataParserArray<SimplifyTopLevel<Omit<DDP.DataParserDefinitionArray, "element"> & {
     readonly element: EligibleDataParser;
 }>> | DDP.AdvancedContract<DDP.DataParserTuple<SimplifyTopLevel<Omit<DDP.DataParserDefinitionTuple, "shape" | "rest"> & {
     readonly shape: readonly [
@@ -12,6 +12,7 @@ export type Subject = (EligibleDataParser | DDP.DataParserArray<SimplifyTopLevel
     ];
     readonly rest: EligibleDataParser | undefined;
 }>>>);
+type ComputeSubject<GenericSubject extends Subject> = [GenericSubject] extends [DDP.DataParser] ? DDP.Output<GenericSubject> : [GenericSubject] extends [EligibleCleanType] ? ComputeEligibleCleanType<GenericSubject> : never;
 declare const commandKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/command", unknown>>;
 export interface Command extends Kind<typeof commandKind.definition> {
     readonly name: string;
@@ -31,12 +32,12 @@ export interface CreateCommandExecuteParams<GenericOptions extends readonly Opti
             name: GenericOptionName;
         }>["execute"]>, SymbolCommandError>["result"];
     };
-    subject: DDP.Output<GenericSubject>;
+    subject: ComputeSubject<GenericSubject>;
 }
 /**
  * Create a command node.
  * 
- * Use this builder to define a command name, its optional options/subject, and the execute handler called after parsing.
+ * Use this builder to define a command name, optional options, an optional subject, and the execute handler called after parsing.
  * 
  * ```ts
  * const ping = SC.create(
@@ -46,13 +47,17 @@ export interface CreateCommandExecuteParams<GenericOptions extends readonly Opti
  * 	},
  * );
  * 
+ * const UserId = C.createNewType("user-id", DP.number(), C.Positive);
+ * 
  * const greet = SC.create(
  * 	"greet",
  * 	{
- * 		options: [SC.createOption("name", DP.string(), { required: true })],
+ * 		options: [SC.createOption("email", C.Email)],
+ * 		subject: UserId,
  * 	},
- * 	({ options: { name } }) => {
- * 		// name: string
+ * 	({ options: { email }, subject }) => {
+ * 		// email: C.Email | undefined
+ * 		// subject: C.GetNewType<typeof UserId>
  * 	},
  * );
  * 
@@ -75,7 +80,7 @@ export interface CreateCommandExecuteParams<GenericOptions extends readonly Opti
  * ```
  * 
  * @remarks
- * `create` supports child commands by setting `subject` to an array of commands.
+ * `subject` can be a parser-like contract for positional arguments, or an array of child commands for nested command trees.
  * 
  * @see https://server-utils.duplojs.dev/en/v0/api/command/create
  * @namespace SC

@@ -6,14 +6,13 @@ prev:
 next:
   text: "createBooleanOption"
   link: "/fr/v0/api/command/createBooleanOption"
-description: "Crée une commande CLI avec son nom, son comportement, et une configuration optionnelle."
+description: "Crée une commande CLI avec un nom, des options/sujets optionnels et un handler d'exécution."
 ---
 
 # create
 
 `create` sert à déclarer une commande CLI.
-Vous donnez un nom et une fonction à exécuter.
-Vous pouvez aussi ajouter des options, un sujet (arguments positionnels), ou des sous-commandes.
+Vous fournissez un nom et une fonction d'exécution, et vous pouvez aussi ajouter des options, un sujet pour les arguments positionnels, ou des sous-commandes.
 
 ## Exemple
 
@@ -48,8 +47,8 @@ function create<
 - `params` (`CreateCommandParams`, optionnel) : configuration de la commande.
 - `params.description` (`string`, optionnel) : description affichée dans le help.
 - `params.options` (`Option[]`, optionnel) : parseurs d'options.
-- `params.subject` (`Subject | Command[]`, optionnel) : parser de données positionnelles ou liste de sous-commandes.
-- `execute` : handler de commande. Reçoit `options` typées et `subject` typé optionnel.
+- `params.subject` (`Subject | Command[]`, optionnel) : contrat de parsing pour les données positionnelles ou liste de sous-commandes.
+- `execute` : handler de commande. Reçoit des `options` typées et, si présent, un `subject` typé.
 
 ## Valeur de retour
 

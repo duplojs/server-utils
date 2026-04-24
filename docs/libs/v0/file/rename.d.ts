@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        rename(path: string, newName: string): Promise<FileSystemLeft<"rename"> | E.Success<string>>;
+        rename(path: string, newName: string): Promise<FileSystemLeft<"rename"> | EE.Success<string>>;
     }
 }
 /**
@@ -26,4 +26,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const rename: (path: string, newName: string) => Promise<FileSystemLeft<"rename"> | E.Success<string>>;
+export declare const rename: (path: string, newName: string) => Promise<FileSystemLeft<"rename"> | EE.Success<string>>;

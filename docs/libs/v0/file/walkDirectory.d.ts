@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { type FileInterface } from "./fileInterface";
 import { type FolderInterface } from "./folderInterface";
 import { type UnknownInterface } from "./unknownInterface";
@@ -8,7 +8,7 @@ interface WalkDirectoryParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        walkDirectory<GenericPath extends string>(path: GenericPath, params?: WalkDirectoryParams): Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
+        walkDirectory<GenericPath extends string>(path: GenericPath, params?: WalkDirectoryParams): Promise<FileSystemLeft<"walk-directory"> | EE.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
     }
 }
 /**
@@ -27,5 +27,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const walkDirectory: <GenericPath extends string>(path: GenericPath, params?: WalkDirectoryParams) => Promise<FileSystemLeft<"walk-directory"> | E.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
+export declare const walkDirectory: <GenericPath extends string>(path: GenericPath, params?: WalkDirectoryParams) => Promise<FileSystemLeft<"walk-directory"> | EE.Success<Generator<FileInterface | FolderInterface | UnknownInterface>>>;
 export {};

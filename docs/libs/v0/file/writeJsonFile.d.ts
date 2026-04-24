@@ -1,11 +1,11 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 interface WriteJsonFile {
     space?: number;
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        writeJsonFile(path: string, data: unknown, params?: WriteJsonFile): Promise<FileSystemLeft<"write-json-file"> | E.Ok>;
+        writeJsonFile(path: string, data: unknown, params?: WriteJsonFile): Promise<FileSystemLeft<"write-json-file"> | EE.Ok>;
     }
 }
 /**
@@ -26,5 +26,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const writeJsonFile: (path: string, data: unknown, params?: WriteJsonFile) => Promise<FileSystemLeft<"write-json-file"> | E.Ok>;
+export declare const writeJsonFile: (path: string, data: unknown, params?: WriteJsonFile) => Promise<FileSystemLeft<"write-json-file"> | EE.Ok>;
 export {};

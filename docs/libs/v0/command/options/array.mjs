@@ -1,13 +1,33 @@
-import { pipe, unwrap } from '@duplojs/utils';
+import { hasSomeKinds, pipe, unwrap } from '@duplojs/utils';
 import * as SS from '@duplojs/utils/string';
 import * as DDP from '@duplojs/utils/dataParser';
 import * as EE from '@duplojs/utils/either';
+import * as CC from '@duplojs/utils/clean';
 import { initOption } from './base.mjs';
 import { addIssue, addDataParserError } from '../error.mjs';
 
 const defaultSeparator = ",";
-function createArrayOption(name, schema, params) {
-    const dataParser = pipe(schema, DDP.array, (schema) => params?.min
+function createArrayOption(name, contract, params) {
+    let computeDataParser = undefined;
+    if (hasSomeKinds(contract, [
+        DDP.stringKind,
+        DDP.numberKind,
+        DDP.bigIntKind,
+        DDP.dateKind,
+        DDP.timeKind,
+        DDP.nilKind,
+    ])) {
+        const clone = contract.clone();
+        clone.definition.coerce = true;
+        computeDataParser = clone;
+    }
+    else if (DDP.identifier(contract, DDP.dataParserKind)) {
+        computeDataParser = contract;
+    }
+    else {
+        computeDataParser = CC.toMapDataParser(contract, { coerce: true });
+    }
+    const dataParser = pipe(computeDataParser, DDP.array, (schema) => params?.min
         ? schema.addChecker(DDP.checkerArrayMin(params.min))
         : schema, (schema) => params?.max
         ? schema.addChecker(DDP.checkerArrayMax(params.max))

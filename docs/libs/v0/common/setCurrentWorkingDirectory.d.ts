@@ -1,7 +1,7 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        setCurrentWorkingDirectory<GenericPath extends string>(path: GenericPath): E.Fail | E.Ok;
+        setCurrentWorkingDirectory<GenericPath extends string>(path: GenericPath): EE.Fail | EE.Ok;
     }
 }
 /**
@@ -26,4 +26,4 @@ declare module "../implementor" {
  * @see https://server-utils.duplojs.dev/en/v0/api/common/setCurrentWorkingDirectory
  * 
  */
-export declare const setCurrentWorkingDirectory: <GenericPath extends string>(path: GenericPath) => E.Fail | E.Ok;
+export declare const setCurrentWorkingDirectory: <GenericPath extends string>(path: GenericPath) => EE.Fail | EE.Ok;

@@ -1,4 +1,4 @@
-import { E } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -8,12 +8,12 @@ const move = implementFunction("move", {
     NODE: async (fromPath, toPath) => {
         const fs = await nodeFileSystem.value;
         return fs.rename(fromPath, toPath)
-            .then(E.ok)
-            .catch((value) => E.left("file-system-move", value));
+            .then(EE.ok)
+            .catch((value) => EE.left("file-system-move", value));
     },
     DENO: (fromPath, toPath) => Deno.rename(fromPath, toPath)
-        .then(E.ok)
-        .catch((value) => E.left("file-system-move", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-move", value)),
 });
 
 export { move };

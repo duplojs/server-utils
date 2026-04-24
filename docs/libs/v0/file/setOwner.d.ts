@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 interface SetOwnerParams {
     userId: number;
@@ -6,7 +6,7 @@ interface SetOwnerParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        setOwner(path: string, params: SetOwnerParams): Promise<FileSystemLeft<"set-owner"> | E.Ok>;
+        setOwner(path: string, params: SetOwnerParams): Promise<FileSystemLeft<"set-owner"> | EE.Ok>;
     }
 }
 /**
@@ -31,5 +31,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const setOwner: (path: string, params: SetOwnerParams) => Promise<FileSystemLeft<"set-owner"> | E.Ok>;
+export declare const setOwner: (path: string, params: SetOwnerParams) => Promise<FileSystemLeft<"set-owner"> | EE.Ok>;
 export {};

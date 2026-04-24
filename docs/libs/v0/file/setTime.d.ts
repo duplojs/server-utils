@@ -1,12 +1,13 @@
-import { D, E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
+import * as DD from "@duplojs/utils/date";
 import type { FileSystemLeft } from "./types";
 interface SetTimeParams {
-    accessTime: D.TheDate;
-    modifiedTime: D.TheDate;
+    accessTime: DD.TheDate;
+    modifiedTime: DD.TheDate;
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        setTime(path: string, params: SetTimeParams): Promise<FileSystemLeft<"set-time"> | E.Ok>;
+        setTime(path: string, params: SetTimeParams): Promise<FileSystemLeft<"set-time"> | EE.Ok>;
     }
 }
 /**
@@ -34,5 +35,5 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const setTime: (path: string, params: SetTimeParams) => Promise<FileSystemLeft<"set-time"> | E.Ok>;
+export declare const setTime: (path: string, params: SetTimeParams) => Promise<FileSystemLeft<"set-time"> | EE.Ok>;
 export {};

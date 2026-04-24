@@ -1,4 +1,4 @@
-import { E } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -8,13 +8,13 @@ const setOwner = implementFunction("setOwner", {
     NODE: async (path, { userId, groupId }) => {
         const fs = await nodeFileSystem.value;
         return fs.chown(path, userId, groupId)
-            .then(E.ok)
-            .catch((value) => E.left("file-system-set-owner", value));
+            .then(EE.ok)
+            .catch((value) => EE.left("file-system-set-owner", value));
     },
     DENO: (path, { userId, groupId }) => Deno
         .chown(path, userId, groupId)
-        .then(E.ok)
-        .catch((value) => E.left("file-system-set-owner", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-set-owner", value)),
 });
 
 export { setOwner };

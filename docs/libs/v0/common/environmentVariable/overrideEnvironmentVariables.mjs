@@ -1,9 +1,11 @@
-import { pipe, A, O } from '@duplojs/utils';
+import { pipe } from '@duplojs/utils';
+import * as OO from '@duplojs/utils/object';
+import * as AA from '@duplojs/utils/array';
 
 function overrideEnvironmentVariables(arrayEnv, override) {
-    return pipe(arrayEnv, A.map(O.entries), A.flat, (entries) => override
+    return pipe(arrayEnv, AA.map(OO.entries), AA.flat, (entries) => override
         ? entries
-        : A.reverse(entries), O.fromEntries);
+        : AA.reverse(entries), OO.fromEntries);
 }
 
 export { overrideEnvironmentVariables };

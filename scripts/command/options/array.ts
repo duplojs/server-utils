@@ -16,11 +16,11 @@ const defaultSeparator = ",";
  */
 export function createArrayOption<
 	GenericName extends string,
-	GenericSchema extends EligibleContract,
+	GenericContract extends EligibleContract,
 	GenericMinValues extends number,
 >(
 	name: GenericName,
-	contract: GenericSchema,
+	contract: GenericContract,
 	params: {
 		description?: string;
 		aliases?: readonly string[];
@@ -33,20 +33,20 @@ export function createArrayOption<
 	GenericName,
 	[
 		...AA.CreateTuple<
-			ComputeOptionContract<GenericSchema>,
+			ComputeOptionContract<GenericContract>,
 			GenericMinValues
 		>,
-		...ComputeOptionContract<GenericSchema>[],
+		...ComputeOptionContract<GenericContract>[],
 	]
 >;
 
 export function createArrayOption<
 	GenericName extends string,
-	GenericSchema extends EligibleContract,
+	GenericContract extends EligibleContract,
 	GenericMinValues extends number,
 >(
 	name: GenericName,
-	contract: GenericSchema,
+	contract: GenericContract,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -58,10 +58,10 @@ export function createArrayOption<
 	GenericName,
 	| [
 		...AA.CreateTuple<
-			ComputeOptionContract<GenericSchema>,
+			ComputeOptionContract<GenericContract>,
 			GenericMinValues
 		>,
-		...ComputeOptionContract<GenericSchema>[],
+		...ComputeOptionContract<GenericContract>[],
 	]
 	| undefined
 >;

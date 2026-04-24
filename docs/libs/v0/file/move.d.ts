@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        move(fromPath: string, toPath: string): Promise<FileSystemLeft<"move"> | E.Ok>;
+        move(fromPath: string, toPath: string): Promise<FileSystemLeft<"move"> | EE.Ok>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const move: (fromPath: string, toPath: string) => Promise<FileSystemLeft<"move"> | E.Ok>;
+export declare const move: (fromPath: string, toPath: string) => Promise<FileSystemLeft<"move"> | EE.Ok>;

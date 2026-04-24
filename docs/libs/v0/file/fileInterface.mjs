@@ -1,5 +1,6 @@
+import { asyncPipe, innerPipe, Path, mimeType } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { createDuplojsServerUtilsKind } from '../kind.mjs';
-import { asyncPipe, E, innerPipe, Path, mimeType } from '@duplojs/utils';
 import { rename } from './rename.mjs';
 import { exists } from './exists.mjs';
 import { move } from './move.mjs';
@@ -32,13 +33,13 @@ function createFileInterface(path) {
         return exists(path);
     }
     function localRename(newName) {
-        return asyncPipe(rename(path, newName), E.whenIsRight(innerPipe(createFileInterface, E.success)));
+        return asyncPipe(rename(path, newName), EE.whenIsRight(innerPipe(createFileInterface, EE.success)));
     }
     function localRelocate(newParentPath) {
-        return asyncPipe(relocate(path, newParentPath), E.whenIsRight(innerPipe(createFileInterface, E.success)));
+        return asyncPipe(relocate(path, newParentPath), EE.whenIsRight(innerPipe(createFileInterface, EE.success)));
     }
     function localMove(newPath) {
-        return asyncPipe(move(path, newPath), E.whenIsRight(() => E.success(createFileInterface(newPath))));
+        return asyncPipe(move(path, newPath), EE.whenIsRight(() => EE.success(createFileInterface(newPath))));
     }
     function localRemove() {
         return remove(path);

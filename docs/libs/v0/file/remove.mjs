@@ -1,4 +1,4 @@
-import { E } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -11,14 +11,14 @@ const remove = implementFunction("remove", {
             recursive: params?.recursive ?? false,
             force: true,
         })
-            .then(E.ok)
-            .catch((value) => E.left("file-system-remove", value));
+            .then(EE.ok)
+            .catch((value) => EE.left("file-system-remove", value));
     },
     DENO: (path, params) => Deno.remove(path, {
         recursive: params?.recursive,
     })
-        .then(E.ok)
-        .catch((value) => E.left("file-system-remove", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-remove", value)),
 });
 
 export { remove };

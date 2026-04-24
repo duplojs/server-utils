@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        realPath<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"real-path"> | E.Success<string>>;
+        realPath<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"real-path"> | EE.Success<string>>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const realPath: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"real-path"> | E.Success<string>>;
+export declare const realPath: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"real-path"> | EE.Success<string>>;

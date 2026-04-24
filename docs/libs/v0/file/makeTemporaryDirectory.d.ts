@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        makeTemporaryDirectory(prefix: string): Promise<FileSystemLeft<"make-temporary-directory"> | E.Success<string>>;
+        makeTemporaryDirectory(prefix: string): Promise<FileSystemLeft<"make-temporary-directory"> | EE.Success<string>>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const makeTemporaryDirectory: (prefix: string) => Promise<FileSystemLeft<"make-temporary-directory"> | E.Success<string>>;
+export declare const makeTemporaryDirectory: (prefix: string) => Promise<FileSystemLeft<"make-temporary-directory"> | EE.Success<string>>;

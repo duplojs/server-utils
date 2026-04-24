@@ -1,13 +1,33 @@
-import { unwrap } from '@duplojs/utils';
-import * as EE from '@duplojs/utils/either';
+import { hasSomeKinds, unwrap } from '@duplojs/utils';
 import * as DDP from '@duplojs/utils/dataParser';
+import * as EE from '@duplojs/utils/either';
+import * as CC from '@duplojs/utils/clean';
 import { initOption } from './base.mjs';
 import { addIssue, addDataParserError } from '../error.mjs';
 
-function createOption(name, schema, params) {
+function createOption(name, contract, params) {
+    let computeDataParser = undefined;
+    if (hasSomeKinds(contract, [
+        DDP.stringKind,
+        DDP.numberKind,
+        DDP.bigIntKind,
+        DDP.dateKind,
+        DDP.timeKind,
+        DDP.nilKind,
+    ])) {
+        const clone = contract.clone();
+        clone.definition.coerce = true;
+        computeDataParser = clone;
+    }
+    else if (DDP.identifier(contract, DDP.dataParserKind)) {
+        computeDataParser = contract;
+    }
+    else {
+        computeDataParser = CC.toMapDataParser(contract, { coerce: true });
+    }
     const dataParser = params?.required
-        ? schema
-        : DDP.optional(schema);
+        ? computeDataParser
+        : DDP.optional(computeDataParser);
     return initOption(name, ({ isHere, value }, error) => {
         if (!isHere && params?.required) {
             return addIssue(error, {

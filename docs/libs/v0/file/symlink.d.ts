@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 export interface SymlinkParams {
     /**
@@ -10,7 +10,7 @@ export interface SymlinkParams {
 }
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        symlink(oldPath: string, newPath: string, params?: SymlinkParams): Promise<FileSystemLeft<"symlink"> | E.Ok>;
+        symlink(oldPath: string, newPath: string, params?: SymlinkParams): Promise<FileSystemLeft<"symlink"> | EE.Ok>;
     }
 }
 /**
@@ -31,4 +31,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const symlink: (oldPath: string, newPath: string, params?: SymlinkParams) => Promise<FileSystemLeft<"symlink"> | E.Ok>;
+export declare const symlink: (oldPath: string, newPath: string, params?: SymlinkParams) => Promise<FileSystemLeft<"symlink"> | EE.Ok>;

@@ -1,4 +1,4 @@
-import { E } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -8,18 +8,18 @@ const writeFile = implementFunction("writeFile", {
     NODE: async (path, data) => {
         const fs = await nodeFileSystem.value;
         return fs.writeFile(path, data)
-            .then(E.ok)
-            .catch((value) => E.left("file-system-write-file", value));
+            .then(EE.ok)
+            .catch((value) => EE.left("file-system-write-file", value));
     },
     DENO: (path, data) => Deno
         .writeFile(path, data)
-        .then(E.ok)
-        .catch((value) => E.left("file-system-write-file", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-write-file", value)),
     BUN: (path, data) => Bun
         .file(path)
         .write(data)
-        .then(E.ok)
-        .catch((value) => E.left("file-system-write-file", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-write-file", value)),
 });
 
 export { writeFile };

@@ -1,4 +1,7 @@
-import { innerPipe, G, P, E } from '@duplojs/utils';
+import { innerPipe } from '@duplojs/utils';
+import * as GG from '@duplojs/utils/generator';
+import * as EE from '@duplojs/utils/either';
+import * as PP from '@duplojs/utils/pattern';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 import { createFileInterface } from './fileInterface.mjs';
 import { createFolderInterface } from './folderInterface.mjs';
@@ -14,8 +17,8 @@ const walkDirectory = implementFunction("walkDirectory", {
             recursive: params?.recursive ?? false,
             withFileTypes: true,
         })
-            .then(innerPipe(G.map(innerPipe(P.when((dirent) => dirent.isFile(), ({ parentPath, name }) => createFileInterface(`${parentPath}/${name}`)), P.when((dirent) => dirent.isDirectory(), ({ parentPath, name }) => createFolderInterface(`${parentPath}/${name}`)), P.otherwise(({ parentPath, name }) => createUnknownInterface(`${parentPath}/${name}`)))), E.success))
-            .catch((value) => E.left("file-system-walk-directory", value));
+            .then(innerPipe(GG.map(innerPipe(PP.when((dirent) => dirent.isFile(), ({ parentPath, name }) => createFileInterface(`${parentPath}/${name}`)), PP.when((dirent) => dirent.isDirectory(), ({ parentPath, name }) => createFolderInterface(`${parentPath}/${name}`)), PP.otherwise(({ parentPath, name }) => createUnknownInterface(`${parentPath}/${name}`)))), EE.success))
+            .catch((value) => EE.left("file-system-walk-directory", value));
     },
 });
 

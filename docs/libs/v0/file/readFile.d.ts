@@ -1,8 +1,8 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import type { FileSystemLeft } from "./types";
 declare module "../implementor" {
     interface ServerUtilsFunction {
-        readFile<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"read-file"> | E.Success<Uint8Array>>;
+        readFile<GenericPath extends string>(path: GenericPath): Promise<FileSystemLeft<"read-file"> | EE.Success<Uint8Array>>;
     }
 }
 /**
@@ -21,4 +21,4 @@ declare module "../implementor" {
  * @namespace SF
  * 
  */
-export declare const readFile: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"read-file"> | E.Success<Uint8Array>>;
+export declare const readFile: <GenericPath extends string>(path: GenericPath) => Promise<FileSystemLeft<"read-file"> | EE.Success<Uint8Array>>;

@@ -1,9 +1,11 @@
-import { G, O, S } from '@duplojs/utils';
+import * as GG from '@duplojs/utils/generator';
+import * as OO from '@duplojs/utils/object';
+import * as SS from '@duplojs/utils/string';
 
 const envVarRegex = /(?<!\\)\${(?<value>[^{}]+)}/g;
 const escapedDollarRegex = /\\\$/g;
 function expandValue(value, env, stack = new Set()) {
-    return S.replace(value, envVarRegex, ({ namedGroups }) => {
+    return SS.replace(value, envVarRegex, ({ namedGroups }) => {
         const value = namedGroups.value;
         const rawEnvValue = env[value];
         if (rawEnvValue === undefined || stack.has(value)) {
@@ -16,8 +18,8 @@ function expandValue(value, env, stack = new Set()) {
     });
 }
 function expandEnvironmentVariables(env) {
-    return G.reduce(O.entries(env), G.reduceFrom(env), ({ element: [key, value], lastValue, nextWithObject }) => nextWithObject(lastValue, {
-        [key]: S.replaceAll(expandValue(value, lastValue), escapedDollarRegex, "$"),
+    return GG.reduce(OO.entries(env), GG.reduceFrom(env), ({ element: [key, value], lastValue, nextWithObject }) => nextWithObject(lastValue, {
+        [key]: SS.replaceAll(expandValue(value, lastValue), escapedDollarRegex, "$"),
     }));
 }
 

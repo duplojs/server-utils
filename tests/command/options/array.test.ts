@@ -150,7 +150,10 @@ describe("createArrayOption", () => {
 		const numberOption = DServerCommand.createArrayOption(
 			"counts",
 			C.Number,
-			{ required: true, min: 1 },
+			{
+				required: true,
+				min: 1,
+			},
 		);
 
 		const numberResult = numberOption.execute(["--counts=42,43"], createError("root"));

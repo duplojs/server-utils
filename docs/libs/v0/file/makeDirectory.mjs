@@ -1,4 +1,4 @@
-import { E } from '@duplojs/utils';
+import * as EE from '@duplojs/utils/either';
 import { implementFunction, nodeFileSystem } from '../implementor.mjs';
 
 /**
@@ -10,14 +10,14 @@ const makeDirectory = implementFunction("makeDirectory", {
         return fs.mkdir(path, {
             recursive: params?.recursive,
         })
-            .then(E.ok)
-            .catch((value) => E.left("file-system-make-directory", value));
+            .then(EE.ok)
+            .catch((value) => EE.left("file-system-make-directory", value));
     },
     DENO: (path, params) => Deno.mkdir(path, {
         recursive: params?.recursive,
     })
-        .then(E.ok)
-        .catch((value) => E.left("file-system-make-directory", value)),
+        .then(EE.ok)
+        .catch((value) => EE.left("file-system-make-directory", value)),
 });
 
 export { makeDirectory };

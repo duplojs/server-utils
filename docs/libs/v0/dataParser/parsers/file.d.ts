@@ -1,9 +1,11 @@
-import { type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type O, type NeverCoalescing, type AnyTuple } from "@duplojs/utils";
+import { type BytesInString, type FixDeepFunctionInfer, type Kind, type NeverCoalescing, type AnyTuple } from "@duplojs/utils";
+import * as DDP from "@duplojs/utils/dataParser";
+import type * as OO from "@duplojs/utils/object";
 import { type FileInterface } from "../../file";
 export interface DataParserFileCheckerCustom {
 }
-export type DataParserFileCheckers = (DataParserFileCheckerCustom[O.GetPropsWithValueExtends<DataParserFileCheckerCustom, DP.DataParserChecker>] | DP.CheckerRefineImplementation<FileInterface>);
-export interface DataParserDefinitionFile extends DP.DataParserDefinition<DataParserFileCheckers> {
+export type DataParserFileCheckers = (DataParserFileCheckerCustom[OO.GetPropsWithValueExtends<DataParserFileCheckerCustom, DDP.DataParserChecker>] | DDP.CheckerRefineImplementation<FileInterface>);
+export interface DataParserDefinitionFile extends DDP.DataParserDefinition<DataParserFileCheckers> {
     readonly coerce: boolean;
     readonly mimeType?: RegExp;
     readonly minSize?: number;
@@ -11,7 +13,7 @@ export interface DataParserDefinitionFile extends DP.DataParserDefinition<DataPa
     readonly checkExist: boolean;
 }
 export declare const fileKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtilsDataParser/file", unknown>>;
-type _DataParserFile<GenericDefinition extends DataParserDefinitionFile> = (DP.DataParser<GenericDefinition, FileInterface, FileInterface> & Kind<typeof fileKind.definition>);
+type _DataParserFile<GenericDefinition extends DataParserDefinitionFile> = (DDP.DataParser<GenericDefinition, FileInterface, FileInterface> & Kind<typeof fileKind.definition>);
 export interface DataParserFile<GenericDefinition extends DataParserDefinitionFile = DataParserDefinitionFile> extends _DataParserFile<GenericDefinition> {
     addChecker<GenericChecker extends readonly [
         DataParserFileCheckers,
@@ -19,7 +21,7 @@ export interface DataParserFile<GenericDefinition extends DataParserDefinitionFi
     ]>(...args: FixDeepFunctionInfer<readonly [
         DataParserFileCheckers,
         ...DataParserFileCheckers[]
-    ], GenericChecker>): DataParserFile<DP.AddCheckersToDefinition<GenericDefinition, GenericChecker>>;
+    ], GenericChecker>): DataParserFile<DDP.AddCheckersToDefinition<GenericDefinition, GenericChecker>>;
 }
 export interface DataParserFileParams {
     readonly mimeType?: string | AnyTuple<string> | RegExp;
@@ -61,7 +63,7 @@ export interface DataParserFileParams {
  * @namespace SDP
  * 
  */
-export declare function file<const GenericDefinition extends Omit<Partial<DataParserDefinitionFile>, "mimeType" | "minSize" | "maxSize" | "checkExist"> = never>(params?: DataParserFileParams, definition?: GenericDefinition): DataParserFile<DP.MergeDefinition<DataParserDefinitionFile, NeverCoalescing<GenericDefinition, {}>>>;
+export declare function file<const GenericDefinition extends Omit<Partial<DataParserDefinitionFile>, "mimeType" | "minSize" | "maxSize" | "checkExist"> = never>(params?: DataParserFileParams, definition?: GenericDefinition): DataParserFile<DDP.MergeDefinition<DataParserDefinitionFile, NeverCoalescing<GenericDefinition, {}>>>;
 export declare namespace file {
     var overrideHandler: import("@duplojs/utils").OverrideHandler<DataParserFile<DataParserDefinitionFile>>;
 }

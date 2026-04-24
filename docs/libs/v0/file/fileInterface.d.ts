@@ -1,4 +1,5 @@
-import { type Kind, E, Path } from "@duplojs/utils";
+import { type Kind, Path } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { type StatInfo } from "./stat";
 import type { FileSystemLeft } from "./types";
 declare const fileInterfaceKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/fileInterface", unknown>>;
@@ -8,12 +9,12 @@ export interface FileInterface extends Kind<typeof fileInterfaceKind.definition>
     getMimeType(): string | null;
     getExtension(params?: Path.GetExtensionNameParams): string | null;
     getParentPath(): string | null;
-    rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
-    relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;
-    move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FileInterface>>;
-    exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
-    remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
-    stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+    rename(newName: string): Promise<FileSystemLeft<"rename"> | EE.Success<FileInterface>>;
+    relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | EE.Success<FileInterface>>;
+    move(newPath: string): Promise<FileSystemLeft<"move"> | EE.Success<FileInterface>>;
+    exists(): Promise<FileSystemLeft<"exists"> | EE.Ok>;
+    remove(): Promise<FileSystemLeft<"remove"> | EE.Ok>;
+    stat(): Promise<FileSystemLeft<"stat"> | EE.Success<StatInfo>>;
 }
 /**
  * Create a file interface with helper methods.
