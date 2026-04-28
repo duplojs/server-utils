@@ -3,7 +3,8 @@ import * as DDP from '@duplojs/utils/dataParser';
 import * as EE from '@duplojs/utils/either';
 import * as CC from '@duplojs/utils/clean';
 import { initOption } from './base.mjs';
-import { addIssue, addDataParserError } from '../error.mjs';
+import { addIssue, addIssueDataParser } from '../error.mjs';
+import { fileKind } from '../../dataParser/parsers/file.mjs';
 
 function createOption(name, contract, params) {
     let computeDataParser = undefined;
@@ -14,6 +15,7 @@ function createOption(name, contract, params) {
         DDP.dateKind,
         DDP.timeKind,
         DDP.nilKind,
+        fileKind,
     ])) {
         const clone = contract.clone();
         clone.definition.coerce = true;
@@ -28,7 +30,7 @@ function createOption(name, contract, params) {
     const dataParser = params?.required
         ? computeDataParser
         : DDP.optional(computeDataParser);
-    return initOption(name, ({ isHere, value }, error) => {
+    return initOption(name, async ({ isHere, value }, error) => {
         if (!isHere && params?.required) {
             return addIssue(error, {
                 type: "option",
@@ -38,9 +40,11 @@ function createOption(name, contract, params) {
                 message: `Option "${name}" is required.`,
             });
         }
-        const result = dataParser.parse(value);
+        const result = dataParser.isAsynchronous()
+            ? await dataParser.asyncParse(value)
+            : dataParser.parse(value);
         if (EE.isLeft(result)) {
-            return addDataParserError(error, unwrap(result), {
+            return addIssueDataParser(error, unwrap(result), {
                 type: "option",
                 target: name,
             });

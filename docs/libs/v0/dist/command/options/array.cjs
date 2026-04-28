@@ -7,6 +7,7 @@ var EE = require('@duplojs/utils/either');
 var CC = require('@duplojs/utils/clean');
 var base = require('./base.cjs');
 var error = require('../error.cjs');
+var file = require('../../dataParser/parsers/file.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -40,6 +41,7 @@ function createArrayOption(name, contract, params) {
         DDP__namespace.dateKind,
         DDP__namespace.timeKind,
         DDP__namespace.nilKind,
+        file.fileKind,
     ])) {
         const clone = contract.clone();
         clone.definition.coerce = true;
@@ -58,7 +60,7 @@ function createArrayOption(name, contract, params) {
         : schema, (schema) => params?.required
         ? schema
         : DDP__namespace.optional(schema));
-    return base.initOption(name, ({ isHere, value }, error$1) => {
+    return base.initOption(name, async ({ isHere, value }, error$1) => {
         if (!isHere && params?.required) {
             return error.addIssue(error$1, {
                 type: "option",
@@ -71,9 +73,11 @@ function createArrayOption(name, contract, params) {
         const values = value !== undefined
             ? SS__namespace.split(value, params?.separator ?? defaultSeparator)
             : undefined;
-        const result = dataParser.parse(values);
+        const result = dataParser.isAsynchronous()
+            ? await dataParser.asyncParse(values)
+            : dataParser.parse(values);
         if (EE__namespace.isLeft(result)) {
-            return error.addDataParserError(error$1, utils.unwrap(result), {
+            return error.addIssueDataParser(error$1, utils.unwrap(result), {
                 type: "option",
                 target: name,
             });

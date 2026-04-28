@@ -1,8 +1,8 @@
 import { type ExpectType, DP, E, unwrap } from "@duplojs/utils";
-import { addDataParserError, addIssue, createError, interpretCommandError, interpretExecOptionError, popErrorPath, setErrorPath, SymbolCommandError } from "@scripts/command/error";
+import { addIssueDataParser, addIssue, createError, interpretCommandError, interpretExecOptionError, SymbolCommandError } from "@scripts/command/error";
 
 describe("error", () => {
-	it("creates and mutates a command error path", () => {
+	it("creates a command error", () => {
 		const error = createError("root");
 
 		type _CheckError = ExpectType<
@@ -11,10 +11,6 @@ describe("error", () => {
 			"strict"
 		>;
 
-		expect(error.currentCommandPath).toEqual(["root"]);
-		expect(setErrorPath(error, "child", 1)).toBe(error);
-		expect(error.currentCommandPath).toEqual(["root", "child"]);
-		expect(popErrorPath(error)).toBe(error);
 		expect(error.currentCommandPath).toEqual(["root"]);
 	});
 
@@ -55,7 +51,7 @@ describe("error", () => {
 		}
 
 		expect(
-			addDataParserError(
+			addIssueDataParser(
 				error,
 				unwrap(optionResult),
 				{
@@ -65,7 +61,7 @@ describe("error", () => {
 			),
 		).toBe(SymbolCommandError);
 
-		setErrorPath(error, "child", 1);
+		error.currentCommandPath[1] = "child";
 
 		const subjectResult = DP.tuple([DP.string(), DP.number()]).parse(["name", "bad"]);
 
@@ -75,7 +71,7 @@ describe("error", () => {
 		}
 
 		expect(
-			addDataParserError(
+			addIssueDataParser(
 				error,
 				unwrap(subjectResult),
 				{
@@ -112,7 +108,7 @@ describe("error", () => {
 		}
 
 		expect(
-			addDataParserError(
+			addIssueDataParser(
 				error,
 				unwrap(optionResult),
 				{

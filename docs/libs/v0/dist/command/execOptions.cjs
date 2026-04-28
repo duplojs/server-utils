@@ -1,12 +1,12 @@
 'use strict';
 
-var AA = require('@duplojs/utils/array');
+var GG = require('@duplojs/utils/generator');
 var OO = require('@duplojs/utils/object');
 var error = require('./error.cjs');
 var help = require('./help.cjs');
-var exitProcess = require('../common/exitProcess.cjs');
 var getProcessArguments = require('../common/getProcessArguments.cjs');
 var boolean = require('./options/boolean.cjs');
+var exitProcess = require('../common/exitProcess.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -25,14 +25,14 @@ function _interopNamespaceDefault(e) {
     return Object.freeze(n);
 }
 
-var AA__namespace = /*#__PURE__*/_interopNamespaceDefault(AA);
+var GG__namespace = /*#__PURE__*/_interopNamespaceDefault(GG);
 var OO__namespace = /*#__PURE__*/_interopNamespaceDefault(OO);
 
 const helpOption = boolean.createBooleanOption("help", { aliases: ["h"] });
-function execOptions(...options) {
+async function execOptions(...options) {
     const processArguments = getProcessArguments.getProcessArguments();
     const error$1 = error.createError("root");
-    const help$1 = helpOption.execute(processArguments, error$1);
+    const help$1 = await helpOption.execute(processArguments, error$1);
     if (help$1 === error.SymbolCommandError) {
         // eslint-disable-next-line no-console
         console.error(error.interpretExecOptionError(error$1));
@@ -42,11 +42,11 @@ function execOptions(...options) {
         help.logExecOptionHelp(options);
         return void exitProcess.exitProcess(0);
     }
-    const result = AA__namespace.reduce(options, AA__namespace.reduceFrom({
+    const result = await GG__namespace.asyncReduce(options, GG__namespace.reduceFrom({
         options: {},
         restArgs: processArguments,
-    }), ({ element: option, lastValue, next, exit }) => {
-        const optionResult = option.execute(lastValue.restArgs, error$1);
+    }), async ({ element: option, lastValue, next, exit }) => {
+        const optionResult = await option.execute(lastValue.restArgs, error$1);
         if (optionResult === error.SymbolCommandError) {
             return exit(error.SymbolCommandError);
         }

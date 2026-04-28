@@ -1,12 +1,12 @@
-import type { SimplifyTopLevel } from "@duplojs/utils";
+import type { AnyTuple, SimplifyTopLevel } from "@duplojs/utils";
 import { type Option } from "./options";
-type ComputeResult<GenericOptions extends [Option, ...Option[]]> = SimplifyTopLevel<{
+type ComputeResult<GenericOptions extends AnyTuple<Option>> = SimplifyTopLevel<{
     [GenericOption in GenericOptions[number] as GenericOption extends Option<infer GenericName, unknown> ? GenericName : never]: GenericOption extends Option<string, infer GenericResult> ? GenericResult : never;
 }>;
 /**
  * Execute command options from process arguments.
  * 
- * `execOptions` reads runtime arguments, executes each option parser, and returns an object keyed by option name. 
+ * `execOptions` reads runtime arguments, executes each option parser, and resolves to an object keyed by option name.
  * It also adds an automatic `--help` / `-h` manual generated from the declared options.
  * 
  * ```ts
@@ -18,7 +18,7 @@ type ComputeResult<GenericOptions extends [Option, ...Option[]]> = SimplifyTopLe
  * 		required: true,
  * 	},
  * );
- * const portResult = SC.execOptions(portOption);
+ * const portResult = await SC.execOptions(portOption);
  * // portResult.port: number
  * 
  * const tagOption = SC.createArrayOption(
@@ -31,7 +31,7 @@ type ComputeResult<GenericOptions extends [Option, ...Option[]]> = SimplifyTopLe
  * );
  * const forceOption = SC.createBooleanOption("force");
  * 
- * const options = SC.execOptions(tagOption, forceOption);
+ * const options = await SC.execOptions(tagOption, forceOption);
  * // options.tag: string[] | undefined
  * ```
  * 
@@ -42,5 +42,5 @@ type ComputeResult<GenericOptions extends [Option, ...Option[]]> = SimplifyTopLe
  * @namespace SC
  * 
  */
-export declare function execOptions<GenericOptions extends [Option, ...Option[]]>(...options: GenericOptions): ComputeResult<GenericOptions>;
+export declare function execOptions<GenericOptions extends AnyTuple<Option>>(...options: GenericOptions): Promise<ComputeResult<GenericOptions>>;
 export {};

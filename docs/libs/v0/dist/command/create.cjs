@@ -2,6 +2,7 @@
 
 var utils = require('@duplojs/utils');
 var AA = require('@duplojs/utils/array');
+var GG = require('@duplojs/utils/generator');
 var OO = require('@duplojs/utils/object');
 var DDP = require('@duplojs/utils/dataParser');
 var EE = require('@duplojs/utils/either');
@@ -11,6 +12,7 @@ var exitProcess = require('../common/exitProcess.cjs');
 var error = require('./error.cjs');
 var help = require('./help.cjs');
 var boolean = require('./options/boolean.cjs');
+var file = require('../dataParser/parsers/file.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -30,12 +32,25 @@ function _interopNamespaceDefault(e) {
 }
 
 var AA__namespace = /*#__PURE__*/_interopNamespaceDefault(AA);
+var GG__namespace = /*#__PURE__*/_interopNamespaceDefault(GG);
 var OO__namespace = /*#__PURE__*/_interopNamespaceDefault(OO);
 var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
 var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
 var CC__namespace = /*#__PURE__*/_interopNamespaceDefault(CC);
 
+const commandKind = kind.createDuplojsServerUtilsKind("command");
+/**
+ * @internal
+ */
+function isCommands(subject) {
+    return subject instanceof Array
+        && subject.length >= 1
+        && AA__namespace.every(subject, commandKind.has);
+}
 function commandSubjectToDataParser(contract) {
+    if (contract instanceof Array) {
+        return DDP__namespace.tuple(AA__namespace.map(contract, (part) => commandSubjectToDataParser(part)));
+    }
     if (utils.hasSomeKinds(contract, [
         DDP__namespace.stringKind,
         DDP__namespace.numberKind,
@@ -43,6 +58,7 @@ function commandSubjectToDataParser(contract) {
         DDP__namespace.dateKind,
         DDP__namespace.timeKind,
         DDP__namespace.nilKind,
+        file.fileKind,
     ])) {
         const clone = contract.clone();
         clone.definition.coerce = true;
@@ -64,22 +80,13 @@ function commandSubjectToDataParser(contract) {
     }
     return CC__namespace.toMapDataParser(contract, { coerce: true });
 }
-function printError(commandError, error$1) {
-    if (!error$1) {
-        // eslint-disable-next-line no-console
-        console.error(error.interpretCommandError(commandError));
-        exitProcess.exitProcess(1);
-    }
-    return error.SymbolCommandError;
-}
-const commandKind = kind.createDuplojsServerUtilsKind("command");
 const helpOption = boolean.createBooleanOption("help", { aliases: ["h"] });
 function create(...args) {
     const [name, params, execute] = args.length === 2
         ? [args[0], {}, args[1]]
         : args;
     const subject = (params.subject
-        && !(params.subject instanceof Array)
+        && !isCommands(params.subject)
         ? commandSubjectToDataParser(params.subject)
         : params.subject) ?? null;
     const self = commandKind.setTo({
@@ -88,39 +95,29 @@ function create(...args) {
         options: params.options ?? [],
         subject: subject,
         execute: async (args, error$1) => {
-            const commandError = error$1 ?? error.createError(self.name);
+            const commandError = error$1;
             const pathIndex = commandError.currentCommandPath.length;
-            if (self.subject instanceof Array) {
+            if (isCommands(self.subject)) {
                 for (const command of self.subject) {
                     if (args[0] === command.name) {
-                        let result = undefined;
-                        error.setErrorPath(commandError, command.name, pathIndex);
-                        try {
-                            result = await command.execute(AA__namespace.shift(args), commandError);
-                        }
-                        finally {
-                            error.popErrorPath(commandError);
-                        }
-                        if (result === error.SymbolCommandError) {
-                            return printError(commandError, error$1);
-                        }
-                        return result;
+                        commandError.currentCommandPath[pathIndex] = command.name;
+                        return command.execute(AA__namespace.shift(args), commandError);
                     }
                 }
             }
-            const help$1 = helpOption.execute(args, commandError);
+            const help$1 = await helpOption.execute(args, commandError);
             if (help$1 === error.SymbolCommandError) {
-                return printError(commandError, error$1);
+                return error.SymbolCommandError;
             }
             else if (help$1.result) {
                 help.logCommandHelp(self);
                 return void exitProcess.exitProcess(0);
             }
-            const commandOptions = AA__namespace.reduce(self.options, AA__namespace.reduceFrom({
+            const commandOptions = await GG__namespace.asyncReduce(self.options, GG__namespace.reduceFrom({
                 options: {},
                 restArgs: args,
-            }), ({ element: option, lastValue, next, exit }) => {
-                const optionResult = option.execute(lastValue.restArgs, commandError);
+            }), async ({ element: option, lastValue, next, exit }) => {
+                const optionResult = await option.execute(lastValue.restArgs, commandError);
                 if (optionResult === error.SymbolCommandError) {
                     return exit(error.SymbolCommandError);
                 }
@@ -132,19 +129,21 @@ function create(...args) {
                 });
             });
             if (commandOptions === error.SymbolCommandError) {
-                return printError(commandError, error$1);
+                return error.SymbolCommandError;
             }
             if (self.subject === null) {
                 await execute({ options: commandOptions.options });
             }
             else if (DDP__namespace.identifier(self.subject, DDP__namespace.arrayKind)
                 || DDP__namespace.identifier(self.subject, DDP__namespace.tupleKind)) {
-                const subjectResult = self.subject.parse(commandOptions.restArgs);
+                const subjectResult = self.subject.isAsynchronous()
+                    ? await self.subject.asyncParse(commandOptions.restArgs)
+                    : self.subject.parse(commandOptions.restArgs);
                 if (EE__namespace.isLeft(subjectResult)) {
-                    error.addDataParserError(commandError, utils.unwrap(subjectResult), {
+                    error.addIssueDataParser(commandError, utils.unwrap(subjectResult), {
                         type: "subject",
                     });
-                    return printError(commandError, error$1);
+                    return error.SymbolCommandError;
                 }
                 await execute({
                     options: commandOptions.options,
@@ -159,14 +158,16 @@ function create(...args) {
                         received: commandOptions.restArgs,
                         message: `Expected exactly one subject argument, received ${commandOptions.restArgs.length}.`,
                     });
-                    return printError(commandError, error$1);
+                    return error.SymbolCommandError;
                 }
-                const subjectResult = self.subject.parse(commandOptions.restArgs[0]);
+                const subjectResult = self.subject.isAsynchronous()
+                    ? await self.subject.asyncParse(commandOptions.restArgs[0])
+                    : self.subject.parse(commandOptions.restArgs[0]);
                 if (EE__namespace.isLeft(subjectResult)) {
-                    error.addDataParserError(commandError, utils.unwrap(subjectResult), {
+                    error.addIssueDataParser(commandError, utils.unwrap(subjectResult), {
                         type: "subject",
                     });
-                    return printError(commandError, error$1);
+                    return error.SymbolCommandError;
                 }
                 await execute({
                     options: commandOptions.options,
@@ -183,3 +184,4 @@ function create(...args) {
 }
 
 exports.create = create;
+exports.isCommands = isCommands;

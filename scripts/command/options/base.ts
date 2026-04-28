@@ -1,4 +1,4 @@
-import type { RemoveKind, Kind } from "@duplojs/utils";
+import type { RemoveKind, Kind, MaybePromise } from "@duplojs/utils";
 import * as AA from "@duplojs/utils/array";
 import * as SS from "@duplojs/utils/string";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
@@ -18,12 +18,13 @@ export interface Option<
 	execute(
 		args: readonly string[],
 		error: CommandError,
-	):
+	): Promise<
 	| {
 		result: GenericExecuteOutputValue;
 		argumentRest: readonly string[];
 	}
-	| SymbolCommandError;
+	| SymbolCommandError
+	>;
 }
 
 export interface InitOptionExecuteParams {
@@ -39,7 +40,7 @@ export function initOption<
 	execute: (
 		params: InitOptionExecuteParams,
 		error: CommandError,
-	) => GenericExecuteOutputValue | SymbolCommandError,
+	) => MaybePromise<GenericExecuteOutputValue | SymbolCommandError>,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -48,7 +49,7 @@ export function initOption<
 ) {
 	const self: Option<GenericName, GenericExecuteOutputValue> = optionKind.setTo({
 		name,
-		execute: (
+		execute: async(
 			args: readonly string[],
 			error: CommandError,
 		) => {
@@ -77,7 +78,7 @@ export function initOption<
 			);
 
 			if (!result) {
-				const executeResult = execute(
+				const executeResult = await execute(
 					{
 						isHere: false,
 						value: undefined,
@@ -110,7 +111,7 @@ export function initOption<
 					);
 				}
 
-				const executeResult = execute(
+				const executeResult = await execute(
 					{
 						isHere: true,
 						value,
@@ -145,7 +146,7 @@ export function initOption<
 				);
 			}
 
-			const executeResult = execute(
+			const executeResult = await execute(
 				{
 					isHere: true,
 					value: undefined,

@@ -52,7 +52,7 @@ function create<
 
 ## Valeur de retour
 
-- `Command` : objet commande exécutable avec `execute(args)`.
+- `Command` : objet de définition de commande destiné à être accroché à un arbre de commandes et exécuté via [`exec`](/fr/v0/api/command/exec).
 
 ## Autres exemples
 

@@ -4,10 +4,11 @@ import * as DDP from "@duplojs/utils/dataParser";
 import type * as AA from "@duplojs/utils/array";
 import * as EE from "@duplojs/utils/either";
 import * as CC from "@duplojs/utils/clean";
+import * as SDP from "@scripts/dataParser";
 import { initOption, type Option } from "./base";
 import type { EligibleContract } from "../types";
 import type { ComputeOptionContract } from "./types";
-import { addIssue, addDataParserError } from "../error";
+import { addIssue, addIssueDataParser } from "../error";
 
 const defaultSeparator = ",";
 
@@ -88,6 +89,7 @@ export function createArrayOption(
 			DDP.dateKind,
 			DDP.timeKind,
 			DDP.nilKind,
+			SDP.fileKind,
 		])
 	) {
 		const clone = contract.clone();
@@ -129,7 +131,7 @@ export function createArrayOption(
 
 	return initOption(
 		name,
-		({ isHere, value }, error) => {
+		async({ isHere, value }, error) => {
 			if (!isHere && params?.required) {
 				return addIssue(
 					error,
@@ -147,10 +149,12 @@ export function createArrayOption(
 				? SS.split(value, params?.separator ?? defaultSeparator)
 				: undefined;
 
-			const result = dataParser.parse(values);
+			const result = dataParser.isAsynchronous()
+				? await dataParser.asyncParse(values)
+				: dataParser.parse(values);
 
 			if (EE.isLeft(result)) {
-				return addDataParserError(
+				return addIssueDataParser(
 					error,
 					unwrap(result),
 					{

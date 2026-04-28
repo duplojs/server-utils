@@ -4,6 +4,8 @@ var utils = require('@duplojs/utils');
 var AA = require('@duplojs/utils/array');
 var PP = require('@duplojs/utils/pattern');
 var DDP = require('@duplojs/utils/dataParser');
+var create = require('./create.cjs');
+var file = require('../dataParser/parsers/file.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -37,11 +39,15 @@ function formatSubject(subject) {
         .when(DDP__namespace.identifier(DDP__namespace.dateKind), utils.justReturn("date"))
         .when(DDP__namespace.identifier(DDP__namespace.timeKind), utils.justReturn("time"))
         .when(DDP__namespace.identifier(DDP__namespace.nilKind), utils.justReturn("null"))
+        .when(file.fileKind.has, utils.justReturn("file"))
         .when(DDP__namespace.identifier(DDP__namespace.literalKind), (subject) => utils.pipe(subject.definition.value, AA__namespace.map(String), AA__namespace.join(" | ")))
         .when(DDP__namespace.identifier(DDP__namespace.templateLiteralKind), (subject) => utils.pipe(subject.definition.template, AA__namespace.map((part) => DDP__namespace.identifier(part, DDP__namespace.dataParserKind)
         ? `\${${formatSubject(part)}}`
         : String(part)), AA__namespace.join("")))
         .when(DDP__namespace.identifier(DDP__namespace.unionKind), (subject) => utils.pipe(subject.definition.options, AA__namespace.map(formatSubject), AA__namespace.join(" | ")))
+        .when(DDP__namespace.identifier(DDP__namespace.transformKind), (subject) => formatSubject(subject.definition.inner))
+        .when(DDP__namespace.identifier(DDP__namespace.pipeKind), (subject) => formatSubject(subject.definition.input))
+        .when(DDP__namespace.identifier(DDP__namespace.optionalKind), (subject) => `${formatSubject(subject.definition.inner)}?`)
         .when(DDP__namespace.identifier(DDP__namespace.arrayKind), (subject) => `${formatSubject(subject.definition.element)}[]`)
         .when(DDP__namespace.identifier(DDP__namespace.tupleKind), (subject) => {
         const parts = utils.pipe(subject.definition.shape, AA__namespace.map(formatSubject), AA__namespace.join(", "));
@@ -85,7 +91,7 @@ function renderCommandHelp(command, depth) {
     if (AA__namespace.minElements(command.options, 1)) {
         logs.push(renderOptionsHelp(command.options, depth + 1));
     }
-    if (utils.isType(command.subject, "array")) {
+    if (create.isCommands(command.subject)) {
         for (const childCommand of command.subject) {
             logs.push(...renderCommandHelp(childCommand, depth + 1));
         }

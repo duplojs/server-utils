@@ -1,11 +1,18 @@
-import { type ExpectType, C, DP, DPE, S, unwrap } from "@duplojs/utils";
-import { DServerCommand } from "@scripts";
+import { E, type ExpectType, C, DP, DPE, S, unwrap } from "@duplojs/utils";
+import { DServerCommand, DServerDataParser, DServerFile, TESTImplementation, setEnvironment } from "@scripts";
 import { createError, SymbolCommandError } from "@scripts/command/error";
 
 describe("createOption", () => {
-	it("returns undefined when optional option is missing", () => {
+	afterEach(() => {
+		setEnvironment("NODE");
+		TESTImplementation.clear();
+		vi.clearAllMocks();
+		vi.restoreAllMocks();
+	});
+
+	it("returns undefined when optional option is missing", async() => {
 		const option = DServerCommand.createOption("name", DP.string());
-		const result = option.execute(["subject"], createError("root"));
+		const result = await option.execute(["subject"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -21,9 +28,9 @@ describe("createOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("parses inline value for optional option", () => {
+	it("parses inline value for optional option", async() => {
 		const option = DServerCommand.createOption("name", DP.string());
-		const result = option.execute(["--name=duplo", "subject"], createError("root"));
+		const result = await option.execute(["--name=duplo", "subject"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -33,9 +40,9 @@ describe("createOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("parses next argument value for optional option", () => {
+	it("parses next argument value for optional option", async() => {
 		const option = DServerCommand.createOption("name", DP.string());
-		const result = option.execute(["--name", "duplo", "subject"], createError("root"));
+		const result = await option.execute(["--name", "duplo", "subject"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -45,17 +52,17 @@ describe("createOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("returns command error when required option is missing", () => {
+	it("returns command error when required option is missing", async() => {
 		const option = DServerCommand.createOption("name", DP.string(), { required: true });
 		const error = createError("root");
 
-		expect(option.execute(["subject"], error)).toBe(SymbolCommandError);
+		await expect(option.execute(["subject"], error)).resolves.toBe(SymbolCommandError);
 		expect(error.issues[0]?.expected).toBe("required option --name");
 	});
 
-	it("parses value when required option is present", () => {
+	it("parses value when required option is present", async() => {
 		const option = DServerCommand.createOption("name", DP.string(), { required: true });
-		const result = option.execute(["--name=duplo", "subject"], createError("root"));
+		const result = await option.execute(["--name=duplo", "subject"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -71,15 +78,15 @@ describe("createOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("returns command error when value cannot be parsed by schema", () => {
+	it("returns command error when value cannot be parsed by schema", async() => {
 		const option = DServerCommand.createOption("enabled", DP.boolean() as never);
 		const error = createError("root");
 
-		expect(option.execute(["--enabled=yes"], error)).toBe(SymbolCommandError);
+		await expect(option.execute(["--enabled=yes"], error)).resolves.toBe(SymbolCommandError);
 		expect(error.issues[0]?.expected).toBe("boolean");
 	});
 
-	it("supports transform schema and keeps transformed output type", () => {
+	it("supports transform schema and keeps transformed output type", async() => {
 		const option = DServerCommand.createOption(
 			"size",
 			DP.transform(
@@ -88,7 +95,7 @@ describe("createOption", () => {
 			),
 		);
 
-		const result = option.execute(["--size=duplo"], createError("root"));
+		const result = await option.execute(["--size=duplo"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -103,14 +110,39 @@ describe("createOption", () => {
 		expect(result.result).toBe(5);
 	});
 
-	it("coerces eligible data parser without mutating original schema", () => {
+	it("supports file data parser with path coercion without mutating original schema", async() => {
+		const schema = DServerDataParser.file();
+		const option = DServerCommand.createOption(
+			"file",
+			schema,
+			{ required: true },
+		);
+
+		const result = await option.execute(["--file=/tmp/demo.txt"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
+
+		type _CheckResult = ExpectType<
+			typeof result.result,
+			DServerFile.FileInterface,
+			"strict"
+		>;
+
+		expect(DServerFile.isFileInterface(result.result)).toBe(true);
+		expect(result.result.path).toBe("/tmp/demo.txt");
+		expect(schema.definition.coerce).toBe(false);
+	});
+
+	it("coerces eligible data parser without mutating original schema", async() => {
 		const schema = DP.number();
 		const option = DServerCommand.createOption(
 			"count",
 			schema,
 		);
 
-		const result = option.execute(["--count=42"], createError("root"));
+		const result = await option.execute(["--count=42"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -126,7 +158,7 @@ describe("createOption", () => {
 		expect(schema.definition.coerce).toBe(false);
 	});
 
-	it("supports optional option with pipe schema without crashing at execute", () => {
+	it("supports optional option with pipe schema without crashing at execute", async() => {
 		const option = DServerCommand.createOption(
 			"name",
 			DPE.string().transform(
@@ -134,8 +166,8 @@ describe("createOption", () => {
 			),
 		);
 
-		const missingResult = option.execute(["subject"], createError("root"));
-		const result = option.execute(["--name=PABLO"], createError("root"));
+		const missingResult = await option.execute(["subject"], createError("root"));
+		const result = await option.execute(["--name=PABLO"], createError("root"));
 		expect(missingResult).not.toBe(SymbolCommandError);
 		expect(result).not.toBe(SymbolCommandError);
 		if (missingResult === SymbolCommandError || result === SymbolCommandError) {
@@ -159,14 +191,68 @@ describe("createOption", () => {
 		expect(result.argumentRest).toEqual([]);
 	});
 
-	it("support optional dataParser", () => {
+	it("supports pipe schema with file output data parser", async() => {
+		const option = DServerCommand.createOption(
+			"file",
+			DP.pipe(
+				DP.string(),
+				DServerDataParser.coerce.file(),
+			),
+			{ required: true },
+		);
+
+		const result = await option.execute(["--file=/tmp/pipe.txt"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
+
+		type _CheckResult = ExpectType<
+			typeof result.result,
+			DServerFile.FileInterface,
+			"strict"
+		>;
+
+		expect(DServerFile.isFileInterface(result.result)).toBe(true);
+		expect(result.result.path).toBe("/tmp/pipe.txt");
+	});
+
+	it("supports asynchronous data parser option", async() => {
+		setEnvironment("TEST");
+		TESTImplementation.set("stat", vi.fn().mockResolvedValue(E.success({
+			isFile: true,
+			sizeBytes: 1,
+		} as never)));
+
+		const option = DServerCommand.createOption(
+			"file",
+			DServerDataParser.file({ checkExist: true }),
+			{ required: true },
+		);
+
+		const result = await option.execute(["--file=/tmp/async.txt"], createError("root"));
+		expect(result).not.toBe(SymbolCommandError);
+		if (result === SymbolCommandError) {
+			return;
+		}
+
+		type _CheckResult = ExpectType<
+			typeof result.result,
+			DServerFile.FileInterface,
+			"strict"
+		>;
+
+		expect(result.result.path).toBe("/tmp/async.txt");
+	});
+
+	it("support optional dataParser", async() => {
 		const optionOptionalRequired = DServerCommand.createOption(
 			"name",
 			DPE.string().optional(),
 			{ required: true },
 		);
 
-		const result = optionOptionalRequired.execute(["--name=guest"], createError("root"));
+		const result = await optionOptionalRequired.execute(["--name=guest"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -183,7 +269,7 @@ describe("createOption", () => {
 			DPE.string().optional(),
 		);
 
-		const result1 = optionOptionalNotRequired.execute(["--name=guest"], createError("root"));
+		const result1 = await optionOptionalNotRequired.execute(["--name=guest"], createError("root"));
 		expect(result1).not.toBe(SymbolCommandError);
 		if (result1 === SymbolCommandError) {
 			return;
@@ -196,13 +282,13 @@ describe("createOption", () => {
 		expect(result1.result).toBe("guest");
 	});
 
-	it("supports clean primitive schema as contract", () => {
+	it("supports clean primitive schema as contract", async() => {
 		const option = DServerCommand.createOption(
 			"count",
 			C.Number,
 		);
 
-		const result = option.execute(["--count=42"], createError("root"));
+		const result = await option.execute(["--count=42"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -217,13 +303,13 @@ describe("createOption", () => {
 		expect(unwrap(result.result)).toBe(42);
 	});
 
-	it("supports clean handler contracts", () => {
+	it("supports clean handler contracts", async() => {
 		const constraintOption = DServerCommand.createOption(
 			"count",
 			C.Positive,
 		);
 
-		const constraintResult = constraintOption.execute(["--count=42"], createError("root"));
+		const constraintResult = await constraintOption.execute(["--count=42"], createError("root"));
 		expect(constraintResult).not.toBe(SymbolCommandError);
 		if (constraintResult === SymbolCommandError) {
 			return;
@@ -246,7 +332,7 @@ describe("createOption", () => {
 			{ required: true },
 		);
 
-		const newTypeResult = newTypeOption.execute(["--user=42"], createError("root"));
+		const newTypeResult = await newTypeOption.execute(["--user=42"], createError("root"));
 		expect(newTypeResult).not.toBe(SymbolCommandError);
 		if (newTypeResult === SymbolCommandError) {
 			return;
@@ -262,13 +348,13 @@ describe("createOption", () => {
 		expect(unwrap(newTypeResult.result)).toBe(42);
 	});
 
-	it("supports clean entity property definition contracts", () => {
+	it("supports clean entity property definition contracts", async() => {
 		const identifierOption = DServerCommand.createOption(
 			"target",
 			C.entityPropertyDefinitionTools.identifier("duplo"),
 		);
 
-		const identifierResult = identifierOption.execute(["--target=duplo"], createError("root"));
+		const identifierResult = await identifierOption.execute(["--target=duplo"], createError("root"));
 		expect(identifierResult).not.toBe(SymbolCommandError);
 		if (identifierResult === SymbolCommandError) {
 			return;
@@ -288,7 +374,7 @@ describe("createOption", () => {
 			),
 		);
 
-		const unionResult = unionOption.execute(["--role=admin"], createError("root"));
+		const unionResult = await unionOption.execute(["--role=admin"], createError("root"));
 		expect(unionResult).not.toBe(SymbolCommandError);
 		if (unionResult === SymbolCommandError) {
 			return;
@@ -307,7 +393,7 @@ describe("createOption", () => {
 			),
 		);
 
-		const nullableResult = nullableOption.execute(["subject"], createError("root"));
+		const nullableResult = await nullableOption.execute(["subject"], createError("root"));
 		expect(nullableResult).not.toBe(SymbolCommandError);
 		if (nullableResult === SymbolCommandError) {
 			return;

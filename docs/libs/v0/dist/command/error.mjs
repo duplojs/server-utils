@@ -14,15 +14,7 @@ function addIssue(error, issue) {
     });
     return SymbolCommandError;
 }
-function setErrorPath(error, value, index) {
-    error.currentCommandPath[index] = value;
-    return error;
-}
-function popErrorPath(error) {
-    error.currentCommandPath.pop();
-    return error;
-}
-function addDataParserError(error, parseError, params) {
+function addIssueDataParser(error, parseError, params) {
     for (const issue of parseError.issues) {
         error.issues.push({
             type: params.type,
@@ -97,4 +89,4 @@ function interpretExecOptionError(error) {
     ]);
 }
 
-export { SymbolCommandError, addDataParserError, addIssue, createError, interpretCommandError, interpretExecOptionError, popErrorPath, setErrorPath };
+export { SymbolCommandError, addIssue, addIssueDataParser, createError, interpretCommandError, interpretExecOptionError };

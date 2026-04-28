@@ -2,10 +2,11 @@ import { hasSomeKinds, unwrap } from "@duplojs/utils";
 import * as DDP from "@duplojs/utils/dataParser";
 import * as EE from "@duplojs/utils/either";
 import * as CC from "@duplojs/utils/clean";
+import * as SDP from "@scripts/dataParser";
 import { initOption, type Option } from "./base";
 import type { EligibleContract } from "../types";
 import type { ComputeOptionContract } from "./types";
-import { addIssue, addDataParserError } from "../error";
+import { addIssue, addIssueDataParser } from "../error";
 
 /**
  * {@include command/createOption/index.md}
@@ -56,6 +57,7 @@ export function createOption(
 			DDP.dateKind,
 			DDP.timeKind,
 			DDP.nilKind,
+			SDP.fileKind,
 		])
 	) {
 		const clone = contract.clone();
@@ -87,7 +89,7 @@ export function createOption(
 
 	return initOption(
 		name,
-		({ isHere, value }, error) => {
+		async({ isHere, value }, error) => {
 			if (!isHere && params?.required) {
 				return addIssue(
 					error,
@@ -101,10 +103,12 @@ export function createOption(
 				);
 			}
 
-			const result = dataParser.parse(value);
+			const result = dataParser.isAsynchronous()
+				? await dataParser.asyncParse(value)
+				: dataParser.parse(value);
 
 			if (EE.isLeft(result)) {
-				return addDataParserError(
+				return addIssueDataParser(
 					error,
 					unwrap(result),
 					{

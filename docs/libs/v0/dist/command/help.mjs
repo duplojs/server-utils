@@ -1,7 +1,9 @@
-import { justReturn, pipe, Printer, isType, hasSomeKinds } from '@duplojs/utils';
+import { justReturn, pipe, Printer, hasSomeKinds } from '@duplojs/utils';
 import * as AA from '@duplojs/utils/array';
 import * as PP from '@duplojs/utils/pattern';
 import * as DDP from '@duplojs/utils/dataParser';
+import { isCommands } from './create.mjs';
+import { fileKind } from '../dataParser/parsers/file.mjs';
 
 /**
  * @internal
@@ -14,11 +16,15 @@ function formatSubject(subject) {
         .when(DDP.identifier(DDP.dateKind), justReturn("date"))
         .when(DDP.identifier(DDP.timeKind), justReturn("time"))
         .when(DDP.identifier(DDP.nilKind), justReturn("null"))
+        .when(fileKind.has, justReturn("file"))
         .when(DDP.identifier(DDP.literalKind), (subject) => pipe(subject.definition.value, AA.map(String), AA.join(" | ")))
         .when(DDP.identifier(DDP.templateLiteralKind), (subject) => pipe(subject.definition.template, AA.map((part) => DDP.identifier(part, DDP.dataParserKind)
         ? `\${${formatSubject(part)}}`
         : String(part)), AA.join("")))
         .when(DDP.identifier(DDP.unionKind), (subject) => pipe(subject.definition.options, AA.map(formatSubject), AA.join(" | ")))
+        .when(DDP.identifier(DDP.transformKind), (subject) => formatSubject(subject.definition.inner))
+        .when(DDP.identifier(DDP.pipeKind), (subject) => formatSubject(subject.definition.input))
+        .when(DDP.identifier(DDP.optionalKind), (subject) => `${formatSubject(subject.definition.inner)}?`)
         .when(DDP.identifier(DDP.arrayKind), (subject) => `${formatSubject(subject.definition.element)}[]`)
         .when(DDP.identifier(DDP.tupleKind), (subject) => {
         const parts = pipe(subject.definition.shape, AA.map(formatSubject), AA.join(", "));
@@ -62,7 +68,7 @@ function renderCommandHelp(command, depth) {
     if (AA.minElements(command.options, 1)) {
         logs.push(renderOptionsHelp(command.options, depth + 1));
     }
-    if (isType(command.subject, "array")) {
+    if (isCommands(command.subject)) {
         for (const childCommand of command.subject) {
             logs.push(...renderCommandHelp(childCommand, depth + 1));
         }

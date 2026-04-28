@@ -1,5 +1,5 @@
-import { type ExpectType, C, DPE, DP, S, unwrap } from "@duplojs/utils";
-import { DServerCommand, TESTImplementation, setEnvironment } from "@scripts";
+import { E, type ExpectType, C, DPE, DP, S, unwrap, type AnyTuple } from "@duplojs/utils";
+import { DServerCommand, DServerDataParser, DServerFile, TESTImplementation, setEnvironment } from "@scripts";
 
 describe("create", () => {
 	afterEach(() => {
@@ -27,7 +27,7 @@ describe("create", () => {
 		>;
 		type _CheckSubject = ExpectType<
 			typeof command.subject,
-			DServerCommand.Subject | null | readonly DServerCommand.Command[],
+			DServerCommand.Subject | null | AnyTuple<DServerCommand.Command>,
 			"strict"
 		>;
 
@@ -48,7 +48,7 @@ describe("create", () => {
 			executeSpy,
 		);
 
-		await command.execute([]);
+		await command.execute([], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith({ options: {} });
 		expect(exitSpy).toHaveBeenCalledWith(0);
@@ -88,7 +88,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["--verbose", "--name=duplo", "subject"]);
+		await command.execute(["--verbose", "--name=duplo", "subject"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith({
 			options: {
@@ -100,7 +100,7 @@ describe("create", () => {
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("renders command error when data parser subject receives many arguments", async() => {
+	it("returns command error when data parser subject receives many arguments", async() => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -122,13 +122,9 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["one", "two"]);
-
-		expect(errorSpy).toHaveBeenCalledTimes(1);
-		expect(errorSpy.mock.calls[0]![0]).toContain("Command failed");
-		expect(errorSpy.mock.calls[0]![0]).toContain("subject");
-		expect(errorSpy.mock.calls[0]![0]).toContain("Expected exactly one subject argument, received 2.");
-		expect(exitSpy).toHaveBeenCalledWith(1);
+		await expect(command.execute(["one", "two"], DServerCommand.createError("root"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
 
 	it("runs help flow when help option is provided", async() => {
@@ -142,12 +138,12 @@ describe("create", () => {
 			executeSpy,
 		);
 
-		await command.execute(["--help"]);
+		await command.execute(["--help"], DServerCommand.createError("root"));
 
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("renders command error when help option is malformed", async() => {
+	it("returns command error when help option is malformed", async() => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -158,11 +154,9 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await command.execute(["--help=true"]);
-
-		expect(errorSpy).toHaveBeenCalledTimes(1);
-		expect(errorSpy.mock.calls[0]![0]).toContain("option without value --help");
-		expect(exitSpy).toHaveBeenCalledWith(1);
+		await expect(command.execute(["--help=true"], DServerCommand.createError("root"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
 
 	it("does not print root error when malformed help is executed with a shared error", async() => {
@@ -214,7 +208,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["subject"]);
+		await command.execute(["subject"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith({
 			options: {
@@ -247,13 +241,174 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["42"]);
+		await command.execute(["42"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith(42);
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("renders command error when tuple subject parsing fails", async() => {
+	it("supports tuple subject with clean type contracts", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+		const UserId = C.createNewType(
+			"userId",
+			DP.number(),
+		);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: [C.Number, UserId],
+			},
+			({ subject }) => {
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					[C.Number, C.GetNewType<typeof UserId>],
+					"strict"
+				>;
+
+				executeSpy(subject.map(unwrap));
+			},
+		);
+
+		await command.execute(["42", "7"], DServerCommand.createError("root"));
+
+		expect(executeSpy).toHaveBeenCalledWith([42, 7]);
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("supports file data parser as subject with path coercion", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+		const schema = DServerDataParser.file();
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: schema,
+			},
+			({ subject }) => {
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					DServerFile.FileInterface,
+					"strict"
+				>;
+
+				executeSpy(subject);
+			},
+		);
+
+		await command.execute(["/tmp/demo.txt"], DServerCommand.createError("root"));
+
+		expect(DServerFile.isFileInterface(executeSpy.mock.calls[0]?.[0])).toBe(true);
+		expect(executeSpy.mock.calls[0]?.[0].path).toBe("/tmp/demo.txt");
+		expect(schema.definition.coerce).toBe(false);
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("supports pipe subject with file output data parser", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.pipe(
+					DP.string(),
+					DServerDataParser.coerce.file(),
+				),
+			},
+			({ subject }) => {
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					DServerFile.FileInterface,
+					"strict"
+				>;
+
+				executeSpy(subject);
+			},
+		);
+
+		await command.execute(["/tmp/pipe.txt"], DServerCommand.createError("root"));
+
+		expect(DServerFile.isFileInterface(executeSpy.mock.calls[0]?.[0])).toBe(true);
+		expect(executeSpy.mock.calls[0]?.[0].path).toBe("/tmp/pipe.txt");
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("supports asynchronous tuple subject parsing", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+		TESTImplementation.set("stat", vi.fn().mockResolvedValue(E.success({
+			isFile: true,
+			sizeBytes: 1,
+		} as never)));
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DP.array(
+					DServerDataParser.file({ checkExist: true }),
+				),
+			},
+			({ subject }) => {
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					DServerFile.FileInterface[],
+					"strict"
+				>;
+
+				executeSpy(subject.map((file) => file.path));
+			},
+		);
+
+		await command.execute(["/tmp/a.txt", "/tmp/b.txt"], DServerCommand.createError("root"));
+
+		expect(executeSpy).toHaveBeenCalledWith(["/tmp/a.txt", "/tmp/b.txt"]);
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("supports asynchronous single subject parsing", async() => {
+		setEnvironment("TEST");
+		const exitSpy = vi.fn();
+		const executeSpy = vi.fn();
+		TESTImplementation.set("exitProcess", exitSpy);
+		TESTImplementation.set("stat", vi.fn().mockResolvedValue(E.success({
+			isFile: true,
+			sizeBytes: 1,
+		} as never)));
+
+		const command = DServerCommand.create(
+			"root",
+			{
+				subject: DServerDataParser.file({ checkExist: true }),
+			},
+			({ subject }) => {
+				type _CheckSubject = ExpectType<
+					typeof subject,
+					DServerFile.FileInterface,
+					"strict"
+				>;
+
+				executeSpy(subject.path);
+			},
+		);
+
+		await command.execute(["/tmp/async.txt"], DServerCommand.createError("root"));
+
+		expect(executeSpy).toHaveBeenCalledWith("/tmp/async.txt");
+		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("returns command error when tuple subject parsing fails", async() => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -267,15 +422,12 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await command.execute(["bad"]);
-
-		expect(errorSpy).toHaveBeenCalledTimes(1);
-		expect(errorSpy.mock.calls[0]![0]).toContain("SUBJECT:");
-		expect(errorSpy.mock.calls[0]![0]).toContain("number");
-		expect(exitSpy).toHaveBeenCalledWith(1);
+		await expect(command.execute(["bad"], DServerCommand.createError("root"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
 
-	it("renders command error when single subject parsing fails", async() => {
+	it("returns command error when single subject parsing fails", async() => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -289,12 +441,9 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await command.execute(["bad"]);
-
-		expect(errorSpy).toHaveBeenCalledTimes(1);
-		expect(errorSpy.mock.calls[0]![0]).toContain("expected");
-		expect(errorSpy.mock.calls[0]![0]).toContain("number");
-		expect(exitSpy).toHaveBeenCalledWith(1);
+		await expect(command.execute(["bad"], DServerCommand.createError("root"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
 
 	it("does not print subject errors when a shared error is provided", async() => {
@@ -350,7 +499,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["one", "two"]);
+		await command.execute(["one", "two"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith({
 			options: {},
@@ -381,7 +530,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["42"]);
+		await command.execute(["42"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith([42]);
 		expect(exitSpy).toHaveBeenCalledWith(0);
@@ -409,7 +558,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["head", "1", "2"]);
+		await command.execute(["head", "1", "2"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith(["head", 1, 2]);
 		expect(exitSpy).toHaveBeenCalledWith(0);
@@ -437,7 +586,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["1", "2"]);
+		await command.execute(["1", "2"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith([1, 2]);
 		expect(exitSpy).toHaveBeenCalledWith(0);
@@ -465,7 +614,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["42"]);
+		await command.execute(["42"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith(42);
 		expect(exitSpy).toHaveBeenCalledWith(0);
@@ -497,7 +646,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["42"]);
+		await command.execute(["42"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith(42);
 		expect(exitSpy).toHaveBeenCalledWith(0);
@@ -528,7 +677,7 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute(["admin"]);
+		await command.execute(["admin"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenCalledWith("admin");
 		expect(exitSpy).toHaveBeenCalledWith(0);
@@ -566,8 +715,8 @@ describe("create", () => {
 			},
 		);
 
-		await command.execute([]);
-		await command.execute(["--name=guest"]);
+		await command.execute([], DServerCommand.createError("root"));
+		await command.execute(["--name=guest"], DServerCommand.createError("root"));
 
 		expect(executeSpy).toHaveBeenNthCalledWith(1, {
 			options: {
@@ -583,7 +732,7 @@ describe("create", () => {
 		expect(exitSpy).toHaveBeenNthCalledWith(2, 0);
 	});
 
-	it("renders command error when option value parsing fails", async() => {
+	it("returns command error when option value parsing fails", async() => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -597,14 +746,9 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await command.execute(["--enabled=yes"]);
-
-		expect(errorSpy).toHaveBeenCalledTimes(1);
-		expect(errorSpy.mock.calls[0]![0]).toContain("Command failed");
-		expect(errorSpy.mock.calls[0]![0]).toContain("OPTION:");
-		expect(errorSpy.mock.calls[0]![0]).toContain("--enabled");
-		expect(errorSpy.mock.calls[0]![0]).toContain("expected");
-		expect(exitSpy).toHaveBeenCalledWith(1);
+		await expect(command.execute(["--enabled=yes"], DServerCommand.createError("root"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
 
 	it("stops option reduction after a first option error", async() => {
@@ -629,11 +773,11 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await command.execute(["--enabled=yes"]);
+		await command.execute(["--enabled=yes"], DServerCommand.createError("root"));
 
-		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy).not.toHaveBeenCalled();
 		expect(secondOptionSpy).not.toHaveBeenCalled();
-		expect(exitSpy).toHaveBeenCalledWith(1);
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
 
 	it("does not capture user command execution errors", async() => {
@@ -650,7 +794,7 @@ describe("create", () => {
 			},
 		);
 
-		await expect(command.execute([])).rejects.toThrow(userError);
+		await expect(command.execute([], DServerCommand.createError("root"))).rejects.toThrow(userError);
 		expect(errorSpy).not.toHaveBeenCalled();
 		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
@@ -674,8 +818,8 @@ describe("create", () => {
 			rootExecuteSpy,
 		);
 
-		await root.execute(["child", "arg"]);
-		await root.execute(["unknown", "arg"]);
+		await root.execute(["child", "arg"], DServerCommand.createError("root"));
+		await root.execute(["unknown", "arg"], DServerCommand.createError("root"));
 
 		expect(childExecuteSpy).toHaveBeenCalledWith({ options: {} });
 		expect(rootExecuteSpy).toHaveBeenCalledWith({});
@@ -700,7 +844,7 @@ describe("create", () => {
 		);
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		await root.execute(["child", "--help"]);
+		await root.execute(["child", "--help"], DServerCommand.createError("root"));
 
 		const renderedHelp = consoleLogSpy.mock.calls.flat().join(" ");
 
@@ -709,7 +853,7 @@ describe("create", () => {
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("renders root command error when a child command fails", async() => {
+	it("returns command error when a child command fails", async() => {
 		setEnvironment("TEST");
 		const exitSpy = vi.fn();
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -730,11 +874,8 @@ describe("create", () => {
 			() => undefined,
 		);
 
-		await root.execute(["child", "--enabled=yes"]);
-
-		expect(errorSpy).toHaveBeenCalledTimes(1);
-		expect(errorSpy.mock.calls[0]![0]).toContain("COMMAND:");
-		expect(errorSpy.mock.calls[0]![0]).toContain("root child");
-		expect(exitSpy).toHaveBeenCalledWith(1);
+		await expect(root.execute(["child", "--enabled=yes"], DServerCommand.createError("root"))).resolves.toBe(DServerCommand.SymbolCommandError);
+		expect(errorSpy).not.toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalledWith(1);
 	});
 });

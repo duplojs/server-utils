@@ -4,7 +4,8 @@ import * as DDP from '@duplojs/utils/dataParser';
 import * as EE from '@duplojs/utils/either';
 import * as CC from '@duplojs/utils/clean';
 import { initOption } from './base.mjs';
-import { addIssue, addDataParserError } from '../error.mjs';
+import { addIssue, addIssueDataParser } from '../error.mjs';
+import { fileKind } from '../../dataParser/parsers/file.mjs';
 
 const defaultSeparator = ",";
 function createArrayOption(name, contract, params) {
@@ -16,6 +17,7 @@ function createArrayOption(name, contract, params) {
         DDP.dateKind,
         DDP.timeKind,
         DDP.nilKind,
+        fileKind,
     ])) {
         const clone = contract.clone();
         clone.definition.coerce = true;
@@ -34,7 +36,7 @@ function createArrayOption(name, contract, params) {
         : schema, (schema) => params?.required
         ? schema
         : DDP.optional(schema));
-    return initOption(name, ({ isHere, value }, error) => {
+    return initOption(name, async ({ isHere, value }, error) => {
         if (!isHere && params?.required) {
             return addIssue(error, {
                 type: "option",
@@ -47,9 +49,11 @@ function createArrayOption(name, contract, params) {
         const values = value !== undefined
             ? SS.split(value, params?.separator ?? defaultSeparator)
             : undefined;
-        const result = dataParser.parse(values);
+        const result = dataParser.isAsynchronous()
+            ? await dataParser.asyncParse(values)
+            : dataParser.parse(values);
         if (EE.isLeft(result)) {
-            return addDataParserError(error, unwrap(result), {
+            return addIssueDataParser(error, unwrap(result), {
                 type: "option",
                 target: name,
             });

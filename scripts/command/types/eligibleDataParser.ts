@@ -1,5 +1,6 @@
 import type { SimplifyTopLevel } from "@duplojs/utils";
 import type * as DDP from "@duplojs/utils/dataParser";
+import type * as SDP from "@scripts/dataParser";
 
 export type EligibleDataParser = (
 	| DDP.DataParserString
@@ -30,10 +31,10 @@ export type EligibleDataParser = (
 	>
 	| DDP.DataParserTransform<
 		SimplifyTopLevel<
-				& Omit<DDP.DataParserDefinitionTransform, "inner">
-				& {
-					readonly inner: EligibleDataParser;
-				}
+			& Omit<DDP.DataParserDefinitionTransform, "inner">
+			& {
+				readonly inner: EligibleDataParser;
+			}
 		>
 	>
 	| DDP.DataParserPipe<
@@ -41,7 +42,7 @@ export type EligibleDataParser = (
 			& Omit<DDP.DataParserDefinitionPipe, "input" | "output">
 			& {
 				readonly input: EligibleDataParser;
-				readonly output: EligibleDataParser;
+				readonly output: DDP.DataParser;
 			}
 		>
 	>
@@ -53,4 +54,5 @@ export type EligibleDataParser = (
 			}
 		>
 	>
+	| SDP.DataParserFile
 );

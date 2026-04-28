@@ -8,7 +8,7 @@ const regexOption = /^(?<dashes>-{1,2})(?<key>[A-Za-z0-9][A-Za-z0-9_-]*)(?:=(?<v
 function initOption(name, execute, params) {
     const self = optionKind.setTo({
         name,
-        execute: (args, error) => {
+        execute: async (args, error) => {
             const result = AA.reduce(args, AA.reduceFrom(null), ({ element, next, exit, index }) => {
                 const extractResult = SS.extract(element, regexOption);
                 if (!extractResult) {
@@ -25,7 +25,7 @@ function initOption(name, execute, params) {
                 return exit(result);
             });
             if (!result) {
-                const executeResult = execute({
+                const executeResult = await execute({
                     isHere: false,
                     value: undefined,
                 }, error);
@@ -49,7 +49,7 @@ function initOption(name, execute, params) {
                         message: `Missing value for option "${self.name}": received another option token instead of a value.`,
                     });
                 }
-                const executeResult = execute({
+                const executeResult = await execute({
                     isHere: true,
                     value,
                 }, error);
@@ -72,7 +72,7 @@ function initOption(name, execute, params) {
                     message: `Option "${self.name}" does not accept a value.`,
                 });
             }
-            const executeResult = execute({
+            const executeResult = await execute({
                 isHere: true,
                 value: undefined,
             }, error);

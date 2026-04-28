@@ -291,7 +291,7 @@ describe("node integration", () => {
 			).toMatchSnapshot("help root");
 
 			logSpy.mockClear();
-			await command.execute(["--help"]);
+			await command.execute(["--help"], SC.createError("root"));
 			expect(
 				stripAnsiColor(
 					logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
@@ -299,14 +299,14 @@ describe("node integration", () => {
 			).toMatchSnapshot("help command");
 
 			logSpy.mockClear();
-			await command.execute(["help-db", "--help"]);
+			await command.execute(["help-db", "--help"], SC.createError("root"));
 			expect(
 				stripAnsiColor(
 					logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
 				),
 			).toMatchSnapshot("help sub-command");
 
-			await command.execute(["seed", "--force", "users"]);
+			await command.execute(["seed", "--force", "users"], SC.createError("root"));
 			expect(subCommandExecuteSpy).toHaveBeenCalledWith({
 				options: {
 					force: true,

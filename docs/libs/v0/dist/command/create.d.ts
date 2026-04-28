@@ -1,9 +1,9 @@
-import { type SimplifyTopLevel, type Kind, type MaybePromise } from "@duplojs/utils";
+import { type SimplifyTopLevel, type Kind, type MaybePromise, type AnyTuple } from "@duplojs/utils";
 import * as DDP from "@duplojs/utils/dataParser";
 import { type Option } from "./options";
-import type { EligibleCleanType, EligibleContract, EligibleDataParser, ComputeEligibleCleanType } from "./types";
+import type { EligibleCleanType, EligibleDataParser, ComputeEligibleCleanType } from "./types";
 import { SymbolCommandError, type CommandError } from "./error";
-export type Subject = (EligibleContract | DDP.DataParserArray<SimplifyTopLevel<Omit<DDP.DataParserDefinitionArray, "element"> & {
+export type Subject = (EligibleDataParser | EligibleCleanType | DDP.DataParserArray<SimplifyTopLevel<Omit<DDP.DataParserDefinitionArray, "element"> & {
     readonly element: EligibleDataParser;
 }>> | DDP.AdvancedContract<DDP.DataParserTuple<SimplifyTopLevel<Omit<DDP.DataParserDefinitionTuple, "shape" | "rest"> & {
     readonly shape: readonly [
@@ -11,26 +11,28 @@ export type Subject = (EligibleContract | DDP.DataParserArray<SimplifyTopLevel<O
         ...EligibleDataParser[]
     ];
     readonly rest: EligibleDataParser | undefined;
-}>>>);
-type ComputeSubject<GenericSubject extends Subject> = [GenericSubject] extends [DDP.DataParser] ? DDP.Output<GenericSubject> : [GenericSubject] extends [EligibleCleanType] ? ComputeEligibleCleanType<GenericSubject> : never;
+}>>> | AnyTuple<EligibleCleanType>);
+type ComputeSubject<GenericSubject extends Subject> = [GenericSubject] extends [AnyTuple<EligibleCleanType>] ? {
+    [GenericKey in keyof GenericSubject]: GenericSubject[GenericKey] extends EligibleCleanType ? ComputeEligibleCleanType<GenericSubject[GenericKey]> : never;
+} : [GenericSubject] extends [DDP.DataParser] ? DDP.Output<GenericSubject> : [GenericSubject] extends [EligibleCleanType] ? ComputeEligibleCleanType<GenericSubject> : never;
 declare const commandKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/command", unknown>>;
 export interface Command extends Kind<typeof commandKind.definition> {
     readonly name: string;
     readonly description: string | null;
-    readonly subject: Subject | null | readonly Command[];
+    readonly subject: Subject | null | AnyTuple<Command>;
     readonly options: readonly Option[];
-    execute(args: readonly string[], error?: CommandError): Promise<undefined | SymbolCommandError>;
+    execute(args: readonly string[], error: CommandError): Promise<undefined | SymbolCommandError>;
 }
 export interface CreateCommandParams<GenericOptions extends readonly Option[] = [], GenericSubject extends Subject = Subject> {
     description?: string;
     options?: GenericOptions;
-    subject?: GenericSubject | readonly Command[];
+    subject?: GenericSubject | AnyTuple<Command>;
 }
 export interface CreateCommandExecuteParams<GenericOptions extends readonly Option[], GenericSubject extends Subject> {
     options: {
-        [GenericOptionName in GenericOptions[number]["name"]]: Exclude<ReturnType<Extract<GenericOptions[number], {
+        [GenericOptionName in GenericOptions[number]["name"]]: Exclude<Awaited<ReturnType<Extract<GenericOptions[number], {
             name: GenericOptionName;
-        }>["execute"]>, SymbolCommandError>["result"];
+        }>["execute"]>>, SymbolCommandError>["result"];
     };
     subject: ComputeSubject<GenericSubject>;
 }

@@ -1,8 +1,9 @@
-import { hasSomeKinds, isType, justReturn, pipe, Printer } from "@duplojs/utils";
+import { hasSomeKinds, justReturn, pipe, Printer } from "@duplojs/utils";
 import * as AA from "@duplojs/utils/array";
 import * as PP from "@duplojs/utils/pattern";
 import * as DDP from "@duplojs/utils/dataParser";
-import type { Command } from "./create";
+import * as SDP from "@scripts/dataParser";
+import { type Command, isCommands } from "./create";
 import type { Option } from "./options";
 
 /**
@@ -35,6 +36,10 @@ export function formatSubject(subject: DDP.DataParser): string {
 			justReturn("null"),
 		)
 		.when(
+			SDP.fileKind.has,
+			justReturn("file"),
+		)
+		.when(
 			DDP.identifier(DDP.literalKind),
 			(subject) => pipe(
 				subject.definition.value,
@@ -61,6 +66,18 @@ export function formatSubject(subject: DDP.DataParser): string {
 				AA.map(formatSubject),
 				AA.join(" | "),
 			),
+		)
+		.when(
+			DDP.identifier(DDP.transformKind),
+			(subject) => formatSubject(subject.definition.inner),
+		)
+		.when(
+			DDP.identifier(DDP.pipeKind),
+			(subject) => formatSubject(subject.definition.input),
+		)
+		.when(
+			DDP.identifier(DDP.optionalKind),
+			(subject) => `${formatSubject(subject.definition.inner)}?`,
 		)
 		.when(
 			DDP.identifier(DDP.arrayKind),
@@ -152,7 +169,7 @@ export function renderCommandHelp(
 		logs.push(renderOptionsHelp(command.options, depth + 1));
 	}
 
-	if (isType(command.subject, "array")) {
+	if (isCommands(command.subject)) {
 		for (const childCommand of command.subject) {
 			logs.push(...renderCommandHelp(childCommand, depth + 1));
 		}

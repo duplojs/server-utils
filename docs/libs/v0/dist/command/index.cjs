@@ -15,6 +15,7 @@ var array = require('./options/array.cjs');
  */
 
 exports.create = create.create;
+exports.isCommands = create.isCommands;
 exports.exec = exec.exec;
 exports.formatSubject = help.formatSubject;
 exports.logCommandHelp = help.logCommandHelp;
@@ -23,13 +24,11 @@ exports.renderCommandHelp = help.renderCommandHelp;
 exports.renderExecOptionHelp = help.renderExecOptionHelp;
 exports.renderOptionsHelp = help.renderOptionsHelp;
 exports.SymbolCommandError = error.SymbolCommandError;
-exports.addDataParserError = error.addDataParserError;
 exports.addIssue = error.addIssue;
+exports.addIssueDataParser = error.addIssueDataParser;
 exports.createError = error.createError;
 exports.interpretCommandError = error.interpretCommandError;
 exports.interpretExecOptionError = error.interpretExecOptionError;
-exports.popErrorPath = error.popErrorPath;
-exports.setErrorPath = error.setErrorPath;
 exports.execOptions = execOptions.execOptions;
 exports.initOption = base.initOption;
 exports.createBooleanOption = boolean.createBooleanOption;

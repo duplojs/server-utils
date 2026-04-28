@@ -15,10 +15,8 @@ export interface CommandError {
 export declare const SymbolCommandError: unique symbol;
 export type SymbolCommandError = typeof SymbolCommandError;
 export declare function createError(commandName: string): CommandError;
-export declare function addIssue(error: CommandError, issue: Omit<CommandErrorIssue, "commandPath">): typeof SymbolCommandError;
-export declare function setErrorPath(error: CommandError, value: string, index: number): CommandError;
-export declare function popErrorPath(error: CommandError): CommandError;
-export declare function addDataParserError(error: CommandError, parseError: DDP.DataParserError, params: {
+export declare function addIssue(error: CommandError, issue: Omit<CommandErrorIssue, "commandPath">): SymbolCommandError;
+export declare function addIssueDataParser(error: CommandError, parseError: DDP.DataParserError, params: {
     type: "option" | "subject";
     target?: string;
 }): SymbolCommandError;

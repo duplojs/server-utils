@@ -9,12 +9,12 @@ describe("execOptions", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("returns empty options when no options are provided", () => {
+	it("returns empty options when no options are provided", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue([]);
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 
-		const result = DServerCommand.execOptions(DServerCommand.createBooleanOption("test"));
+		const result = await DServerCommand.execOptions(DServerCommand.createBooleanOption("test"));
 
 		type _CheckResult = ExpectType<
 			typeof result,
@@ -28,13 +28,13 @@ describe("execOptions", () => {
 		expect(result).toEqual({ test: false });
 	});
 
-	it("executes a single boolean option successfully", () => {
+	it("executes a single boolean option successfully", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["--verbose"]);
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 
 		const verboseOption = DServerCommand.createBooleanOption("verbose");
-		const result = DServerCommand.execOptions(verboseOption);
+		const result = await DServerCommand.execOptions(verboseOption);
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(result).toEqual({
@@ -42,7 +42,7 @@ describe("execOptions", () => {
 		});
 	});
 
-	it("logs dedicated execOption help and exits when builtin help is used", () => {
+	it("logs dedicated execOption help and exits when builtin help is used", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["-h"]);
 		const exitSpy = vi.fn();
@@ -50,7 +50,7 @@ describe("execOptions", () => {
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		DServerCommand.execOptions(DServerCommand.createBooleanOption("verbose"));
+		await DServerCommand.execOptions(DServerCommand.createBooleanOption("verbose"));
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(consoleLogSpy).toHaveBeenCalledTimes(1);
@@ -59,7 +59,7 @@ describe("execOptions", () => {
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("logs an error and exits when builtin help is malformed", () => {
+	it("logs an error and exits when builtin help is malformed", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["--help=true"]);
 		const exitSpy = vi.fn();
@@ -67,7 +67,7 @@ describe("execOptions", () => {
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const result = DServerCommand.execOptions(DServerCommand.createBooleanOption("verbose"));
+		const result = await DServerCommand.execOptions(DServerCommand.createBooleanOption("verbose"));
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
@@ -76,14 +76,14 @@ describe("execOptions", () => {
 		expect(result).toBeUndefined();
 	});
 
-	it("executes multiple options successfully", () => {
+	it("executes multiple options successfully", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["--verbose", "--debug"]);
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 
 		const verboseOption = DServerCommand.createBooleanOption("verbose");
 		const debugOption = DServerCommand.createBooleanOption("debug");
-		const result = DServerCommand.execOptions(verboseOption, debugOption);
+		const result = await DServerCommand.execOptions(verboseOption, debugOption);
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(result).toEqual({
@@ -92,32 +92,30 @@ describe("execOptions", () => {
 		});
 	});
 
-	it("exits with error when option parsing fails", () => {
+	it("exits with error when option parsing fails", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["--count", "invalid"]);
 		const exitSpy = vi.fn();
-		const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 		TESTImplementation.set("exitProcess", exitSpy);
 
-		const countOption = DServerCommand.createOption("count", DP.coerce.number());
-		const result = DServerCommand.execOptions(countOption);
+		const countOption = DServerCommand.createOption("count", DP.number());
+		const result = await DServerCommand.execOptions(countOption);
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(consoleErrorSpy).toHaveBeenCalled();
 		expect(exitSpy).toHaveBeenCalledWith(1);
 		expect(result).toBeUndefined();
-
-		consoleErrorSpy.mockRestore();
 	});
 
-	it("returns options with unmatched arguments", () => {
+	it("returns options with unmatched arguments", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["--verbose", "remaining", "args"]);
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
 
 		const verboseOption = DServerCommand.createBooleanOption("verbose");
-		const result = DServerCommand.execOptions(verboseOption);
+		const result = await DServerCommand.execOptions(verboseOption);
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(result).toEqual({

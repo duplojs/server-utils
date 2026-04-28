@@ -1,18 +1,21 @@
-import { hasSomeKinds, type SimplifyTopLevel, type Kind, type AnyFunction, type RemoveKind, unwrap, type MaybePromise } from "@duplojs/utils";
+import { hasSomeKinds, type SimplifyTopLevel, type Kind, type AnyFunction, type RemoveKind, unwrap, type MaybePromise, type AnyTuple } from "@duplojs/utils";
 import * as AA from "@duplojs/utils/array";
+import * as GG from "@duplojs/utils/generator";
 import * as OO from "@duplojs/utils/object";
 import * as DDP from "@duplojs/utils/dataParser";
 import * as EE from "@duplojs/utils/either";
 import * as CC from "@duplojs/utils/clean";
-import { createBooleanOption, type Option } from "./options";
+import * as SDP from "@scripts/dataParser";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
-import type { EligibleCleanType, EligibleContract, EligibleDataParser, ComputeEligibleCleanType } from "./types";
+import { createBooleanOption, type Option } from "./options";
+import type { EligibleCleanType, EligibleDataParser, ComputeEligibleCleanType } from "./types";
 import { exitProcess } from "@scripts/common/exitProcess";
-import { addIssue, addDataParserError, createError, interpretCommandError, popErrorPath, setErrorPath, SymbolCommandError, type CommandError } from "./error";
+import { addIssue, addIssueDataParser, SymbolCommandError, type CommandError } from "./error";
 import { logCommandHelp } from "./help";
 
 export type Subject = (
-	| EligibleContract
+	| EligibleDataParser
+	| EligibleCleanType
 	| DDP.DataParserArray<
 		SimplifyTopLevel<
 			& Omit<DDP.DataParserDefinitionArray, "element">
@@ -35,17 +38,44 @@ export type Subject = (
 			>
 		>
 	>
+	| AnyTuple<EligibleCleanType>
 );
 
 type ComputeSubject<
 	GenericSubject extends Subject,
-> = [GenericSubject] extends [DDP.DataParser]
-	? DDP.Output<GenericSubject>
-	: [GenericSubject] extends [EligibleCleanType]
-		? ComputeEligibleCleanType<GenericSubject>
-		: never;
+> = [GenericSubject] extends [AnyTuple<EligibleCleanType>]
+	? {
+		[GenericKey in keyof GenericSubject]: GenericSubject[GenericKey] extends EligibleCleanType
+			? ComputeEligibleCleanType<GenericSubject[GenericKey]>
+			: never;
+	}
+	: [GenericSubject] extends [DDP.DataParser]
+		? DDP.Output<GenericSubject>
+		: [GenericSubject] extends [EligibleCleanType]
+			? ComputeEligibleCleanType<GenericSubject>
+			: never;
+
+const commandKind = createDuplojsServerUtilsKind("command");
+
+/**
+ * @internal
+ */
+export function isCommands(subject: unknown): subject is AnyTuple<Command> {
+	return subject instanceof Array
+		&& subject.length >= 1
+		&& AA.every(subject, commandKind.has);
+}
 
 function commandSubjectToDataParser(contract: Subject): DDP.DataParser {
+	if (contract instanceof Array) {
+		return DDP.tuple(
+			AA.map(
+				contract,
+				(part) => commandSubjectToDataParser(part),
+			) as [DDP.DataParser, ...DDP.DataParser[]],
+		);
+	}
+
 	if (
 		hasSomeKinds(contract, [
 			DDP.stringKind,
@@ -54,6 +84,7 @@ function commandSubjectToDataParser(contract: Subject): DDP.DataParser {
 			DDP.dateKind,
 			DDP.timeKind,
 			DDP.nilKind,
+			SDP.fileKind,
 		])
 	) {
 		const clone = contract.clone();
@@ -101,18 +132,6 @@ function commandSubjectToDataParser(contract: Subject): DDP.DataParser {
 	);
 }
 
-function printError(commandError: CommandError, error?: CommandError): SymbolCommandError {
-	if (!error) {
-		// eslint-disable-next-line no-console
-		console.error(interpretCommandError(commandError));
-		exitProcess(1);
-	}
-
-	return SymbolCommandError;
-}
-
-const commandKind = createDuplojsServerUtilsKind("command");
-
 const helpOption = createBooleanOption("help", { aliases: ["h"] });
 
 export interface Command extends Kind<
@@ -120,9 +139,9 @@ export interface Command extends Kind<
 > {
 	readonly name: string;
 	readonly description: string | null;
-	readonly subject: Subject | null | readonly Command[];
+	readonly subject: Subject | null | AnyTuple<Command>;
 	readonly options: readonly Option[];
-	execute(args: readonly string[], error?: CommandError): Promise<undefined | SymbolCommandError>;
+	execute(args: readonly string[], error: CommandError): Promise<undefined | SymbolCommandError>;
 }
 
 export interface CreateCommandParams<
@@ -131,7 +150,7 @@ export interface CreateCommandParams<
 > {
 	description?: string;
 	options?: GenericOptions;
-	subject?: GenericSubject | readonly Command[];
+	subject?: GenericSubject | AnyTuple<Command>;
 }
 
 export interface CreateCommandExecuteParams<
@@ -140,12 +159,12 @@ export interface CreateCommandExecuteParams<
 > {
 	options: {
 		[GenericOptionName in GenericOptions[number]["name"]]: Exclude<
-			ReturnType<
+			Awaited<ReturnType<
 				Extract<
 					GenericOptions[number],
 					{ name: GenericOptionName }
 				>["execute"]
-			>,
+			>>,
 			SymbolCommandError
 		>["result"]
 	};
@@ -183,7 +202,7 @@ export function create(
 
 	const subject = (
 		params.subject
-		&& !(params.subject instanceof Array)
+		&& !isCommands(params.subject)
 			? commandSubjectToDataParser(params.subject)
 			: params.subject
 	) ?? null;
@@ -194,51 +213,39 @@ export function create(
 			description: params.description ?? null,
 			options: params.options ?? [],
 			subject: subject as Command["subject"],
-			execute: async(args, error?) => {
-				const commandError = error ?? createError(self.name);
+			execute: async(args, error) => {
+				const commandError = error;
 				const pathIndex = commandError.currentCommandPath.length;
 
-				if (self.subject instanceof Array) {
+				if (isCommands(self.subject)) {
 					for (const command of self.subject) {
 						if (args[0] === command.name) {
-							let result: Awaited<ReturnType<typeof command.execute>> | undefined = undefined;
-
-							setErrorPath(commandError, command.name, pathIndex);
-							try {
-								result = await command.execute(AA.shift(args), commandError);
-							} finally {
-								popErrorPath(commandError);
-							}
-
-							if (result === SymbolCommandError) {
-								return printError(commandError, error);
-							}
-
-							return result;
+							commandError.currentCommandPath[pathIndex] = command.name;
+							return command.execute(AA.shift(args), commandError);
 						}
 					}
 				}
 
-				const help = helpOption.execute(args, commandError);
+				const help = await helpOption.execute(args, commandError);
 
 				if (help === SymbolCommandError) {
-					return printError(commandError, error);
+					return SymbolCommandError;
 				} else if (help.result) {
 					logCommandHelp(self);
 					return void exitProcess(0);
 				}
 
-				const commandOptions = AA.reduce(
+				const commandOptions = await GG.asyncReduce(
 					self.options,
-					AA.reduceFrom<{
+					GG.reduceFrom<{
 						options: Record<string, unknown>;
 						restArgs: readonly string[];
 					}>({
 						options: {},
 						restArgs: args,
 					}),
-					({ element: option, lastValue, next, exit }) => {
-						const optionResult = option.execute(lastValue.restArgs, commandError);
+					async({ element: option, lastValue, next, exit }) => {
+						const optionResult = await option.execute(lastValue.restArgs, commandError);
 
 						if (optionResult === SymbolCommandError) {
 							return exit(SymbolCommandError);
@@ -257,7 +264,7 @@ export function create(
 				);
 
 				if (commandOptions === SymbolCommandError) {
-					return printError(commandError, error);
+					return SymbolCommandError;
 				}
 
 				if (self.subject === null) {
@@ -266,10 +273,12 @@ export function create(
 					DDP.identifier(self.subject, DDP.arrayKind)
 					|| DDP.identifier(self.subject, DDP.tupleKind)
 				) {
-					const subjectResult = self.subject.parse(commandOptions.restArgs);
+					const subjectResult = self.subject.isAsynchronous()
+						? await self.subject.asyncParse(commandOptions.restArgs)
+						: self.subject.parse(commandOptions.restArgs);
 
 					if (EE.isLeft(subjectResult)) {
-						addDataParserError(
+						addIssueDataParser(
 							commandError,
 							unwrap(subjectResult),
 							{
@@ -277,7 +286,7 @@ export function create(
 							},
 						);
 
-						return printError(commandError, error);
+						return SymbolCommandError;
 					}
 
 					await execute({
@@ -296,15 +305,15 @@ export function create(
 							},
 						);
 
-						return printError(commandError, error);
+						return SymbolCommandError;
 					}
 
-					const subjectResult = self.subject.parse(
-						commandOptions.restArgs[0],
-					);
+					const subjectResult = self.subject.isAsynchronous()
+						? await self.subject.asyncParse(commandOptions.restArgs[0])
+						: self.subject.parse(commandOptions.restArgs[0]);
 
 					if (EE.isLeft(subjectResult)) {
-						addDataParserError(
+						addIssueDataParser(
 							commandError,
 							unwrap(subjectResult),
 							{
@@ -312,7 +321,7 @@ export function create(
 							},
 						);
 
-						return printError(commandError, error);
+						return SymbolCommandError;
 					}
 
 					await execute({

@@ -1,4 +1,4 @@
-import { type ExpectType, pipe } from "@duplojs/utils";
+import { type ExpectType } from "@duplojs/utils";
 import { DServerCommand } from "@scripts";
 import { createError, SymbolCommandError } from "@scripts/command/error";
 
@@ -8,9 +8,9 @@ describe("createBooleanOption", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("returns false when option is missing", () => {
+	it("returns false when option is missing", async() => {
 		const option = DServerCommand.createBooleanOption("help");
-		const result = option.execute(["subject"], createError("root"));
+		const result = await option.execute(["subject"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -26,9 +26,9 @@ describe("createBooleanOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("returns true when option is present", () => {
+	it("returns true when option is present", async() => {
 		const option = DServerCommand.createBooleanOption("help");
-		const result = option.execute(["--help", "subject"], createError("root"));
+		const result = await option.execute(["--help", "subject"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -38,9 +38,9 @@ describe("createBooleanOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("returns true when alias is present", () => {
+	it("returns true when alias is present", async() => {
 		const option = DServerCommand.createBooleanOption("help", { aliases: ["h"] });
-		const result = option.execute(["-h", "subject"], createError("root"));
+		const result = await option.execute(["-h", "subject"], createError("root"));
 		expect(result).not.toBe(SymbolCommandError);
 		if (result === SymbolCommandError) {
 			return;
@@ -50,11 +50,11 @@ describe("createBooleanOption", () => {
 		expect(result.argumentRest).toEqual(["subject"]);
 	});
 
-	it("returns command error when a value is provided", () => {
+	it("returns command error when a value is provided", async() => {
 		const option = DServerCommand.createBooleanOption("help");
 		const error = createError("root");
 
-		expect(option.execute(["--help=true"], error)).toBe(SymbolCommandError);
+		await expect(option.execute(["--help=true"], error)).resolves.toBe(SymbolCommandError);
 		expect(error.issues[0]?.expected).toBe("option without value --help");
 	});
 });

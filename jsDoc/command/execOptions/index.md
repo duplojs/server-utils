@@ -1,6 +1,6 @@
 Execute command options from process arguments.
 
-`execOptions` reads runtime arguments, executes each option parser, and returns an object keyed by option name. 
+`execOptions` reads runtime arguments, executes each option parser, and resolves to an object keyed by option name.
 It also adds an automatic `--help` / `-h` manual generated from the declared options.
 
 ```ts

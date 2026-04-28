@@ -31,7 +31,7 @@ export function createError(
 export function addIssue(
 	error: CommandError,
 	issue: Omit<CommandErrorIssue, "commandPath">,
-): typeof SymbolCommandError {
+): SymbolCommandError {
 	error.issues.push(
 		{
 			...issue,
@@ -42,25 +42,7 @@ export function addIssue(
 	return SymbolCommandError;
 }
 
-export function setErrorPath(
-	error: CommandError,
-	value: string,
-	index: number,
-): CommandError {
-	error.currentCommandPath[index] = value;
-
-	return error;
-}
-
-export function popErrorPath(
-	error: CommandError,
-): CommandError {
-	error.currentCommandPath.pop();
-
-	return error;
-}
-
-export function addDataParserError(
+export function addIssueDataParser(
 	error: CommandError,
 	parseError: DDP.DataParserError,
 	params: {

@@ -1,5 +1,5 @@
 import { type ExpectType, DP, Printer } from "@duplojs/utils";
-import { DServerCommand } from "@scripts";
+import { DServerCommand, DServerDataParser } from "@scripts";
 
 describe("help", () => {
 	afterEach(() => {
@@ -128,7 +128,7 @@ describe("help", () => {
 		const command = DServerCommand.create(
 			"root",
 			{
-				subject: DP.tuple([DP.string(), DP.coerce.number()]),
+				subject: DP.tuple([DP.string(), DP.number()]),
 			},
 			() => Promise.resolve(undefined),
 		);
@@ -177,6 +177,27 @@ describe("help", () => {
 				expected: "string | number",
 			},
 			{
+				subject: DP.transform(
+					DP.string(),
+					(value) => value.length,
+				),
+				expected: "string",
+			},
+			{
+				subject: DP.pipe(
+					DP.string(),
+					DP.transform(
+						DP.string(),
+						(value) => value.length,
+					),
+				),
+				expected: "string",
+			},
+			{
+				subject: DP.optional(DP.string()),
+				expected: "string?",
+			},
+			{
 				subject: DP.array(DP.string()),
 				expected: "string[]",
 			},
@@ -191,6 +212,10 @@ describe("help", () => {
 			{
 				subject: DP.tuple([DP.literal("")], { rest: DP.number() }),
 				expected: "[...number[]]",
+			},
+			{
+				subject: DServerDataParser.file(),
+				expected: "file",
 			},
 			{
 				subject: DP.unknown(),

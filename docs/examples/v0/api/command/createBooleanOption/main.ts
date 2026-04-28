@@ -11,21 +11,15 @@ const verboseOption = SC.createBooleanOption(
 
 const forceOption = SC.createBooleanOption("force");
 
-const command = SC.create(
-	"cleanup",
-	{
-		options: [verboseOption, forceOption],
-	},
-	({ options }) => {
-		type check = ExpectType<
-			typeof options,
-			{
-				verbose: boolean;
-				force: boolean;
-			},
-			"strict"
-		>;
-	},
-);
-
-await command.execute(["--verbose", "--force"]);
+await SC.exec({
+	options: [verboseOption, forceOption],
+}, ({ options }) => {
+	type check = ExpectType<
+		typeof options,
+		{
+			verbose: boolean;
+			force: boolean;
+		},
+		"strict"
+	>;
+});
