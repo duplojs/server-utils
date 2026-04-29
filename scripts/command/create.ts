@@ -69,10 +69,10 @@ export function isCommands(subject: unknown): subject is AnyTuple<Command> {
 function commandSubjectToDataParser(contract: Subject): DDP.DataParser {
 	if (contract instanceof Array) {
 		return DDP.tuple(
-			AA.map(
+			AA.mapTuple(
 				contract,
 				(part) => commandSubjectToDataParser(part),
-			) as [DDP.DataParser, ...DDP.DataParser[]],
+			),
 		);
 	}
 
@@ -103,9 +103,10 @@ function commandSubjectToDataParser(contract: Subject): DDP.DataParser {
 
 	if (DDP.identifier(contract, DDP.tupleKind)) {
 		return DDP.tuple(
-			contract.definition.shape.map(
+			AA.mapTuple(
+				contract.definition.shape,
 				(part) => commandSubjectToDataParser(part),
-			) as [DDP.DataParser, ...DDP.DataParser[]],
+			),
 			{
 				...contract.definition,
 				rest: contract.definition.rest
@@ -119,15 +120,8 @@ function commandSubjectToDataParser(contract: Subject): DDP.DataParser {
 		return contract;
 	}
 
-	return (
-		CC.toMapDataParser as (
-			innerContract: unknown,
-			params?: {
-				coerce?: boolean;
-			},
-		) => DDP.Contract<unknown, unknown>
-	)(
-		contract,
+	return CC.toMapDataParser(
+		contract as never,
 		{ coerce: true },
 	);
 }
