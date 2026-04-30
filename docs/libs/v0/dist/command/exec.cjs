@@ -1,6 +1,6 @@
 'use strict';
 
-var create = require('./create.cjs');
+var index = require('./create/index.cjs');
 var error = require('./error.cjs');
 var getProcessArguments = require('../common/getProcessArguments.cjs');
 var exitProcess = require('../common/exitProcess.cjs');
@@ -10,7 +10,7 @@ async function exec(...args) {
         ? [{}, args[0]]
         : args;
     const error$1 = error.createError("root");
-    const result = await create.create("root", params, execute).execute(getProcessArguments.getProcessArguments(), error$1);
+    const result = await index.create("root", params, execute).execute(getProcessArguments.getProcessArguments(), error$1);
     if (result === error.SymbolCommandError) {
         // eslint-disable-next-line no-console
         console.error(error.interpretCommandError(error$1));

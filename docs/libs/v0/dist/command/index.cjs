@@ -1,9 +1,7 @@
 'use strict';
 
-var create = require('./create.cjs');
+var index = require('./create/index.cjs');
 var exec = require('./exec.cjs');
-var help = require('./help.cjs');
-var error = require('./error.cjs');
 var execOptions = require('./execOptions.cjs');
 var base = require('./options/base.cjs');
 var boolean = require('./options/boolean.cjs');
@@ -14,21 +12,9 @@ var array = require('./options/array.cjs');
  * {@include command/index.md}
  */
 
-exports.create = create.create;
-exports.isCommands = create.isCommands;
+exports.create = index.create;
+exports.isCommand = index.isCommand;
 exports.exec = exec.exec;
-exports.formatSubject = help.formatSubject;
-exports.logCommandHelp = help.logCommandHelp;
-exports.logExecOptionHelp = help.logExecOptionHelp;
-exports.renderCommandHelp = help.renderCommandHelp;
-exports.renderExecOptionHelp = help.renderExecOptionHelp;
-exports.renderOptionsHelp = help.renderOptionsHelp;
-exports.SymbolCommandError = error.SymbolCommandError;
-exports.addIssue = error.addIssue;
-exports.addIssueDataParser = error.addIssueDataParser;
-exports.createError = error.createError;
-exports.interpretCommandError = error.interpretCommandError;
-exports.interpretExecOptionError = error.interpretExecOptionError;
 exports.execOptions = execOptions.execOptions;
 exports.initOption = base.initOption;
 exports.createBooleanOption = boolean.createBooleanOption;

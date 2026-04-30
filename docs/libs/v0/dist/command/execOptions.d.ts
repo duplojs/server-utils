@@ -1,5 +1,5 @@
 import type { AnyTuple, SimplifyTopLevel } from "@duplojs/utils";
-import { type Option } from "./options";
+import type { Option } from "./options";
 type ComputeResult<GenericOptions extends AnyTuple<Option>> = SimplifyTopLevel<{
     [GenericOption in GenericOptions[number] as GenericOption extends Option<infer GenericName, unknown> ? GenericName : never]: GenericOption extends Option<string, infer GenericResult> ? GenericResult : never;
 }>;

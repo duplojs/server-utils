@@ -70,15 +70,8 @@ export function createOption(
 	) {
 		computeDataParser = contract;
 	} else {
-		computeDataParser = (
-			CC.toMapDataParser as (
-				contract: unknown,
-				params?: {
-					coerce?: boolean;
-				},
-			) => DDP.Contract<unknown, unknown>
-		)(
-			contract,
+		computeDataParser = CC.toMapDataParser(
+			contract as never,
 			{ coerce: true },
 		);
 	}

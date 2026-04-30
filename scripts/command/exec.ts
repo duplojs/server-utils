@@ -1,5 +1,5 @@
-import type { AnyFunction, MaybePromise } from "@duplojs/utils";
-import { type CreateCommandExecuteParams, type CreateCommandParams, type Subject, create } from "./create";
+import type { AnyFunction, MaybePromise, AnyTuple } from "@duplojs/utils";
+import { type Command, type Subject, type CreateCommandExecuteParams, type CreateCommandParams, create } from "./create";
 import type { Option } from "./options";
 import { exitProcess, getProcessArguments } from "@scripts/common";
 import { createError, interpretCommandError, SymbolCommandError } from "./error";
@@ -13,7 +13,7 @@ export function exec(
 
 export function exec<
 	GenericOptions extends readonly Option[],
-	GenericSubject extends Subject,
+	GenericSubject extends Subject | Command | AnyTuple<Command> | undefined,
 >(
 	params: CreateCommandParams<
 		GenericOptions,

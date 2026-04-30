@@ -20,13 +20,13 @@ export type EligibleCleanType = (
 );
 
 export type ComputeEligibleCleanType<
-	GenericSubject extends EligibleCleanType,
-> = [GenericSubject] extends [CC.ConstraintHandler<any, any, readonly any[], any>]
-	? CC.GetConstraint<GenericSubject>
-	: [GenericSubject] extends [CC.ConstraintsSetHandler<any, readonly any[], any>]
-		? CC.GetConstraints<GenericSubject>
-		: [GenericSubject] extends [CC.PrimitiveHandler]
-			? ReturnType<GenericSubject["createWithUnknownOrThrow"]>
-			: [GenericSubject] extends [EligibleEntityProperty]
-				? CC.EntityProperty<GenericSubject>
+	GenericCleanType extends EligibleCleanType,
+> = [GenericCleanType] extends [CC.ConstraintHandler<any, any, readonly any[], any>]
+	? CC.GetConstraint<GenericCleanType>
+	: [GenericCleanType] extends [CC.ConstraintsSetHandler<any, readonly any[], any>]
+		? CC.GetConstraints<GenericCleanType>
+		: [GenericCleanType] extends [CC.PrimitiveHandler]
+			? ReturnType<GenericCleanType["createWithUnknownOrThrow"]>
+			: [GenericCleanType] extends [EligibleEntityProperty]
+				? CC.EntityProperty<GenericCleanType>
 				: never;

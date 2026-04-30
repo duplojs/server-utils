@@ -1,7 +1,5 @@
-export { create, isCommands } from './create.mjs';
+export { create, isCommand } from './create/index.mjs';
 export { exec } from './exec.mjs';
-export { formatSubject, logCommandHelp, logExecOptionHelp, renderCommandHelp, renderExecOptionHelp, renderOptionsHelp } from './help.mjs';
-export { SymbolCommandError, addIssue, addIssueDataParser, createError, interpretCommandError, interpretExecOptionError } from './error.mjs';
 export { execOptions } from './execOptions.mjs';
 export { initOption } from './options/base.mjs';
 export { createBooleanOption } from './options/boolean.mjs';

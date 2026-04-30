@@ -48,24 +48,21 @@ describe("exec", () => {
 				options: [DServerCommand.createBooleanOption("verbose")],
 				subject: DP.tuple([DP.string()]),
 			},
-			({ options, subject }) => {
+			(params) => {
 				type _CheckOptions = ExpectType<
-					typeof options,
+					typeof params.options,
 					{
 						verbose: boolean;
 					},
 					"strict"
 				>;
 				type _CheckSubject = ExpectType<
-					typeof subject,
+					typeof params.subject,
 					[string],
 					"strict"
 				>;
 
-				executeSpy({
-					options,
-					subject,
-				});
+				executeSpy(params);
 			},
 		);
 

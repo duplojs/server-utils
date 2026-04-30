@@ -4,7 +4,7 @@ var utils = require('@duplojs/utils');
 var AA = require('@duplojs/utils/array');
 var PP = require('@duplojs/utils/pattern');
 var DDP = require('@duplojs/utils/dataParser');
-var create = require('./create.cjs');
+var boolean = require('./options/boolean.cjs');
 var file = require('../dataParser/parsers/file.cjs');
 
 function _interopNamespaceDefault(e) {
@@ -28,9 +28,7 @@ var AA__namespace = /*#__PURE__*/_interopNamespaceDefault(AA);
 var PP__namespace = /*#__PURE__*/_interopNamespaceDefault(PP);
 var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
 
-/**
- * @internal
- */
+const helpOption = boolean.createBooleanOption("help", { aliases: ["h"] });
 function formatSubject(subject) {
     return PP__namespace.match(subject)
         .when(DDP__namespace.identifier(DDP__namespace.stringKind), utils.justReturn("string"))
@@ -58,9 +56,6 @@ function formatSubject(subject) {
     })
         .otherwise(utils.justReturn("unknown"));
 }
-/**
- * @internal
- */
 function renderOptionsHelp(options, depth) {
     return utils.Printer.renderParagraph([
         `${utils.Printer.indent(depth)}${utils.Printer.colorizedBold("OPTIONS:", "blue")}`,
@@ -76,9 +71,6 @@ function renderOptionsHelp(options, depth) {
         ])),
     ]);
 }
-/**
- * @internal
- */
 function renderCommandHelp(command, depth) {
     const logs = [];
     logs.push(`${utils.Printer.indent(depth)}${utils.Printer.colorizedBold("NAME:", "green")}${command.name}`);
@@ -91,42 +83,40 @@ function renderCommandHelp(command, depth) {
     if (AA__namespace.minElements(command.options, 1)) {
         logs.push(renderOptionsHelp(command.options, depth + 1));
     }
-    if (create.isCommands(command.subject)) {
-        for (const childCommand of command.subject) {
-            logs.push(...renderCommandHelp(childCommand, depth + 1));
+    if (command.children?.type === "subCommand") {
+        for (const subCommand of command.children.subCommands) {
+            logs.push(...renderCommandHelp(subCommand, depth + 1));
         }
     }
-    else if (DDP__namespace.identifier(command.subject, DDP__namespace.dataParserKind)) {
-        const formattedSubject = formatSubject(command.subject);
+    else if (command.children?.type === "subject") {
+        const formattedSubject = formatSubject(command.children.dataParser);
         logs.push(AA__namespace.join([
             utils.Printer.indent(depth + 1),
             utils.Printer.colorizedBold("SUBJECT:", "magenta"),
-            utils.hasSomeKinds(command.subject, [DDP__namespace.tupleKind, DDP__namespace.arrayKind])
+            utils.hasSomeKinds(command.children.dataParser, [DDP__namespace.tupleKind, DDP__namespace.arrayKind])
                 ? formattedSubject
                 : `<${formattedSubject}>`,
         ], ""));
     }
     return logs;
 }
-function logCommandHelp(command, depth = 0) {
+function logCommandHelp(command) {
     // eslint-disable-next-line no-console
-    console.log(utils.Printer.renderParagraph(renderCommandHelp(command, depth)));
+    console.log(utils.Printer.renderParagraph(renderCommandHelp(command, 0)));
 }
-/**
- * @internal
- */
 function renderExecOptionHelp(options, depth) {
     return [
         `${utils.Printer.indent(depth)}${utils.Printer.colorizedBold("OPTION HELP", "green")}`,
         renderOptionsHelp(options, depth + 1),
     ];
 }
-function logExecOptionHelp(options, depth = 0) {
+function logExecOptionHelp(options) {
     // eslint-disable-next-line no-console
-    console.log(utils.Printer.renderParagraph(renderExecOptionHelp(options, depth)));
+    console.log(utils.Printer.renderParagraph(renderExecOptionHelp(options, 0)));
 }
 
 exports.formatSubject = formatSubject;
+exports.helpOption = helpOption;
 exports.logCommandHelp = logCommandHelp;
 exports.logExecOptionHelp = logExecOptionHelp;
 exports.renderCommandHelp = renderCommandHelp;

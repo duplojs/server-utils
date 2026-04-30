@@ -274,49 +274,69 @@ describe("node integration", () => {
 			commandExecuteSpy,
 		);
 
-		try {
-			getProcessArgumentsSpy.mockReturnValue(["--help"]);
-			await SC.exec(
-				{
-					subject: [command],
-				},
-				rootExecuteSpy,
-			);
+		getProcessArgumentsSpy.mockReturnValue(["--help"]);
+		await SC.exec(
+			{
+				subject: command,
+			},
+			rootExecuteSpy,
+		);
 
-			expect(logSpy).toHaveBeenCalled();
-			expect(
-				stripAnsiColor(
-					logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
-				),
-			).toMatchSnapshot("help root");
+		expect(logSpy).toHaveBeenCalled();
+		expect(
+			stripAnsiColor(
+				logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
+			),
+		).toMatchSnapshot("help root");
 
-			logSpy.mockClear();
-			await command.execute(["--help"], SC.createError("root"));
-			expect(
-				stripAnsiColor(
-					logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
-				),
-			).toMatchSnapshot("help command");
+		logSpy.mockClear();
+		getProcessArgumentsSpy.mockReturnValue(["db", "--help"]);
+		await SC.exec(
+			{
+				subject: command,
+			},
+			rootExecuteSpy,
+		);
+		expect(
+			stripAnsiColor(
+				logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
+			),
+		).toMatchSnapshot("help command");
 
-			logSpy.mockClear();
-			await command.execute(["help-db", "--help"], SC.createError("root"));
-			expect(
-				stripAnsiColor(
-					logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
-				),
-			).toMatchSnapshot("help sub-command");
+		logSpy.mockClear();
+		getProcessArgumentsSpy.mockReturnValue(["db", "help-db", "--help"]);
+		await SC.exec(
+			{
+				subject: command,
+			},
+			rootExecuteSpy,
+		);
+		expect(
+			stripAnsiColor(
+				logSpy.mock.calls.map(([message]) => String(message)).join("\n"),
+			),
+		).toMatchSnapshot("help sub-command");
 
-			await command.execute(["seed", "--force", "users"], SC.createError("root"));
-			expect(subCommandExecuteSpy).toHaveBeenCalledWith({
-				options: {
-					force: true,
-				},
-				subject: ["users"],
-			});
-		} finally {
-			setEnvironment("NODE");
-			TESTImplementation.clear();
-			logSpy.mockRestore();
-		}
+		getProcessArgumentsSpy.mockReturnValue(["db", "seed", "--force", "users"]);
+		await SC.exec(
+			{
+				subject: command,
+			},
+			rootExecuteSpy,
+		);
+
+		expect(rootExecuteSpy).not.toHaveBeenCalled();
+		expect(commandExecuteSpy).not.toHaveBeenCalled();
+		expect(subHelpExecuteSpy).not.toHaveBeenCalled();
+		expect(subCommandExecuteSpy).toHaveBeenCalledWith({
+			options: {
+				force: true,
+			},
+			subject: ["users"],
+		});
+
+		setEnvironment("NODE");
+		TESTImplementation.clear();
+		logSpy.mockRestore();
 	});
 });

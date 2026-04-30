@@ -1,4 +1,4 @@
-import { create } from './create.mjs';
+import { create } from './create/index.mjs';
 import { createError, SymbolCommandError, interpretCommandError } from './error.mjs';
 import { getProcessArguments } from '../common/getProcessArguments.mjs';
 import { exitProcess } from '../common/exitProcess.mjs';

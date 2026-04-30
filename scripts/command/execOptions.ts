@@ -2,11 +2,9 @@ import type { AnyTuple, SimplifyTopLevel } from "@duplojs/utils";
 import * as GG from "@duplojs/utils/generator";
 import * as OO from "@duplojs/utils/object";
 import { createError, interpretExecOptionError, SymbolCommandError } from "./error";
-import { logExecOptionHelp } from "./help";
-import { createBooleanOption, type Option } from "./options";
+import { logExecOptionHelp, helpOption } from "./help";
+import type { Option } from "./options";
 import { exitProcess, getProcessArguments } from "@scripts/common";
-
-const helpOption = createBooleanOption("help", { aliases: ["h"] });
 
 type ComputeResult<
 	GenericOptions extends AnyTuple<Option>,

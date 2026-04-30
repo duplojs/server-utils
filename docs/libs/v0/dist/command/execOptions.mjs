@@ -1,12 +1,10 @@
 import * as GG from '@duplojs/utils/generator';
 import * as OO from '@duplojs/utils/object';
 import { createError, SymbolCommandError, interpretExecOptionError } from './error.mjs';
-import { logExecOptionHelp } from './help.mjs';
+import { helpOption, logExecOptionHelp } from './help.mjs';
 import { getProcessArguments } from '../common/getProcessArguments.mjs';
-import { createBooleanOption } from './options/boolean.mjs';
 import { exitProcess } from '../common/exitProcess.mjs';
 
-const helpOption = createBooleanOption("help", { aliases: ["h"] });
 async function execOptions(...options) {
     const processArguments = getProcessArguments();
     const error = createError("root");

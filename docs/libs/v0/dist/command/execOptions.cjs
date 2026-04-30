@@ -5,7 +5,6 @@ var OO = require('@duplojs/utils/object');
 var error = require('./error.cjs');
 var help = require('./help.cjs');
 var getProcessArguments = require('../common/getProcessArguments.cjs');
-var boolean = require('./options/boolean.cjs');
 var exitProcess = require('../common/exitProcess.cjs');
 
 function _interopNamespaceDefault(e) {
@@ -28,11 +27,10 @@ function _interopNamespaceDefault(e) {
 var GG__namespace = /*#__PURE__*/_interopNamespaceDefault(GG);
 var OO__namespace = /*#__PURE__*/_interopNamespaceDefault(OO);
 
-const helpOption = boolean.createBooleanOption("help", { aliases: ["h"] });
 async function execOptions(...options) {
     const processArguments = getProcessArguments.getProcessArguments();
     const error$1 = error.createError("root");
-    const help$1 = await helpOption.execute(processArguments, error$1);
+    const help$1 = await help.helpOption.execute(processArguments, error$1);
     if (help$1 === error.SymbolCommandError) {
         // eslint-disable-next-line no-console
         console.error(error.interpretExecOptionError(error$1));

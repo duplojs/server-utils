@@ -1,5 +1,5 @@
-import type { MaybePromise } from "@duplojs/utils";
-import { type CreateCommandExecuteParams, type CreateCommandParams, type Subject } from "./create";
+import type { MaybePromise, AnyTuple } from "@duplojs/utils";
+import { type Command, type Subject, type CreateCommandExecuteParams, type CreateCommandParams } from "./create";
 import type { Option } from "./options";
 /**
  * Execute a root command from process arguments.
@@ -43,4 +43,4 @@ import type { Option } from "./options";
  * 
  */
 export declare function exec(execute: () => void): Promise<void>;
-export declare function exec<GenericOptions extends readonly Option[], GenericSubject extends Subject>(params: CreateCommandParams<GenericOptions, GenericSubject>, execute: (params: CreateCommandExecuteParams<GenericOptions, GenericSubject>) => MaybePromise<void>): Promise<void>;
+export declare function exec<GenericOptions extends readonly Option[], GenericSubject extends Subject | Command | AnyTuple<Command> | undefined>(params: CreateCommandParams<GenericOptions, GenericSubject>, execute: (params: CreateCommandExecuteParams<GenericOptions, GenericSubject>) => MaybePromise<void>): Promise<void>;
