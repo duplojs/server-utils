@@ -48,24 +48,21 @@ describe("exec", () => {
 				options: [DServerCommand.createBooleanOption("verbose")],
 				subject: DP.tuple([DP.string()]),
 			},
-			({ options, subject }) => {
+			(params) => {
 				type _CheckOptions = ExpectType<
-					typeof options,
+					typeof params.options,
 					{
 						verbose: boolean;
 					},
 					"strict"
 				>;
 				type _CheckSubject = ExpectType<
-					typeof subject,
+					typeof params.subject,
 					[string],
 					"strict"
 				>;
 
-				executeSpy({
-					options,
-					subject,
-				});
+				executeSpy(params);
 			},
 		);
 
@@ -108,5 +105,26 @@ describe("exec", () => {
 			subject: ["subject"],
 		});
 		expect(exitSpy).toHaveBeenCalledWith(0);
+	});
+
+	it("prints the interpreted root error and exits when execution returns command error", async() => {
+		setEnvironment("TEST");
+		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["bad"]);
+		const exitSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
+		TESTImplementation.set("exitProcess", exitSpy);
+
+		await DServerCommand.exec(
+			{
+				subject: DP.number(),
+			},
+			() => undefined,
+		);
+
+		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
+		expect(errorSpy).toHaveBeenCalledTimes(1);
+		expect(String(errorSpy.mock.calls[0]?.[0])).toContain("Command failed");
+		expect(exitSpy).toHaveBeenCalledWith(1);
 	});
 });

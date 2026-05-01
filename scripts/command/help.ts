@@ -1,13 +1,13 @@
-import { hasSomeKinds, isType, justReturn, pipe, Printer } from "@duplojs/utils";
+import { hasSomeKinds, justReturn, pipe, Printer } from "@duplojs/utils";
 import * as AA from "@duplojs/utils/array";
 import * as PP from "@duplojs/utils/pattern";
 import * as DDP from "@duplojs/utils/dataParser";
+import * as SDP from "@scripts/dataParser";
 import type { Command } from "./create";
-import type { Option } from "./options";
+import { createBooleanOption, type Option } from "./options";
 
-/**
- * @internal
- */
+export const helpOption = createBooleanOption("help", { aliases: ["h"] });
+
 export function formatSubject(subject: DDP.DataParser): string {
 	return PP.match(subject)
 		.when(
@@ -33,6 +33,10 @@ export function formatSubject(subject: DDP.DataParser): string {
 		.when(
 			DDP.identifier(DDP.nilKind),
 			justReturn("null"),
+		)
+		.when(
+			SDP.fileKind.has,
+			justReturn("file"),
 		)
 		.when(
 			DDP.identifier(DDP.literalKind),
@@ -63,6 +67,18 @@ export function formatSubject(subject: DDP.DataParser): string {
 			),
 		)
 		.when(
+			DDP.identifier(DDP.transformKind),
+			(subject) => formatSubject(subject.definition.inner),
+		)
+		.when(
+			DDP.identifier(DDP.pipeKind),
+			(subject) => formatSubject(subject.definition.input),
+		)
+		.when(
+			DDP.identifier(DDP.optionalKind),
+			(subject) => `${formatSubject(subject.definition.inner)}?`,
+		)
+		.when(
 			DDP.identifier(DDP.arrayKind),
 			(subject) => `${formatSubject(subject.definition.element)}[]`,
 		)
@@ -84,9 +100,6 @@ export function formatSubject(subject: DDP.DataParser): string {
 		.otherwise(justReturn("unknown"));
 }
 
-/**
- * @internal
- */
 export function renderOptionsHelp(
 	options: readonly Option[],
 	depth: number,
@@ -124,9 +137,6 @@ export function renderOptionsHelp(
 	);
 }
 
-/**
- * @internal
- */
 export function renderCommandHelp(
 	command: Command,
 	depth: number,
@@ -152,19 +162,19 @@ export function renderCommandHelp(
 		logs.push(renderOptionsHelp(command.options, depth + 1));
 	}
 
-	if (isType(command.subject, "array")) {
-		for (const childCommand of command.subject) {
-			logs.push(...renderCommandHelp(childCommand, depth + 1));
+	if (command.children?.type === "subCommand") {
+		for (const subCommand of command.children.subCommands) {
+			logs.push(...renderCommandHelp(subCommand, depth + 1));
 		}
-	} else if (DDP.identifier(command.subject, DDP.dataParserKind)) {
-		const formattedSubject = formatSubject(command.subject);
+	} else if (command.children?.type === "subject") {
+		const formattedSubject = formatSubject(command.children.dataParser);
 
 		logs.push(
 			AA.join(
 				[
 					Printer.indent(depth + 1),
 					Printer.colorizedBold("SUBJECT:", "magenta"),
-					hasSomeKinds(command.subject, [DDP.tupleKind, DDP.arrayKind])
+					hasSomeKinds(command.children.dataParser, [DDP.tupleKind, DDP.arrayKind])
 						? formattedSubject
 						: `<${formattedSubject}>`,
 				],
@@ -178,19 +188,15 @@ export function renderCommandHelp(
 
 export function logCommandHelp(
 	command: Command,
-	depth = 0,
 ) {
 	// eslint-disable-next-line no-console
 	console.log(
 		Printer.renderParagraph(
-			renderCommandHelp(command, depth),
+			renderCommandHelp(command, 0),
 		),
 	);
 }
 
-/**
- * @internal
- */
 export function renderExecOptionHelp(
 	options: readonly Option[],
 	depth: number,
@@ -203,12 +209,11 @@ export function renderExecOptionHelp(
 
 export function logExecOptionHelp(
 	options: readonly Option[],
-	depth = 0,
 ) {
 	// eslint-disable-next-line no-console
 	console.log(
 		Printer.renderParagraph(
-			renderExecOptionHelp(options, depth),
+			renderExecOptionHelp(options, 0),
 		),
 	);
 }

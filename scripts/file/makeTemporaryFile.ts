@@ -1,10 +1,11 @@
-import { E, Path } from "@duplojs/utils";
+import { Path } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeCrypto, nodeFileSystem, nodeOs } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
-		makeTemporaryFile(prefix: string, suffix?: string): Promise<FileSystemLeft<"make-temporary-file"> | E.Success<string>>;
+		makeTemporaryFile(prefix: string, suffix?: string): Promise<FileSystemLeft<"make-temporary-file"> | EE.Success<string>>;
 	}
 }
 
@@ -25,14 +26,14 @@ export const makeTemporaryFile = implementFunction(
 			]);
 			return fs.open(fileTemporaryPath, "wx")
 				.then((fh) => fh.close())
-				.then(() => E.success(fileTemporaryPath))
-				.catch((value) => E.left("file-system-make-temporary-file", value));
+				.then(() => EE.success(fileTemporaryPath))
+				.catch((value) => EE.left("file-system-make-temporary-file", value));
 		},
 		DENO: (prefix, suffix) => Deno.makeTempFile({
 			prefix,
 			suffix,
 		})
-			.then(E.success)
-			.catch((value) => E.left("file-system-make-temporary-file", value)),
+			.then(EE.success)
+			.catch((value) => EE.left("file-system-make-temporary-file", value)),
 	},
 );

@@ -11,7 +11,7 @@ description: "Parse les options CLI depuis les arguments du runtime."
 
 # execOptions
 
-`execOptions` parse les options CLI et retourne le résultat sous forme de record `{ [optionName]: resultOption }`.
+`execOptions` parse les options CLI et résout le résultat sous forme de record `{ [optionName]: resultOption }`.
 Si le parsing échoue, une erreur détaillée est affichée dans la console.
 Le `--help` / `-h` est généré automatiquement depuis les options déclarées.
 
@@ -29,7 +29,7 @@ function execOptions<
   GenericOptions extends [Option, ...Option[]]
 >(
   ...options: GenericOptions
-): ComputeResult<GenericOptions>
+): Promise<ComputeResult<GenericOptions>>
 ```
 
 ## Paramètres
@@ -38,7 +38,7 @@ function execOptions<
 
 ## Valeur de retour
 
-- `ComputeResult<GenericOptions>` : objet dont les clés sont les noms d'options et les valeurs sont les résultats typés de chaque parser.
+- `Promise<ComputeResult<GenericOptions>>` : promesse qui résout un objet dont les clés sont les noms d'options et les valeurs sont les résultats typés de chaque parser.
 
 ## Voir aussi
 

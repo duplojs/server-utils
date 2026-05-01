@@ -1,7 +1,8 @@
-import type { AnyFunction, MaybePromise } from "@duplojs/utils";
-import { type CreateCommandExecuteParams, type CreateCommandParams, type Subject, create } from "./create";
+import type { AnyFunction, MaybePromise, AnyTuple } from "@duplojs/utils";
+import { type Command, type Subject, type CreateCommandExecuteParams, type CreateCommandParams, create } from "./create";
 import type { Option } from "./options";
-import { getProcessArguments } from "@scripts/common";
+import { exitProcess, getProcessArguments } from "@scripts/common";
+import { createError, interpretCommandError, SymbolCommandError } from "./error";
 
 /**
  * {@include command/exec/index.md}
@@ -12,7 +13,7 @@ export function exec(
 
 export function exec<
 	GenericOptions extends readonly Option[],
-	GenericSubject extends Subject,
+	GenericSubject extends Subject | Command | AnyTuple<Command> | undefined,
 >(
 	params: CreateCommandParams<
 		GenericOptions,
@@ -30,11 +31,20 @@ export async function exec(
 		? [{}, args[0]]
 		: args;
 
-	await create(
+	const error = createError("root");
+
+	const result = await create(
 		"root",
 		params,
 		execute,
 	).execute(
 		getProcessArguments(),
+		error,
 	);
+
+	if (result === SymbolCommandError) {
+		// eslint-disable-next-line no-console
+		console.error(interpretCommandError(error));
+		return void exitProcess(1);
+	}
 }

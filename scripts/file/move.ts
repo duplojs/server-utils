@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -7,7 +7,7 @@ declare module "@scripts/implementor" {
 		move(
 			fromPath: string,
 			toPath: string,
-		): Promise<FileSystemLeft<"move"> | E.Ok>;
+		): Promise<FileSystemLeft<"move"> | EE.Ok>;
 	}
 }
 
@@ -23,15 +23,15 @@ export const move = implementFunction(
 				fromPath,
 				toPath,
 			)
-				.then(E.ok)
-				.catch((value) => E.left("file-system-move", value));
+				.then(EE.ok)
+				.catch((value) => EE.left("file-system-move", value));
 		},
 		DENO: (fromPath, toPath) => Deno.rename(
 			fromPath,
 			toPath,
 		)
-			.then(E.ok)
-			.catch((value) => E.left("file-system-move", value)),
+			.then(EE.ok)
+			.catch((value) => EE.left("file-system-move", value)),
 	},
 );
 

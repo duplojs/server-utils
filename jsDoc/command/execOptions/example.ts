@@ -9,7 +9,7 @@ const portOption = SC.createOption(
 		required: true,
 	},
 );
-const portResult = SC.execOptions(portOption);
+const portResult = await SC.execOptions(portOption);
 // portResult.port: number
 
 const tagOption = SC.createArrayOption(
@@ -22,5 +22,5 @@ const tagOption = SC.createArrayOption(
 );
 const forceOption = SC.createBooleanOption("force");
 
-const options = SC.execOptions(tagOption, forceOption);
+const options = await SC.execOptions(tagOption, forceOption);
 // options.tag: string[] | undefined

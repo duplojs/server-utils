@@ -1,15 +1,13 @@
-import type { SimplifyTopLevel } from "@duplojs/utils";
-import * as AA from "@duplojs/utils/array";
+import type { AnyTuple, SimplifyTopLevel } from "@duplojs/utils";
+import * as GG from "@duplojs/utils/generator";
 import * as OO from "@duplojs/utils/object";
 import { createError, interpretExecOptionError, SymbolCommandError } from "./error";
-import { logExecOptionHelp } from "./help";
-import { createBooleanOption, type Option } from "./options";
+import { logExecOptionHelp, helpOption } from "./help";
+import type { Option } from "./options";
 import { exitProcess, getProcessArguments } from "@scripts/common";
 
-const helpOption = createBooleanOption("help", { aliases: ["h"] });
-
 type ComputeResult<
-	GenericOptions extends [Option, ...Option[]],
+	GenericOptions extends AnyTuple<Option>,
 > = SimplifyTopLevel<{
 	[GenericOption in GenericOptions[number] as GenericOption extends Option<infer GenericName, unknown>
 		? GenericName
@@ -23,17 +21,17 @@ type ComputeResult<
  * {@include command/execOptions/index.md}
  */
 export function execOptions<
-	GenericOptions extends [Option, ...Option[]],
+	GenericOptions extends AnyTuple<Option>,
 >(
 	...options: GenericOptions
-): ComputeResult<GenericOptions>;
+): Promise<ComputeResult<GenericOptions>>;
 
-export function execOptions(
-	...options: [Option, ...Option[]]
+export async function execOptions(
+	...options: AnyTuple<Option>
 ) {
 	const processArguments = getProcessArguments();
 	const error = createError("root");
-	const help = helpOption.execute(processArguments, error);
+	const help = await helpOption.execute(processArguments, error);
 
 	if (help === SymbolCommandError) {
 		// eslint-disable-next-line no-console
@@ -44,17 +42,17 @@ export function execOptions(
 		return void exitProcess(0);
 	}
 
-	const result = AA.reduce(
+	const result = await GG.asyncReduce(
 		options,
-		AA.reduceFrom<{
+		GG.reduceFrom<{
 			options: Record<string, unknown>;
 			restArgs: readonly string[];
 		}>({
 			options: {},
 			restArgs: processArguments,
 		}),
-		({ element: option, lastValue, next, exit }) => {
-			const optionResult = option.execute(lastValue.restArgs, error);
+		async({ element: option, lastValue, next, exit }) => {
+			const optionResult = await option.execute(lastValue.restArgs, error);
 
 			if (optionResult === SymbolCommandError) {
 				return exit(SymbolCommandError);

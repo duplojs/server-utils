@@ -13,15 +13,14 @@
   },
   "scripts": {
     "build": "rollup --config",
-    "test:tu": "vitest --coverage",
-    "test:tu:bench": "vitest bench",
-    "test:tu:watch": "vitest --coverage --watch",
-    "test:tu:update": "vitest --coverage --update",
+    "test:tu": "./.commands/test-tu.sh",
+    "test:tu:watch": "./.commands/test-tu.sh --watch",
+    "test:tu:update": "./.commands/test-tu.sh --update",
     "test:integration:bun": "bun test integration/bun",
     "test:integration:deno": "deno test -P -c integration/deno/deno.json integration/deno",
-    "test:types": "tsc -p tsconfig.test.json",
-    "test:lint": "eslint --quiet",
-    "test:lint:fix": "eslint --fix --quiet",
+    "test:types": "./.commands/test-types.sh",
+    "test:lint": "./.commands/test-lint.sh",
+    "test:lint:fix": "./.commands/test-lint.sh --fix",
     "docs:dev": "npm -w docs run docs:dev",
     "docs:build": "npm -w docs run docs:build",
     "docs:preview": "npm -w docs run docs:preview",
@@ -92,7 +91,7 @@
     "@duplojs/dev-tools": "0.2.0"
   },
   "peerDependencies": {
-    "@duplojs/utils": ">=1.6.5 <2.0.0"
+    "@duplojs/utils": ">=1.7.0 <2.0.0"
   },
   "workspaces": [
     "integration", 

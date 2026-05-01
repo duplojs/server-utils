@@ -95,25 +95,25 @@ export default defineConfig({
 						({ namedGroups }) => A.join(
 							[
 								"// @filename: @duplojs/server-utils.ts",
-								`export * from "@v${namedGroups?.version ?? ""}";`,
+								`export * from "@server-utils/v${namedGroups?.version ?? ""}";`,
 
 								"// @filename: @duplojs/server-utils/file.ts",
-								`export * from "@v${namedGroups?.version ?? ""}/file";`,
+								`export * from "@server-utils/v${namedGroups?.version ?? ""}/file";`,
 
 								"// @filename: @duplojs/server-utils/common.ts",
-								`export * from "@v${namedGroups?.version ?? ""}/common";`,
+								`export * from "@server-utils/v${namedGroups?.version ?? ""}/common";`,
 
 								"// @filename: @duplojs/server-utils/dataParser.ts",
-								`export * from "@v${namedGroups?.version ?? ""}/dataParser";`,
+								`export * from "@server-utils/v${namedGroups?.version ?? ""}/dataParser";`,
 
 								"// @filename: @duplojs/server-utils/dataParserCoerce.ts",
-								`export * from "@v${namedGroups?.version ?? ""}/dataParserCoerce";`,
+								`export * from "@server-utils/v${namedGroups?.version ?? ""}/dataParserCoerce";`,
 
 								"// @filename: @duplojs/server-utils/dataParserExtended.ts",
-								`export * from "@v${namedGroups?.version ?? ""}/dataParserExtended";`,
+								`export * from "@server-utils/v${namedGroups?.version ?? ""}/dataParserExtended";`,
 
 								"// @filename: @duplojs/server-utils/command.ts",
-								`export * from "@v${namedGroups?.version ?? ""}/command";`,
+								`export * from "@server-utils/v${namedGroups?.version ?? ""}/command";`,
 
 								"// @filename: index.ts",
 								"// ---cut---",
@@ -134,13 +134,13 @@ export default defineConfig({
 						moduleResolution: ModuleResolutionKind.Bundler,
 						moduleDetection: ModuleDetectionKind.Force,
 						paths: {
-							"@v0": ["libs/v0/index"],
-							"@v0/common": ["libs/v0/common/index"],
-							"@v0/file": ["libs/v0/file/index"],
-							"@v0/dataParser": ["libs/v0/dataParser/index"],
-							"@v0/dataParserCoerce": ["libs/v0/dataParser/parsers/coerce/index"],
-							"@v0/dataParserExtended": ["libs/v0/dataParser/extended/index"],
-							"@v0/command": ["libs/v0/command/index"],
+							"@server-utils/v0": ["libs/v0/index"],
+							"@server-utils/v0/common": ["libs/v0/common/index"],
+							"@server-utils/v0/file": ["libs/v0/file/index"],
+							"@server-utils/v0/dataParser": ["libs/v0/dataParser/index"],
+							"@server-utils/v0/dataParserCoerce": ["libs/v0/dataParser/parsers/coerce/index"],
+							"@server-utils/v0/dataParserExtended": ["libs/v0/dataParser/extended/index"],
+							"@server-utils/v0/command": ["libs/v0/command/index"],
 						},
 					},
 				},

@@ -1,54 +1,88 @@
-import { unwrap } from "@duplojs/utils";
-import * as EE from "@duplojs/utils/either";
+import { hasSomeKinds, unwrap } from "@duplojs/utils";
 import * as DDP from "@duplojs/utils/dataParser";
+import * as EE from "@duplojs/utils/either";
+import * as CC from "@duplojs/utils/clean";
+import * as SDP from "@scripts/dataParser";
 import { initOption, type Option } from "./base";
-import type { EligibleDataParser } from "../types";
-import { addIssue, addDataParserError } from "../error";
+import type { EligibleContract } from "../types";
+import type { ComputeOptionContract } from "./types";
+import { addIssue, addIssueDataParser } from "../error";
 
 /**
  * {@include command/createOption/index.md}
  */
 export function createOption<
 	GenericName extends string,
-	GenericSchema extends EligibleDataParser,
+	GenericContract extends EligibleContract,
+	GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>,
 >(
 	name: GenericName,
-	schema: GenericSchema,
+	contract: GenericContract,
 	params: {
 		description?: string;
 		aliases?: readonly string[];
 		required: true;
 	},
-): Option<GenericName, DDP.Output<GenericSchema>>;
+): Option<GenericName, GenericOutput>;
 
 export function createOption<
 	GenericName extends string,
-	GenericSchema extends EligibleDataParser,
+	GenericContract extends EligibleContract,
+	GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>,
 >(
 	name: GenericName,
-	schema: GenericSchema,
+	contract: GenericContract,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
 	},
-): Option<GenericName, DDP.Output<GenericSchema> | undefined>;
+): Option<GenericName, GenericOutput | undefined>;
 
 export function createOption(
 	name: string,
-	schema: DDP.DataParser,
+	contract: EligibleContract,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
 		required?: true;
 	},
-) {
+): any {
+	let computeDataParser: DDP.Contract<unknown, unknown> | undefined = undefined;
+
+	if (
+		hasSomeKinds(contract, [
+			DDP.stringKind,
+			DDP.numberKind,
+			DDP.bigIntKind,
+			DDP.dateKind,
+			DDP.timeKind,
+			DDP.nilKind,
+			SDP.fileKind,
+		])
+	) {
+		const clone = contract.clone();
+
+		(clone.definition.coerce as any) = true;
+
+		computeDataParser = clone;
+	} else if (
+		DDP.identifier(contract, DDP.dataParserKind)
+	) {
+		computeDataParser = contract;
+	} else {
+		computeDataParser = CC.toMapDataParser(
+			contract as never,
+			{ coerce: true },
+		);
+	}
+
 	const dataParser = params?.required
-		? schema
-		: DDP.optional(schema);
+		? computeDataParser
+		: DDP.optional(computeDataParser);
 
 	return initOption(
 		name,
-		({ isHere, value }, error) => {
+		async({ isHere, value }, error) => {
 			if (!isHere && params?.required) {
 				return addIssue(
 					error,
@@ -62,10 +96,12 @@ export function createOption(
 				);
 			}
 
-			const result = dataParser.parse(value);
+			const result = dataParser.isAsynchronous()
+				? await dataParser.asyncParse(value)
+				: dataParser.parse(value);
 
 			if (EE.isLeft(result)) {
-				return addDataParserError(
+				return addIssueDataParser(
 					error,
 					unwrap(result),
 					{

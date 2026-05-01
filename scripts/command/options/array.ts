@@ -1,11 +1,14 @@
-import { pipe, unwrap } from "@duplojs/utils";
+import { hasSomeKinds, pipe, unwrap } from "@duplojs/utils";
 import * as SS from "@duplojs/utils/string";
 import * as DDP from "@duplojs/utils/dataParser";
 import type * as AA from "@duplojs/utils/array";
 import * as EE from "@duplojs/utils/either";
+import * as CC from "@duplojs/utils/clean";
+import * as SDP from "@scripts/dataParser";
 import { initOption, type Option } from "./base";
-import type { EligibleDataParser } from "../types";
-import { addIssue, addDataParserError } from "../error";
+import type { EligibleContract } from "../types";
+import type { ComputeOptionContract } from "./types";
+import { addIssue, addIssueDataParser } from "../error";
 
 const defaultSeparator = ",";
 
@@ -14,11 +17,11 @@ const defaultSeparator = ",";
  */
 export function createArrayOption<
 	GenericName extends string,
-	GenericSchema extends EligibleDataParser,
+	GenericContract extends EligibleContract,
 	GenericMinValues extends number,
 >(
 	name: GenericName,
-	schema: GenericSchema,
+	contract: GenericContract,
 	params: {
 		description?: string;
 		aliases?: readonly string[];
@@ -31,20 +34,20 @@ export function createArrayOption<
 	GenericName,
 	[
 		...AA.CreateTuple<
-			DDP.Output<GenericSchema>,
+			ComputeOptionContract<GenericContract>,
 			GenericMinValues
 		>,
-		...DDP.Output<GenericSchema>[],
+		...ComputeOptionContract<GenericContract>[],
 	]
 >;
 
 export function createArrayOption<
 	GenericName extends string,
-	GenericSchema extends EligibleDataParser,
+	GenericContract extends EligibleContract,
 	GenericMinValues extends number,
 >(
 	name: GenericName,
-	schema: GenericSchema,
+	contract: GenericContract,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -56,17 +59,17 @@ export function createArrayOption<
 	GenericName,
 	| [
 		...AA.CreateTuple<
-			DDP.Output<GenericSchema>,
+			ComputeOptionContract<GenericContract>,
 			GenericMinValues
 		>,
-		...DDP.Output<GenericSchema>[],
+		...ComputeOptionContract<GenericContract>[],
 	]
 	| undefined
 >;
 
 export function createArrayOption(
 	name: string,
-	schema: DDP.DataParser,
+	contract: EligibleContract,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -76,8 +79,37 @@ export function createArrayOption(
 		separator?: string;
 	},
 ) {
+	let computeDataParser: DDP.Contract<unknown, unknown> | undefined = undefined;
+
+	if (
+		hasSomeKinds(contract, [
+			DDP.stringKind,
+			DDP.numberKind,
+			DDP.bigIntKind,
+			DDP.dateKind,
+			DDP.timeKind,
+			DDP.nilKind,
+			SDP.fileKind,
+		])
+	) {
+		const clone = contract.clone();
+
+		(clone.definition.coerce as any) = true;
+
+		computeDataParser = clone;
+	} else if (
+		DDP.identifier(contract, DDP.dataParserKind)
+	) {
+		computeDataParser = contract;
+	} else {
+		computeDataParser = CC.toMapDataParser(
+			contract as never,
+			{ coerce: true },
+		);
+	}
+
 	const dataParser = pipe(
-		schema,
+		computeDataParser,
 		DDP.array,
 		(schema) => params?.min
 			? schema.addChecker(DDP.checkerArrayMin(params.min))
@@ -92,7 +124,7 @@ export function createArrayOption(
 
 	return initOption(
 		name,
-		({ isHere, value }, error) => {
+		async({ isHere, value }, error) => {
 			if (!isHere && params?.required) {
 				return addIssue(
 					error,
@@ -110,10 +142,12 @@ export function createArrayOption(
 				? SS.split(value, params?.separator ?? defaultSeparator)
 				: undefined;
 
-			const result = dataParser.parse(values);
+			const result = dataParser.isAsynchronous()
+				? await dataParser.asyncParse(values)
+				: dataParser.parse(values);
 
 			if (EE.isLeft(result)) {
-				return addDataParserError(
+				return addIssueDataParser(
 					error,
 					unwrap(result),
 					{

@@ -1,5 +1,6 @@
+import { asyncPipe, type Kind, mimeType, Path, innerPipe } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
-import { asyncPipe, type Kind, E, mimeType, Path, innerPipe } from "@duplojs/utils";
 import { rename } from "./rename";
 import { exists } from "./exists";
 import { move } from "./move";
@@ -18,12 +19,12 @@ export interface FileInterface extends Kind<
 	getMimeType(): string | null;
 	getExtension(params?: Path.GetExtensionNameParams): string | null;
 	getParentPath(): string | null;
-	rename(newName: string): Promise<FileSystemLeft<"rename"> | E.Success<FileInterface>>;
-	relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | E.Success<FileInterface>>;
-	move(newPath: string): Promise<FileSystemLeft<"move"> | E.Success<FileInterface>>;
-	exists(): Promise<FileSystemLeft<"exists"> | E.Ok>;
-	remove(): Promise<FileSystemLeft<"remove"> | E.Ok>;
-	stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
+	rename(newName: string): Promise<FileSystemLeft<"rename"> | EE.Success<FileInterface>>;
+	relocate(parentPath: string): Promise<FileSystemLeft<"relocate"> | EE.Success<FileInterface>>;
+	move(newPath: string): Promise<FileSystemLeft<"move"> | EE.Success<FileInterface>>;
+	exists(): Promise<FileSystemLeft<"exists"> | EE.Ok>;
+	remove(): Promise<FileSystemLeft<"remove"> | EE.Ok>;
+	stat(): Promise<FileSystemLeft<"stat"> | EE.Success<StatInfo>>;
 }
 
 /**
@@ -61,10 +62,10 @@ export function createFileInterface(
 	function localRename(newName: string) {
 		return asyncPipe(
 			rename(path, newName),
-			E.whenIsRight(
+			EE.whenIsRight(
 				innerPipe(
 					createFileInterface,
-					E.success,
+					EE.success,
 				),
 			),
 		);
@@ -73,10 +74,10 @@ export function createFileInterface(
 	function localRelocate(newParentPath: string) {
 		return asyncPipe(
 			relocate(path, newParentPath),
-			E.whenIsRight(
+			EE.whenIsRight(
 				innerPipe(
 					createFileInterface,
-					E.success,
+					EE.success,
 				),
 			),
 		);
@@ -85,8 +86,8 @@ export function createFileInterface(
 	function localMove(newPath: string) {
 		return asyncPipe(
 			move(path, newPath),
-			E.whenIsRight(
-				() => E.success(
+			EE.whenIsRight(
+				() => EE.success(
 					createFileInterface(newPath),
 				),
 			),

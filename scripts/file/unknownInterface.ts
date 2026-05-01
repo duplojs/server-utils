@@ -1,4 +1,5 @@
-import { Path, type E, type Kind } from "@duplojs/utils";
+import { Path, type Kind } from "@duplojs/utils";
+import type * as EE from "@duplojs/utils/either";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import { stat, type StatInfo } from "./stat";
 import { exists } from "./exists";
@@ -12,8 +13,8 @@ export interface UnknownInterface extends Kind<
 	path: string;
 	getName(): string | null;
 	getParentPath(): string | null;
-	stat(): Promise<FileSystemLeft<"stat"> | E.Success<StatInfo>>;
-	exist(): Promise<FileSystemLeft<"exists"> | E.Ok>;
+	stat(): Promise<FileSystemLeft<"stat"> | EE.Success<StatInfo>>;
+	exist(): Promise<FileSystemLeft<"exists"> | EE.Ok>;
 }
 
 /**

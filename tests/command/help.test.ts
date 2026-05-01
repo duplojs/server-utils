@@ -1,5 +1,6 @@
 import { type ExpectType, DP, Printer } from "@duplojs/utils";
-import { DServerCommand } from "@scripts";
+import { DServerCommand, DServerDataParser } from "@scripts";
+import { renderCommandHelp, renderExecOptionHelp, logCommandHelp, logExecOptionHelp, formatSubject } from "@scripts/command/help";
 
 describe("help", () => {
 	afterEach(() => {
@@ -32,7 +33,7 @@ describe("help", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		const lines = DServerCommand.renderCommandHelp(command, 1);
+		const lines = renderCommandHelp(command, 1);
 
 		type _CheckLines = ExpectType<
 			typeof lines,
@@ -59,18 +60,18 @@ describe("help", () => {
 			() => Promise.resolve(undefined),
 		);
 
-		DServerCommand.logCommandHelp(command, 1);
+		logCommandHelp(command);
 
 		expect(logSpy).toHaveBeenCalledTimes(1);
 		expect(logSpy.mock.calls[0]).toEqual([
 			Printer.renderParagraph(
-				DServerCommand.renderCommandHelp(command, 1),
+				renderCommandHelp(command, 0),
 			),
 		]);
 	});
 
 	it("renders execOption help with a dedicated title and options block", () => {
-		const lines = DServerCommand.renderExecOptionHelp(
+		const lines = renderExecOptionHelp(
 			[
 				DServerCommand.createBooleanOption("help", { aliases: ["h"] }),
 				DServerCommand.createBooleanOption("verbose", {
@@ -94,30 +95,30 @@ describe("help", () => {
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 		const options = [DServerCommand.createBooleanOption("help", { aliases: ["h"] })];
 
-		DServerCommand.logExecOptionHelp(options, 1);
+		logExecOptionHelp(options);
 
 		expect(logSpy).toHaveBeenCalledTimes(1);
 		expect(logSpy.mock.calls[0]).toEqual([
 			Printer.renderParagraph(
-				DServerCommand.renderExecOptionHelp(options, 1),
+				renderExecOptionHelp(options, 0),
 			),
 		]);
 	});
 
 	it("recursively renders child commands when subject is a command list", () => {
-		const child = DServerCommand.create(
+		const subCommand = DServerCommand.create(
 			"child",
 			() => Promise.resolve(undefined),
 		);
 		const root = DServerCommand.create(
 			"root",
 			{
-				subject: [child],
+				subject: subCommand,
 			},
 			() => Promise.resolve(undefined),
 		);
 
-		const lines = DServerCommand.renderCommandHelp(root, 0);
+		const lines = renderCommandHelp(root, 0);
 		const output = lines.join("\n");
 
 		expect(output).toContain("root");
@@ -128,12 +129,12 @@ describe("help", () => {
 		const command = DServerCommand.create(
 			"root",
 			{
-				subject: DP.tuple([DP.string(), DP.coerce.number()]),
+				subject: DP.tuple([DP.string(), DP.number()]),
 			},
 			() => Promise.resolve(undefined),
 		);
 
-		expect(DServerCommand.renderCommandHelp(command, 0)).toContain(
+		expect(renderCommandHelp(command, 0)).toContain(
 			`${Printer.indent(1)}${Printer.colorizedBold("SUBJECT:", "magenta")}[string, number]`,
 		);
 	});
@@ -177,6 +178,27 @@ describe("help", () => {
 				expected: "string | number",
 			},
 			{
+				subject: DP.transform(
+					DP.string(),
+					(value) => value.length,
+				),
+				expected: "string",
+			},
+			{
+				subject: DP.pipe(
+					DP.string(),
+					DP.transform(
+						DP.string(),
+						(value) => value.length,
+					),
+				),
+				expected: "string",
+			},
+			{
+				subject: DP.optional(DP.string()),
+				expected: "string?",
+			},
+			{
 				subject: DP.array(DP.string()),
 				expected: "string[]",
 			},
@@ -193,13 +215,17 @@ describe("help", () => {
 				expected: "[...number[]]",
 			},
 			{
+				subject: DServerDataParser.file(),
+				expected: "file",
+			},
+			{
 				subject: DP.unknown(),
 				expected: "unknown",
 			},
 		];
 
 		for (const testCase of cases) {
-			expect(DServerCommand.formatSubject(testCase.subject)).toBe(testCase.expected);
+			expect(formatSubject(testCase.subject)).toBe(testCase.expected);
 		}
 	});
 });

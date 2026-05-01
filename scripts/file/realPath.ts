@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -8,7 +8,7 @@ declare module "@scripts/implementor" {
 			GenericPath extends string,
 		>(
 			path: GenericPath,
-		): Promise<FileSystemLeft<"real-path"> | E.Success<string>>;
+		): Promise<FileSystemLeft<"real-path"> | EE.Success<string>>;
 	}
 }
 
@@ -21,12 +21,12 @@ export const realPath = implementFunction(
 		NODE: async(path) => {
 			const fs = await nodeFileSystem.value;
 			return fs.realpath(path)
-				.then(E.success)
-				.catch((value) => E.left("file-system-real-path", value));
+				.then(EE.success)
+				.catch((value) => EE.left("file-system-real-path", value));
 		},
 		DENO: (path) => Deno
 			.realPath(path)
-			.then(E.success)
-			.catch((value) => E.left("file-system-real-path", value)),
+			.then(EE.success)
+			.catch((value) => EE.left("file-system-real-path", value)),
 	},
 );

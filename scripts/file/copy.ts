@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -7,7 +7,7 @@ declare module "@scripts/implementor" {
 		copy(
 			fromPath: string,
 			toPath: string,
-		): Promise<FileSystemLeft<"copy"> | E.Ok>;
+		): Promise<FileSystemLeft<"copy"> | EE.Ok>;
 	}
 }
 
@@ -24,8 +24,8 @@ export const copy = implementFunction(
 				toPath,
 				{ recursive: true },
 			)
-				.then(E.ok)
-				.catch((value) => E.left("file-system-copy", value));
+				.then(EE.ok)
+				.catch((value) => EE.left("file-system-copy", value));
 		},
 	},
 );

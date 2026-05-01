@@ -1,6 +1,7 @@
 
+import type { NeverCoalescing } from "@duplojs/utils";
+import type * as DDP from "@duplojs/utils/dataParser";
 import * as dataParsers from "../../parsers";
-import { type DP, type NeverCoalescing } from "@duplojs/utils";
 
 export function file<
 	const GenericDefinition extends Omit<
@@ -11,7 +12,7 @@ export function file<
 	params?: dataParsers.DataParserFileParams,
 	definition?: GenericDefinition,
 ): dataParsers.DataParserFile<
-		DP.MergeDefinition<
+		DDP.MergeDefinition<
 			dataParsers.DataParserDefinitionFile,
 			NeverCoalescing<GenericDefinition, {}> & { coerce: true }
 		>

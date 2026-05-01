@@ -1,4 +1,6 @@
-import { type DP, E, kindHeritage, unwrap } from "@duplojs/utils";
+import { kindHeritage, unwrap } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
+import type * as DDP from "@duplojs/utils/dataParser";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import type * as SF from "@scripts/file";
 import { type EnvironmentVariableParams, environmentVariable } from "./environmentVariable";
@@ -9,7 +11,7 @@ export class EnvironmentVariableError extends kindHeritage(
 	Error,
 ) {
 	public constructor(
-		public error: SF.FileSystemLeft<"read-text-file"> | E.Error<DP.DataParserError>,
+		public error: SF.FileSystemLeft<"read-text-file"> | EE.Error<DDP.DataParserError>,
 	) {
 		super({}, ["Failed to load environment variables: one env file could not be read or parsed values do not match the provided schema."]);
 	}
@@ -19,14 +21,14 @@ export class EnvironmentVariableError extends kindHeritage(
  * {@include common/environmentVariableOrThrow/index.md}
  */
 export async function environmentVariableOrThrow<
-	GenericShape extends DP.DataParserObjectShape,
+	GenericShape extends DDP.DataParserObjectShape,
 >(
 	shape: GenericShape,
 	params?: EnvironmentVariableParams,
-): Promise<DP.DataParserObjectShapeOutput<GenericShape>> {
+): Promise<DDP.DataParserObjectShapeOutput<GenericShape>> {
 	const result = await environmentVariable(shape, params);
 
-	if (E.isLeft(result)) {
+	if (EE.isLeft(result)) {
 		throw new EnvironmentVariableError(result);
 	}
 

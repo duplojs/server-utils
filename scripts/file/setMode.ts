@@ -1,4 +1,5 @@
-import { E, isType } from "@duplojs/utils";
+import { isType } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -51,7 +52,7 @@ declare module "@scripts/implementor" {
 		setMode(
 			path: string,
 			mode: SetMode,
-		): Promise<FileSystemLeft<"set-mode"> | E.Ok>;
+		): Promise<FileSystemLeft<"set-mode"> | EE.Ok>;
 	}
 }
 
@@ -64,12 +65,12 @@ export const setMode = implementFunction(
 		NODE: async(path, mode) => {
 			const fs = await nodeFileSystem.value;
 			return fs.chmod(path, toMode(mode))
-				.then(E.ok)
-				.catch((value) => E.left("file-system-set-mode", value));
+				.then(EE.ok)
+				.catch((value) => EE.left("file-system-set-mode", value));
 		},
 		DENO: (path, mode) => Deno
 			.chmod(path, toMode(mode))
-			.then(E.ok)
-			.catch((value) => E.left("file-system-set-mode", value)),
+			.then(EE.ok)
+			.catch((value) => EE.left("file-system-set-mode", value)),
 	},
 );

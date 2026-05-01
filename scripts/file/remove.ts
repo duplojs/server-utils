@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -13,7 +13,7 @@ declare module "@scripts/implementor" {
 		>(
 			path: GenericPath,
 			params?: RemoveDirectoryParams
-		): Promise<FileSystemLeft<"remove"> | E.Ok>;
+		): Promise<FileSystemLeft<"remove"> | EE.Ok>;
 	}
 }
 
@@ -32,8 +32,8 @@ export const remove = implementFunction(
 					force: true,
 				},
 			)
-				.then(E.ok)
-				.catch((value) => E.left("file-system-remove", value));
+				.then(EE.ok)
+				.catch((value) => EE.left("file-system-remove", value));
 		},
 		DENO: (path, params) => Deno.remove(
 			path,
@@ -41,7 +41,7 @@ export const remove = implementFunction(
 				recursive: params?.recursive,
 			},
 		)
-			.then(E.ok)
-			.catch((value) => E.left("file-system-remove", value)),
+			.then(EE.ok)
+			.catch((value) => EE.left("file-system-remove", value)),
 	},
 );

@@ -6,7 +6,7 @@ prev:
 next:
   text: "API Reference"
   link: "/en/v0/api/"
-description: "Creates an option that parses a delimited list into a typed array."
+description: "Creates an option that parses a delimited list into a typed array from a DataParser or clean contract."
 ---
 
 # createArrayOption
@@ -25,11 +25,11 @@ Creates an option that parses a delimited list into a typed array.
 ```typescript
 function createArrayOption<
   GenericName extends string,
-  GenericSchema extends EligibleDataParser,
+  GenericContract extends EligibleContract,
   GenericMinValues extends number
 >(
   name: GenericName,
-  schema: GenericSchema,
+  contract: GenericContract,
   params: {
     description?: string
     aliases?: readonly string[]
@@ -41,18 +41,18 @@ function createArrayOption<
 ): Option<
   GenericName,
   [
-    ...A.CreateTuple<DP.Output<GenericSchema>, GenericMinValues>,
-    ...DP.Output<GenericSchema>[]
+    ...A.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
+    ...ComputeOptionContract<GenericContract>[]
   ]
 >
 
 function createArrayOption<
   GenericName extends string,
-  GenericSchema extends EligibleDataParser,
+  GenericContract extends EligibleContract,
   GenericMinValues extends number
 >(
   name: GenericName,
-  schema: GenericSchema,
+  contract: GenericContract,
   params?: {
     description?: string
     aliases?: readonly string[]
@@ -63,8 +63,8 @@ function createArrayOption<
 ): Option<
   GenericName,
   | [
-      ...A.CreateTuple<DP.Output<GenericSchema>, GenericMinValues>,
-      ...DP.Output<GenericSchema>[]
+      ...A.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
+      ...ComputeOptionContract<GenericContract>[]
     ]
   | undefined
 >
@@ -73,7 +73,7 @@ function createArrayOption<
 ## Parameters
 
 - `name` (`string`) : option name used as `--name`.
-- `schema` (`EligibleDataParser`) : parser for each array element.
+- `contract` (`EligibleContract`) : parser or clean contract for each array element.
 - `params` (optional) : option metadata and array constraints.
 - `params.required` (`true`, optional) : throws when option is missing.
 - `params.min` (`number`, optional) : minimum number of values.
@@ -86,6 +86,10 @@ function createArrayOption<
 
 - Required mode: `Option<GenericName, [..items]>`.
 - Optional mode: `Option<GenericName, [..items] | undefined>`.
+
+## Notes
+
+- Primitive parsers and clean primitive contracts are coerced from CLI string input automatically.
 
 ## See also
 

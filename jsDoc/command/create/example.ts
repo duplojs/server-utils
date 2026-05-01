@@ -1,5 +1,5 @@
 import { SC } from "@scripts";
-import { DP } from "@duplojs/utils";
+import { C, DP } from "@duplojs/utils";
 
 const ping = SC.create(
 	"ping",
@@ -8,13 +8,17 @@ const ping = SC.create(
 	},
 );
 
+const UserId = C.createNewType("user-id", DP.number(), C.Positive);
+
 const greet = SC.create(
 	"greet",
 	{
-		options: [SC.createOption("name", DP.string(), { required: true })],
+		options: [SC.createOption("email", C.Email)],
+		subject: UserId,
 	},
-	({ options: { name } }) => {
-		// name: string
+	({ options: { email }, subject }) => {
+		// email: C.Email | undefined
+		// subject: C.GetNewType<typeof UserId>
 	},
 );
 

@@ -1,4 +1,5 @@
-import { type AnyTuple, type BytesInString, DP, type FixDeepFunctionInfer, type Kind, type NeverCoalescing, createOverride } from "@duplojs/utils";
+import { type AnyTuple, type BytesInString, type FixDeepFunctionInfer, type Kind, type NeverCoalescing, createOverride } from "@duplojs/utils";
+import * as DDP from "@duplojs/utils/dataParser";
 import * as dataParsers from "../parsers";
 import { type FileInterface } from "@scripts/file";
 
@@ -6,7 +7,7 @@ type _DataParserFileExtended<
 	GenericDefinition extends dataParsers.DataParserDefinitionFile,
 > = (
 	& Kind<typeof dataParsers.fileKind.definition>
-	& DP.DataParserExtended<
+	& DDP.DataParserExtended<
 		GenericDefinition,
 		FileInterface,
 		FileInterface
@@ -30,21 +31,21 @@ export interface DataParserFileExtended<
 			GenericChecker
 		>
 	): DataParserFileExtended<
-		DP.AddCheckersToDefinition<
+		DDP.AddCheckersToDefinition<
 			GenericDefinition,
 			GenericChecker
 		>
 	>;
 
 	refine(
-		theFunction: (input: DP.Output<this>) => boolean,
+		theFunction: (input: DDP.Output<this>) => boolean,
 		definition?: Partial<
-			Omit<DP.DataParserCheckerDefinitionRefine, "theFunction">
+			Omit<DDP.DataParserCheckerDefinitionRefine, "theFunction">
 		>
 	): DataParserFileExtended<
-		DP.AddCheckersToDefinition<
+		DDP.AddCheckersToDefinition<
 			GenericDefinition,
-			readonly [DP.CheckerRefineImplementation<DP.Output<this>>]
+			readonly [DDP.CheckerRefineImplementation<DDP.Output<this>>]
 		>
 	>;
 
@@ -82,12 +83,12 @@ export function file<
 	params?: dataParsers.DataParserFileParams,
 	definition?: GenericDefinition,
 ): DataParserFileExtended<
-		DP.MergeDefinition<
+		DDP.MergeDefinition<
 			dataParsers.DataParserDefinitionFile,
 			NeverCoalescing<GenericDefinition, {}>
 		>
 	> {
-	const self = DP.dataParserExtendedInit<
+	const self = DDP.dataParserExtendedInit<
 		dataParsers.DataParserFile,
 		DataParserFileExtended
 	>(

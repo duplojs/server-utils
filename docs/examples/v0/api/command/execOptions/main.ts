@@ -18,7 +18,7 @@ const verboseOption = SC.createBooleanOption(
 	},
 );
 
-const options = SC.execOptions(portOption, verboseOption);
+const options = await SC.execOptions(portOption, verboseOption);
 //       ^?
 
 

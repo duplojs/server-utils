@@ -1,4 +1,4 @@
-import { E } from "@duplojs/utils";
+import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
 
@@ -13,7 +13,7 @@ declare module "@scripts/implementor" {
 		>(
 			path: GenericPath,
 			params?: MakeDirectoryParams
-		): Promise<FileSystemLeft<"make-directory"> | E.Ok>;
+		): Promise<FileSystemLeft<"make-directory"> | EE.Ok>;
 	}
 }
 
@@ -31,8 +31,8 @@ export const makeDirectory = implementFunction(
 					recursive: params?.recursive,
 				},
 			)
-				.then(E.ok)
-				.catch((value) => E.left("file-system-make-directory", value));
+				.then(EE.ok)
+				.catch((value) => EE.left("file-system-make-directory", value));
 		},
 		DENO: (path, params) => Deno.mkdir(
 			path,
@@ -40,7 +40,7 @@ export const makeDirectory = implementFunction(
 				recursive: params?.recursive,
 			},
 		)
-			.then(E.ok)
-			.catch((value) => E.left("file-system-make-directory", value)),
+			.then(EE.ok)
+			.catch((value) => EE.left("file-system-make-directory", value)),
 	},
 );

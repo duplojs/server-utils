@@ -1,5 +1,5 @@
-import type { E } from "@duplojs/utils";
+import type * as EE from "@duplojs/utils/either";
 
 export type FileSystemLeft<
 	GenericName extends string,
-> = E.Left<`file-system-${GenericName}`, unknown>;
+> = EE.Left<`file-system-${GenericName}`, unknown>;
