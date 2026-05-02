@@ -1,4 +1,4 @@
-import { SC } from "@duplojs/server-utils";
+import { SC } from "@server-utils/v0";
 import { type ExpectType } from "@duplojs/utils";
 
 const verboseOption = SC.createBooleanOption(

@@ -1,8 +1,5 @@
 ---
 description: "Installer @duplojs/server-utils et faire un premier usage en quelques minutes."
-prev:
-  text: "Introduction"
-  link: "/fr/v0/guide/"
 ---
 
 # Démarrage rapide

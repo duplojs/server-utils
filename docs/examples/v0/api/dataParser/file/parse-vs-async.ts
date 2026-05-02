@@ -1,4 +1,4 @@
-import { SDP, type SF } from "@duplojs/server-utils";
+import { SDP, type SF } from "@server-utils/v0";
 import { E, type DP, type ExpectType } from "@duplojs/utils";
 
 const schema = SDP.coerce.file({

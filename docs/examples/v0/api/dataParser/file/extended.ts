@@ -1,4 +1,4 @@
-import { SDPE, type SF } from "@duplojs/server-utils";
+import { SDPE, type SF } from "@server-utils/v0";
 import { E, type ExpectType, type DP } from "@duplojs/utils";
 
 const schema = SDPE

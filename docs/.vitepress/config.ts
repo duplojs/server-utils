@@ -2,7 +2,7 @@ import { defineConfig } from "vitepress";
 import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 import { ModuleDetectionKind, ModuleKind, ModuleResolutionKind } from "typescript";
 import { groupIconMdPlugin, groupIconVitePlugin } from "vitepress-plugin-group-icons";
-import { A, innerPipe, S } from "@duplojs/utils";
+import { Path, S } from "@duplojs/utils";
 
 const hostname = "https://server-utils.duplojs.dev";
 const ogImage = new URL("/images/ogImage.png", hostname).toString();
@@ -89,42 +89,13 @@ export default defineConfig({
 		codeTransformers: [
 			{
 				name: "duplo-version-transformer",
-				preprocess: innerPipe(
-					S.replace(
-						/\/\/ @version: (?<version>[0-9]+)/,
-						({ namedGroups }) => A.join(
-							[
-								"// @filename: @duplojs/server-utils.ts",
-								`export * from "@server-utils/v${namedGroups?.version ?? ""}";`,
-
-								"// @filename: @duplojs/server-utils/file.ts",
-								`export * from "@server-utils/v${namedGroups?.version ?? ""}/file";`,
-
-								"// @filename: @duplojs/server-utils/common.ts",
-								`export * from "@server-utils/v${namedGroups?.version ?? ""}/common";`,
-
-								"// @filename: @duplojs/server-utils/dataParser.ts",
-								`export * from "@server-utils/v${namedGroups?.version ?? ""}/dataParser";`,
-
-								"// @filename: @duplojs/server-utils/dataParserCoerce.ts",
-								`export * from "@server-utils/v${namedGroups?.version ?? ""}/dataParserCoerce";`,
-
-								"// @filename: @duplojs/server-utils/dataParserExtended.ts",
-								`export * from "@server-utils/v${namedGroups?.version ?? ""}/dataParserExtended";`,
-
-								"// @filename: @duplojs/server-utils/command.ts",
-								`export * from "@server-utils/v${namedGroups?.version ?? ""}/command";`,
-
-								"// @filename: index.ts",
-								"// ---cut---",
-							],
-							"\n",
-						),
-					),
-					S.replace(
-						/ ?@ts-expect-error/g,
-						"",
-					),
+				preprocess: S.replace(
+					/ ?@ts-expect-error/g,
+					"",
+				),
+				postprocess: S.replace(
+					/"@server-utils\/v([0-9]+)/g,
+					"\"@duplojs/server-utils",
 				),
 			},
 			transformerTwoslash({
@@ -133,15 +104,7 @@ export default defineConfig({
 						module: ModuleKind.ESNext,
 						moduleResolution: ModuleResolutionKind.Bundler,
 						moduleDetection: ModuleDetectionKind.Force,
-						paths: {
-							"@server-utils/v0": ["libs/v0/index"],
-							"@server-utils/v0/common": ["libs/v0/common/index"],
-							"@server-utils/v0/file": ["libs/v0/file/index"],
-							"@server-utils/v0/dataParser": ["libs/v0/dataParser/index"],
-							"@server-utils/v0/dataParserCoerce": ["libs/v0/dataParser/parsers/coerce/index"],
-							"@server-utils/v0/dataParserExtended": ["libs/v0/dataParser/extended/index"],
-							"@server-utils/v0/command": ["libs/v0/command/index"],
-						},
+						allowArbitraryExtensions: true,
 					},
 				},
 			}),
@@ -150,6 +113,11 @@ export default defineConfig({
 	},
 	vite: {
 		plugins: [groupIconVitePlugin()],
+		resolve: {
+			alias: {
+				"@": Path.resolveRelative([import.meta.dirname, ".."]),
+			},
+		},
 	},
 	transformPageData(pageData) {
 		const frontmatter = pageData.frontmatter ?? {};
@@ -215,7 +183,7 @@ export default defineConfig({
 					},
 				],
 				sidebar: {
-					"/en/v0/guide/": [
+					"/fr/v0/guide/": [
 						{
 							text: "Commencer",
 							items: [

@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 import { E, type ExpectType, unwrap } from "@duplojs/utils";
 
 const config = await SF.readJsonFile("/tmp/config.json");

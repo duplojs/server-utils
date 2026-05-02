@@ -1,4 +1,4 @@
-import { environmentVariableOrThrow } from "@duplojs/server-utils";
+import { environmentVariableOrThrow } from "@server-utils/v0";
 import { DP } from "@duplojs/utils";
 
 const parsedVariables = await environmentVariableOrThrow(

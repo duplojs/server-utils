@@ -1,4 +1,4 @@
-import { getCurrentWorkDirectory } from "@duplojs/server-utils";
+import { getCurrentWorkDirectory } from "@server-utils/v0";
 import { E, unwrap } from "@duplojs/utils";
 
 const result = getCurrentWorkDirectory();

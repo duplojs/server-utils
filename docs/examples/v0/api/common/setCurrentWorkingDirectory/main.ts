@@ -1,4 +1,4 @@
-import { setCurrentWorkingDirectory } from "@duplojs/server-utils";
+import { setCurrentWorkingDirectory } from "@server-utils/v0";
 import { E } from "@duplojs/utils";
 
 const result = setCurrentWorkingDirectory("/tmp/project");

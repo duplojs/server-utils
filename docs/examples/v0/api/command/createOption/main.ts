@@ -1,4 +1,4 @@
-import { SC } from "@duplojs/server-utils";
+import { SC } from "@server-utils/v0";
 import { C, DP, type ExpectType } from "@duplojs/utils";
 
 const UserId = C.createNewType("user-id", DP.number(), C.Positive);

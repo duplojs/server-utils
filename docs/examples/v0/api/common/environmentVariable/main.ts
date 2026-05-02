@@ -1,4 +1,4 @@
-import { environmentVariable } from "@duplojs/server-utils";
+import { environmentVariable } from "@server-utils/v0";
 import { DP, E, unwrap } from "@duplojs/utils";
 
 const firstResult = await environmentVariable({

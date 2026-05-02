@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 
 const result = await SF.setOwner("/tmp/file.txt", {
 	userId: 1000,

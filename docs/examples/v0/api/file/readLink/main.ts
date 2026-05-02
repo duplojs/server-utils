@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 
 const target = await SF.readLink("/tmp/link");
 // target: E.Success<string> | SF.FileSystemLeft<"read-link">

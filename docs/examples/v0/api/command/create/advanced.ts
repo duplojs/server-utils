@@ -1,4 +1,4 @@
-import { SC } from "@duplojs/server-utils";
+import { SC } from "@server-utils/v0";
 import { DP, type ExpectType } from "@duplojs/utils";
 
 const deployCommand = SC.create(

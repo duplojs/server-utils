@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 
 const entry = SF.createUnknownInterface("/tmp/entry");
 const name = entry.getName();

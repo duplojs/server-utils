@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 import { E } from "@duplojs/utils";
 
 const result = await SF.exists("/tmp/file.txt");

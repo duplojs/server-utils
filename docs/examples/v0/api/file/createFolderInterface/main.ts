@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 import { E, type ExpectType, G, unwrap } from "@duplojs/utils";
 
 const folder = SF.createFolderInterface("/tmp/project");

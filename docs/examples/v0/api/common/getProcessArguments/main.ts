@@ -1,5 +1,5 @@
 import { A, type ExpectType, S } from "@duplojs/utils";
-import { getProcessArguments } from "@duplojs/server-utils";
+import { getProcessArguments } from "@server-utils/v0";
 
 const argumentsList = getProcessArguments();
 

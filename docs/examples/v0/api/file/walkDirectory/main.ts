@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 import { E, type ExpectType, G } from "@duplojs/utils";
 
 const result = await SF.walkDirectory("/tmp/project");

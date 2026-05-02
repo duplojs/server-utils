@@ -1,5 +1,5 @@
 import { D } from "@duplojs/utils";
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 
 const now = D.now();
 const result = await SF.setTime("/tmp/file.txt", {

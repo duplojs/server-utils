@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 import { E, unwrap } from "@duplojs/utils";
 
 const result = await SF.readTextFile("/tmp/file.txt");

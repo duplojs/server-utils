@@ -1,8 +1,5 @@
 ---
 description: "Présentation de @duplojs/server-utils et de son rôle dans l’écosystème DuploJS."
-next:
-  text: "Démarrage rapide"
-  link: "/fr/v0/guide/quickStart"
 ---
 
 # Introduction

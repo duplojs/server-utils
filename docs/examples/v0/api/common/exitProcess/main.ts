@@ -1,4 +1,4 @@
-import { exitProcess } from "@duplojs/server-utils";
+import { exitProcess } from "@server-utils/v0";
 
 const shouldTerminate = false;
 

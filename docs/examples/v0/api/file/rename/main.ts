@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 
 const result = await SF.rename("/tmp/file.txt", "renamed.txt");
 // result: E.Success<string> | SF.FileSystemLeft<"rename">

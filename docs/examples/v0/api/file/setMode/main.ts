@@ -1,4 +1,4 @@
-import { SF } from "@duplojs/server-utils";
+import { SF } from "@server-utils/v0";
 
 const result = await SF.setMode("/tmp/file.txt", 0o644);
 // result: E.Ok | SF.FileSystemLeft<"set-mode">
