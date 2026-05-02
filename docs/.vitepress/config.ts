@@ -192,8 +192,33 @@ export default defineConfig({
 									link: "/fr/v0/guide/",
 								},
 								{
-									text: "Démarrage rapide",
+									text: "Démarrer rapide",
 									link: "/fr/v0/guide/quickStart",
+								},
+							],
+						},
+						{
+							text: "Commandes",
+							items: [
+								{
+									text: "Créer une commande",
+									link: "/fr/v0/guide/command",
+								},
+								{
+									text: "Options",
+									link: "/fr/v0/guide/command#ajouter-des-options",
+								},
+								{
+									text: "Erreurs",
+									link: "/fr/v0/guide/command#comprendre-les-erreurs",
+								},
+								{
+									text: "Sous-commandes",
+									link: "/fr/v0/guide/command#sous-commandes",
+								},
+								{
+									text: "Help généré",
+									link: "/fr/v0/guide/command#help-genere",
 								},
 							],
 						},
@@ -270,8 +295,33 @@ export default defineConfig({
 									link: "/en/v0/guide/",
 								},
 								{
-									text: "Quick Start",
+									text: "Quick start",
 									link: "/en/v0/guide/quickStart",
+								},
+							],
+						},
+						{
+							text: "Commands",
+							items: [
+								{
+									text: "Create a command",
+									link: "/en/v0/guide/command",
+								},
+								{
+									text: "Options",
+									link: "/en/v0/guide/command#add-options",
+								},
+								{
+									text: "Errors",
+									link: "/en/v0/guide/command#understand-errors",
+								},
+								{
+									text: "Subcommands",
+									link: "/en/v0/guide/command#subcommands",
+								},
+								{
+									text: "Generated Help",
+									link: "/en/v0/guide/command#generated-help",
 								},
 							],
 						},

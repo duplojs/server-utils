@@ -339,4 +339,66 @@ describe("node integration", () => {
 		TESTImplementation.clear();
 		logSpy.mockRestore();
 	});
+
+	it("command integration renders interpreted errors", async() => {
+		setEnvironment("TEST");
+
+		const exitSpy = vi.fn();
+		const getProcessArgumentsSpy = vi.fn();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		const rootExecuteSpy = vi.fn();
+		const commandExecuteSpy = vi.fn();
+		const subCommandExecuteSpy = vi.fn();
+
+		TESTImplementation.set("exitProcess", exitSpy);
+		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
+
+		const subCommand = SC.create(
+			"seed",
+			{
+				description: "Seed a target",
+				options: [
+					SC.createBooleanOption(
+						"force",
+						{
+							aliases: ["f"],
+							description: "force execution",
+						},
+					),
+				],
+				subject: DP.tuple([DP.string()]),
+			},
+			subCommandExecuteSpy,
+		);
+
+		const command = SC.create(
+			"db",
+			{
+				description: "Database commands",
+				subject: [subCommand],
+			},
+			commandExecuteSpy,
+		);
+
+		getProcessArgumentsSpy.mockReturnValue(["db", "seed", "--force=true", "users"]);
+		await SC.exec(
+			{
+				subject: command,
+			},
+			rootExecuteSpy,
+		);
+
+		expect(
+			stripAnsiColor(
+				errorSpy.mock.calls.map(([message]) => String(message)).join("\n"),
+			),
+		).toMatchSnapshot("command error");
+		expect(rootExecuteSpy).not.toHaveBeenCalled();
+		expect(commandExecuteSpy).not.toHaveBeenCalled();
+		expect(subCommandExecuteSpy).not.toHaveBeenCalled();
+
+		setEnvironment("NODE");
+		TESTImplementation.clear();
+		errorSpy.mockRestore();
+	});
 });

@@ -1,5 +1,13 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`node integration > command integration renders interpreted errors > command error 1`] = `
+"Command failed
+	COMMAND: root db seed
+	OPTION: --force
+✖ expected option without value --force but received "true"
+	↳ Option "force" does not accept a value."
+`;
+
 exports[`node integration > command integration with nested help and execute > help command 1`] = `
 "NAME:db
 	DESCRIPTION:

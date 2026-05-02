@@ -79,6 +79,23 @@ defineProps<{
   font-family: var(--vp-font-family-mono);
 }
 
+.terminal-line {
+  display: block;
+  min-height: 1.65em;
+}
+
+.terminal-indent-1 {
+  padding-left: 2ch;
+}
+
+.terminal-indent-2 {
+  padding-left: 4ch;
+}
+
+.terminal-indent-3 {
+  padding-left: 6ch;
+}
+
 .terminal-muted {
   color: #a1a1aa;
 }
@@ -89,5 +106,17 @@ defineProps<{
 
 .terminal-info {
   color: #7dd3fc;
+}
+
+.terminal-error {
+  color: #f87171;
+}
+
+.terminal-key {
+  color: #c084fc;
+}
+
+.terminal-value {
+  color: #facc15;
 }
 </style>
