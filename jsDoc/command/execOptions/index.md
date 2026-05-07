@@ -8,7 +8,7 @@ It also adds an automatic `--help` / `-h` manual generated from the declared opt
 ```
 
 @remarks
-Use this helper when your CLI only needs option parsing and does not need a command subject.
+Use this helper when your CLI only needs option parsing and does not need command subjects.
 
 @see https://server-utils.duplojs.dev/en/v0/api/command/execOptions
 @namespace SC

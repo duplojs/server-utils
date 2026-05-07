@@ -14,11 +14,11 @@ const greet = SC.create(
 	"greet",
 	{
 		options: [SC.createOption("email", C.Email)],
-		subject: UserId,
+		subjects: [SC.createArgument("userId", UserId)],
 	},
-	({ options: { email }, subject }) => {
+	({ options: { email }, args: { userId } }) => {
 		// email: C.Email | undefined
-		// subject: C.GetNewType<typeof UserId>
+		// userId: C.GetNewType<typeof UserId>
 	},
 );
 
@@ -32,7 +32,7 @@ const projectCreate = SC.create(
 const project = SC.create(
 	"project",
 	{
-		subject: [projectCreate],
+		subjects: [projectCreate],
 	},
 	() => {
 		// parent command fallback

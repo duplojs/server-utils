@@ -13,8 +13,9 @@ import * as SC from "@duplojs/server-utils/command";
 
 What you will find in this namespace:
 - Command builders: `create`, `exec`
+- Argument builder: `createArgument`
 - Option builders: `createBooleanOption`, `createOption`, `createArrayOption`
-- Rendering helpers: `logHelp`, `Printer`
+- Option-only executor: `execOptions`
 - Errors and types for command parsing
 
 @see https://server-utils.duplojs.dev/en/v0/api/command
