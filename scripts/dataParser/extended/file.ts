@@ -7,7 +7,7 @@ type _DataParserFileExtended<
 	GenericDefinition extends dataParsers.DataParserDefinitionFile,
 > = (
 	& Kind<typeof dataParsers.fileKind.definition>
-	& DDP.DataParserExtended<
+	& DDP.DataParserBaseExtended<
 		GenericDefinition,
 		FileInterface,
 		FileInterface
@@ -88,7 +88,7 @@ export function file<
 			NeverCoalescing<GenericDefinition, {}>
 		>
 	> {
-	const self = DDP.dataParserExtendedInit<
+	const self = DDP.dataParserBaseExtendedInit<
 		dataParsers.DataParserFile,
 		DataParserFileExtended
 	>(

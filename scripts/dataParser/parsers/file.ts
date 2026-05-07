@@ -33,7 +33,7 @@ export const fileKind = createDataParserKind("file");
 type _DataParserFile<
 	GenericDefinition extends DataParserDefinitionFile,
 > = (
-	& DDP.DataParser<
+	& DDP.DataParserBase<
 		GenericDefinition,
 		FileInterface,
 		FileInterface
@@ -89,7 +89,7 @@ export function file<
 			NeverCoalescing<GenericDefinition, {}>
 		>
 	> {
-	const self = DDP.dataParserInit<DataParserFile>(
+	const self = DDP.dataParserBaseInit<DataParserFile>(
 		fileKind,
 		{
 			errorMessage: definition?.errorMessage,
