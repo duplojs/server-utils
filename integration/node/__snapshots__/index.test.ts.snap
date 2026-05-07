@@ -9,32 +9,38 @@ exports[`node integration > command integration renders interpreted errors > com
 `;
 
 exports[`node integration > command integration with nested help and execute > help command 1`] = `
-"NAME:db
+"COMMAND: db
 	DESCRIPTION:
 	Database commands
-	NAME:help-db
-	NAME:seed
+	COMMAND: help-db
+	COMMAND: seed
 		DESCRIPTION:
 		Seed a target
 		OPTIONS:
-		- force: -f, --force
+		 - force: -f, --force
 		  force execution
-		SUBJECT:[string]"
+		 - str: --str [string]
+		  test option
+		 ARGUMENTS: <src>
+		 - src: string"
 `;
 
 exports[`node integration > command integration with nested help and execute > help root 1`] = `
-"NAME:root
-	NAME:db
+"COMMAND: root
+	COMMAND: db
 		DESCRIPTION:
 		Database commands
-		NAME:help-db
-		NAME:seed
+		COMMAND: help-db
+		COMMAND: seed
 			DESCRIPTION:
 			Seed a target
 			OPTIONS:
-			- force: -f, --force
+			 - force: -f, --force
 			  force execution
-			SUBJECT:[string]"
+			 - str: --str [string]
+			  test option
+			 ARGUMENTS: <src>
+			 - src: string"
 `;
 
-exports[`node integration > command integration with nested help and execute > help sub-command 1`] = `"NAME:help-db"`;
+exports[`node integration > command integration with nested help and execute > help sub-command 1`] = `"COMMAND: help-db"`;

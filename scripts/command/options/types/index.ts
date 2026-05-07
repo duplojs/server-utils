@@ -1,1 +1,2 @@
-export * from "./computeOptionContract";
+export * from "./computeOptionSpec";
+export * from "./options";

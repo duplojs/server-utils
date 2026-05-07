@@ -1,122 +1,126 @@
-import { hasSomeKinds, unwrap } from "@duplojs/utils";
-import * as DDP from "@duplojs/utils/dataParser";
+import { type Kind, type RemoveKind, unwrap } from "@duplojs/utils";
 import * as EE from "@duplojs/utils/either";
-import * as CC from "@duplojs/utils/clean";
-import * as SDP from "@scripts/dataParser";
+import type * as DDP from "@duplojs/utils/dataParser";
 import { initOption, type Option } from "./base";
-import type { EligibleContract } from "../types";
-import type { ComputeOptionContract } from "./types";
+import type { EligibleSpec } from "../types";
+import type { ComputeOptionSpec } from "./types";
 import { addIssue, addIssueDataParser } from "../error";
+import { specToDataParser } from "../spec";
+import { createDuplojsServerUtilsKind } from "@scripts/kind";
+
+export const simpleOptionKind = createDuplojsServerUtilsKind("command-simple-option");
+
+type _SimpleOption<
+	GenericName extends string = string,
+	GenericExecuteOutputValue extends unknown = unknown,
+> = (
+	& Option<
+		GenericName,
+		GenericExecuteOutputValue
+	>
+	& Kind<typeof simpleOptionKind.definition>
+);
+
+export interface SimpleOption<
+	GenericName extends string = string,
+	GenericExecuteOutputValue extends unknown = unknown,
+> extends _SimpleOption<GenericName, GenericExecuteOutputValue> {
+	readonly spec: EligibleSpec;
+	readonly dataParser: DDP.DataParser;
+	readonly required: boolean;
+}
 
 /**
  * {@include command/createOption/index.md}
  */
 export function createOption<
 	GenericName extends string,
-	GenericContract extends EligibleContract,
-	GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>,
+	GenericSpec extends EligibleSpec,
+	GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>,
 >(
 	name: GenericName,
-	contract: GenericContract,
+	spec: GenericSpec,
 	params: {
 		description?: string;
 		aliases?: readonly string[];
 		required: true;
 	},
-): Option<GenericName, GenericOutput>;
+): SimpleOption<GenericName, GenericOutput>;
 
 export function createOption<
 	GenericName extends string,
-	GenericContract extends EligibleContract,
-	GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>,
+	GenericSpec extends EligibleSpec,
+	GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>,
 >(
 	name: GenericName,
-	contract: GenericContract,
+	spec: GenericSpec,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
 	},
-): Option<GenericName, GenericOutput | undefined>;
+): SimpleOption<GenericName, GenericOutput | undefined>;
 
 export function createOption(
 	name: string,
-	contract: EligibleContract,
+	spec: EligibleSpec,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
 		required?: true;
 	},
 ): any {
-	let computeDataParser: DDP.Contract<unknown, unknown> | undefined = undefined;
+	const dataParser = specToDataParser(spec);
 
-	if (
-		hasSomeKinds(contract, [
-			DDP.stringKind,
-			DDP.numberKind,
-			DDP.bigIntKind,
-			DDP.dateKind,
-			DDP.timeKind,
-			DDP.nilKind,
-			SDP.fileKind,
-		])
-	) {
-		const clone = contract.clone();
-
-		(clone.definition.coerce as any) = true;
-
-		computeDataParser = clone;
-	} else if (
-		DDP.identifier(contract, DDP.dataParserKind)
-	) {
-		computeDataParser = contract;
-	} else {
-		computeDataParser = CC.toMapDataParser(
-			contract as never,
-			{ coerce: true },
-		);
-	}
-
-	const dataParser = params?.required
-		? computeDataParser
-		: DDP.optional(computeDataParser);
-
-	return initOption(
-		name,
-		async({ isHere, value }, error) => {
-			if (!isHere && params?.required) {
-				return addIssue(
-					error,
-					{
-						type: "option",
-						target: name,
-						expected: `required option --${name}`,
-						received: value,
-						message: `Option "${name}" is required.`,
-					},
-				);
-			}
-
-			const result = dataParser.isAsynchronous()
-				? await dataParser.asyncParse(value)
-				: dataParser.parse(value);
-
-			if (EE.isLeft(result)) {
-				return addIssueDataParser(
-					error,
-					unwrap(result),
-					{
-						type: "option",
-						target: name,
-					},
-				);
-			}
-
-			return unwrap(result);
-		},
+	const self: SimpleOption = simpleOptionKind.setTo(
 		{
-			description: params?.description,
-			aliases: params?.aliases,
-			hasValue: true,
-		},
+			spec,
+			dataParser,
+			required: params?.required ?? false,
+			...initOption(
+				name,
+				async({ isHere, value }, error) => {
+					if (!isHere && self.required === true) {
+						return addIssue(
+							error,
+							{
+								type: "option",
+								target: name,
+								expected: `required option --${name}`,
+								received: value,
+								message: `Option "${name}" is required.`,
+							},
+						);
+					}
+
+					if (!isHere && self.required === false) {
+						return undefined;
+					}
+
+					const result = dataParser.isAsynchronous()
+						? await dataParser.asyncParse(value)
+						: dataParser.parse(value);
+
+					if (EE.isLeft(result)) {
+						return addIssueDataParser(
+							error,
+							unwrap(result),
+							{
+								type: "option",
+								target: name,
+							},
+						);
+					}
+
+					return unwrap(result);
+				},
+				{
+					description: params?.description,
+					aliases: params?.aliases,
+					hasValue: true,
+				},
+			),
+		} satisfies RemoveKind<SimpleOption<string, unknown>>,
 	);
+
+	return self;
 }

@@ -15,7 +15,7 @@ describe("createArrayOption", () => {
 
 		type _checkOption = ExpectType<
 			typeof option,
-			DServerCommand.Option<"tags", string[] | undefined>,
+			DServerCommand.ArrayOption<"tags", string[] | undefined>,
 			"strict"
 		>;
 
@@ -68,6 +68,14 @@ describe("createArrayOption", () => {
 
 		expect(result.result).toEqual(["one", "two"]);
 		expect(result.argumentRest).toEqual(["subject"]);
+	});
+
+	it("handles present option without value", async() => {
+		const option = DServerCommand.createArrayOption("tags", DP.string());
+		const error = createError("root");
+
+		await expect(option.execute(["--tags"], error)).resolves.toBe(SymbolCommandError);
+		expect(error.issues[0]?.type).toBe("option");
 	});
 
 	it("returns command error when required option is missing", async() => {

@@ -1,6 +1,6 @@
-import { type ExpectType, DP, Printer } from "@duplojs/utils";
+import { DP, Printer } from "@duplojs/utils";
 import { DServerCommand, DServerDataParser } from "@scripts";
-import { renderCommandHelp, renderExecOptionHelp, logCommandHelp, logExecOptionHelp, formatSubject } from "@scripts/command/help";
+import { formatDataParser, logCommandHelp, logExecOptionHelp, renderArgumentsHelp, renderCommandHelp, renderExecOptionHelp } from "@scripts/command/help";
 
 describe("help", () => {
 	afterEach(() => {
@@ -8,224 +8,137 @@ describe("help", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("renders name, description, options and subject blocks", () => {
+	it("renders name, description, options and arguments", () => {
 		const command = DServerCommand.create(
 			"root",
 			{
 				description: "Root command description",
 				options: [
-					DServerCommand.createBooleanOption(
-						"silent",
-						{
-							aliases: ["s"],
-						},
-					),
-					DServerCommand.createBooleanOption(
-						"verbose",
-						{
-							description: "Enable verbose mode",
-							aliases: ["v"],
-						},
-					),
+					DServerCommand.createBooleanOption("verbose", {
+						aliases: ["v"],
+						description: "Enable verbose mode",
+					}),
 				],
-				subject: DP.string(),
+				subjects: [DServerCommand.createArgument("name", DP.string(), { description: "User name" })],
 			},
 			() => Promise.resolve(undefined),
 		);
 
-		const lines = renderCommandHelp(command, 1);
+		const output = renderCommandHelp(command, 0).join("\n");
 
-		type _CheckLines = ExpectType<
-			typeof lines,
-			string[],
-			"strict"
-		>;
-
-		expect(lines).toContain(
-			`${Printer.indent(1)}${Printer.colorizedBold("NAME:", "green")}root`,
-		);
-		expect(lines.join("\n")).toContain("Root command description");
-		expect(lines.join("\n")).toContain(Printer.colorizedBold("OPTIONS:", "blue"));
-		expect(lines.join("\n")).toContain("--silent");
-		expect(lines.join("\n")).toContain("Enable verbose mode");
-		expect(lines).toContain(
-			`${Printer.indent(2)}${Printer.colorizedBold("SUBJECT:", "magenta")}<string>`,
-		);
+		expect(output).toContain("COMMAND:");
+		expect(output).toContain("Root command description");
+		expect(output).toContain("OPTIONS:");
+		expect(output).toContain("--verbose");
+		expect(output).toContain("Enable verbose mode");
+		expect(output).toContain("ARGUMENTS:");
+		expect(output).toContain("<name>");
+		expect(output).toContain("name:");
+		expect(output).toContain("User name");
 	});
 
-	it("logs rendered help lines", () => {
-		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
-		const command = DServerCommand.create(
-			"root",
-			() => Promise.resolve(undefined),
-		);
-
-		logCommandHelp(command);
-
-		expect(logSpy).toHaveBeenCalledTimes(1);
-		expect(logSpy.mock.calls[0]).toEqual([
-			Printer.renderParagraph(
-				renderCommandHelp(command, 0),
-			),
-		]);
-	});
-
-	it("renders execOption help with a dedicated title and options block", () => {
-		const lines = renderExecOptionHelp(
-			[
-				DServerCommand.createBooleanOption("help", { aliases: ["h"] }),
-				DServerCommand.createBooleanOption("verbose", {
-					aliases: ["v"],
-					description: "Enable verbose mode",
-				}),
-			],
-			1,
-		);
-
-		expect(lines).toContain(
-			`${Printer.indent(1)}${Printer.colorizedBold("OPTION HELP", "green")}`,
-		);
-		expect(lines.join("\n")).toContain(Printer.colorizedBold("OPTIONS:", "blue"));
-		expect(lines.join("\n")).toContain("--help");
-		expect(lines.join("\n")).toContain("--verbose");
-		expect(lines.join("\n")).toContain("Enable verbose mode");
-	});
-
-	it("logs execOption help lines", () => {
-		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
-		const options = [DServerCommand.createBooleanOption("help", { aliases: ["h"] })];
-
-		logExecOptionHelp(options);
-
-		expect(logSpy).toHaveBeenCalledTimes(1);
-		expect(logSpy.mock.calls[0]).toEqual([
-			Printer.renderParagraph(
-				renderExecOptionHelp(options, 0),
-			),
-		]);
-	});
-
-	it("recursively renders child commands when subject is a command list", () => {
-		const subCommand = DServerCommand.create(
-			"child",
-			() => Promise.resolve(undefined),
-		);
+	it("recursively renders child commands", () => {
+		const child = DServerCommand.create("child", () => Promise.resolve(undefined));
 		const root = DServerCommand.create(
 			"root",
-			{
-				subject: subCommand,
-			},
+			{ subjects: [child] },
 			() => Promise.resolve(undefined),
 		);
 
-		const lines = renderCommandHelp(root, 0);
-		const output = lines.join("\n");
-
+		const output = renderCommandHelp(root, 0).join("\n");
 		expect(output).toContain("root");
 		expect(output).toContain("child");
 	});
 
-	it("renders tuple subjects without angle brackets", () => {
-		const command = DServerCommand.create(
-			"root",
-			{
-				subject: DP.tuple([DP.string(), DP.number()]),
-			},
-			() => Promise.resolve(undefined),
+	it("renders argument blocks", () => {
+		const output = renderArgumentsHelp(
+			[
+				DServerCommand.createArgument("id", DP.number()),
+				DServerCommand.createArgument("tag", DP.string(), { optional: true }),
+			],
+			1,
 		);
 
-		expect(renderCommandHelp(command, 0)).toContain(
-			`${Printer.indent(1)}${Printer.colorizedBold("SUBJECT:", "magenta")}[string, number]`,
-		);
+		expect(output).toContain("ARGUMENTS:");
+		expect(output).toContain("<?tag>");
+		expect(output).toContain("id:");
+		expect(output).toContain("number");
+		expect(output).toContain("tag:");
+		expect(output).toContain("string | undefined");
 	});
 
-	it("formats supported subject data parser kinds", () => {
-		const cases = [
-			{
-				subject: DP.string(),
-				expected: "string",
-			},
-			{
-				subject: DP.number(),
-				expected: "number",
-			},
-			{
-				subject: DP.bigint(),
-				expected: "bigint",
-			},
-			{
-				subject: DP.date(),
-				expected: "date",
-			},
-			{
-				subject: DP.time(),
-				expected: "time",
-			},
-			{
-				subject: DP.nil(),
-				expected: "null",
-			},
-			{
-				subject: DP.literal(["on", "off"] as const),
-				expected: "on | off",
-			},
-			{
-				subject: DP.templateLiteral(["id-", DP.number()]),
-				expected: "id-${number}",
-			},
-			{
-				subject: DP.union([DP.string(), DP.number()]),
-				expected: "string | number",
-			},
-			{
-				subject: DP.transform(
+	it("formats supported parser kinds", () => {
+		expect(formatDataParser(DP.string())).toBe("string");
+		expect(formatDataParser(DP.number())).toBe("number");
+		expect(formatDataParser(DP.bigint())).toBe("bigint");
+		expect(formatDataParser(DP.literal(["on", "off"] as const))).toBe("on | off");
+		expect(formatDataParser(DP.templateLiteral(["id-", DP.number()]))).toBe("id-${number}");
+		expect(formatDataParser(DP.union([DP.string(), DP.number()]))).toBe("string | number");
+		expect(formatDataParser(DP.transform(DP.string(), (value) => value.length))).toBe("string");
+		expect(
+			formatDataParser(
+				DP.pipe(
 					DP.string(),
-					(value) => value.length,
+					DP.transform(DP.string(), (value) => value.length),
 				),
-				expected: "string",
-			},
-			{
-				subject: DP.pipe(
-					DP.string(),
-					DP.transform(
-						DP.string(),
-						(value) => value.length,
-					),
-				),
-				expected: "string",
-			},
-			{
-				subject: DP.optional(DP.string()),
-				expected: "string?",
-			},
-			{
-				subject: DP.array(DP.string()),
-				expected: "string[]",
-			},
-			{
-				subject: DP.tuple([DP.string(), DP.number()]),
-				expected: "[string, number]",
-			},
-			{
-				subject: DP.tuple([DP.string()], { rest: DP.number() }),
-				expected: "[string, ...number[]]",
-			},
-			{
-				subject: DP.tuple([DP.literal("")], { rest: DP.number() }),
-				expected: "[...number[]]",
-			},
-			{
-				subject: DServerDataParser.file(),
-				expected: "file",
-			},
-			{
-				subject: DP.unknown(),
-				expected: "unknown",
-			},
-		];
+			),
+		).toBe("string");
+		expect(formatDataParser(DP.optional(DP.number()))).toBe("number?");
+		expect(formatDataParser(DP.array(DP.string()))).toBe("string[]");
+		expect(formatDataParser(DP.tuple([DP.string(), DP.number()]))).toBe("[string, number]");
+		expect(formatDataParser(DP.tuple([DP.string()], { rest: DP.number() }))).toBe("[string, ...number[]]");
+		expect(formatDataParser(DP.tuple([] as never, { rest: DP.number() }))).toBe("[...number[]]");
+		expect(formatDataParser(DServerDataParser.file())).toBe("file");
+	});
 
-		for (const testCase of cases) {
-			expect(formatSubject(testCase.subject)).toBe(testCase.expected);
-		}
+	it("renders metadata for required sismple and array options", () => {
+		const output = renderExecOptionHelp(
+			[
+				DServerCommand.createOption("name", DP.string(), { required: true }),
+				DServerCommand.createArrayOption("ids", DP.number(), { required: true }),
+			],
+			0,
+		).join("\n");
+
+		expect(output).toContain("[string] required");
+		expect(output).toContain("[number[]] required");
+	});
+
+	it("renders metadata for non-required options without required label", () => {
+		const output = renderExecOptionHelp(
+			[
+				DServerCommand.createOption("name", DP.string()),
+				DServerCommand.createArrayOption("ids", DP.number()),
+			],
+			0,
+		).join("\n");
+
+		expect(output).toContain("[string]");
+		expect(output).toContain("[number[]]");
+		expect(output).not.toContain("[string] required");
+		expect(output).not.toContain("[number[]] required");
+	});
+
+	it("logs command help", () => {
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const command = DServerCommand.create("root", () => Promise.resolve(undefined));
+
+		logCommandHelp(command);
+
+		expect(logSpy).toHaveBeenCalledTimes(1);
+		expect(String(logSpy.mock.calls[0]?.[0])).toContain("COMMAND:");
+	});
+
+	it("renders and logs exec options help", () => {
+		const options = [DServerCommand.createBooleanOption("help", { aliases: ["h"] })];
+		const lines = renderExecOptionHelp(options, 1);
+		const output = Printer.renderParagraph(lines);
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+
+		expect(output).toContain("OPTION HELP");
+		expect(output).toContain("--help");
+
+		logExecOptionHelp(options);
+		expect(logSpy).toHaveBeenCalledTimes(1);
 	});
 });

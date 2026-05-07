@@ -5,6 +5,7 @@ import { createError, interpretExecOptionError, SymbolCommandError } from "./err
 import { logExecOptionHelp, helpOption } from "./help";
 import type { Option } from "./options";
 import { exitProcess, getProcessArguments } from "@scripts/common";
+import type { ForbiddenDuplicateName } from "./types";
 
 type ComputeResult<
 	GenericOptions extends AnyTuple<Option>,
@@ -23,7 +24,7 @@ type ComputeResult<
 export function execOptions<
 	GenericOptions extends AnyTuple<Option>,
 >(
-	...options: GenericOptions
+	...options: GenericOptions & ForbiddenDuplicateName<GenericOptions, "option">
 ): Promise<ComputeResult<GenericOptions>>;
 
 export async function execOptions(
