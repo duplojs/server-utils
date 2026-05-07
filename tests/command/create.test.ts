@@ -310,4 +310,40 @@ describe("create", () => {
 			() => undefined,
 		);
 	});
+
+	it("isolate arg inference", () => {
+		DServerCommand.create(
+			"root",
+			{
+				subjects: [DServerCommand.createArgument("test", DP.string())],
+			},
+			({ args }) => {
+				type check = ExpectType<
+					typeof args,
+					{
+						test: string;
+					},
+					"strict"
+				>;
+			},
+		);
+	});
+
+	it("isolate option inference", () => {
+		DServerCommand.create(
+			"root",
+			{
+				options: [DServerCommand.createBooleanOption("verbose")],
+			},
+			({ options }) => {
+				type check = ExpectType<
+					typeof options,
+					{
+						verbose: boolean;
+					},
+					"strict"
+				>;
+			},
+		);
+	});
 });

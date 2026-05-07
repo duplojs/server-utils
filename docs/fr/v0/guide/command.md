@@ -17,10 +17,10 @@ La feature `command` sert à écrire des CLI qui restent simples à appeler et s
 Une commande est composée de trois éléments:
 
 - des options, comme `--port 3000` ou `--verbose`;
-- un sujet, c'est-à-dire les arguments positionnels après les options;
+- des sujets, c'est-à-dire soit des arguments positionnels après les options, soit des sous-commandes;
 - un handler, appelé uniquement quand le parsing est valide.
 
-Les options et les sujets s'appuient sur les `DataParser` de `@duplojs/utils`. C'est ce qui permet de transformer une entrée CLI, toujours textuelle au départ, en valeur métier typée.
+Les options et les arguments s'appuient sur les `DataParser` de `@duplojs/utils`. C'est ce qui permet de transformer une entrée CLI, toujours textuelle au départ, en valeur métier typée.
 
 ## Une première commande
 
@@ -29,7 +29,7 @@ Les options et les sujets s'appuient sur les `DataParser` de `@duplojs/utils`. C
 <!--@include: @/examples/v0/guide/command/firstCommand.ts-->
 ```
 
-Ici, `exec` crée la commande racine. Le sujet `DP.tuple([DP.string(), DP.string()])` impose deux arguments positionnels: le motif recherché et le fichier à inspecter.
+Ici, `exec` crée la commande racine. La liste `subjects` déclare deux arguments positionnels (`pattern` et `filePath`), puis les valeurs parsées sont exposées dans `args.pattern` et `args.filePath`.
 
 <TerminalBlock title="grep-like">
 <span class="terminal-line terminal-info">$ grep-like "TODO" ./src/index.ts --ignore-case</span>
@@ -53,7 +53,7 @@ Le type de `options.type` devient `"file" | "directory"`. Si la valeur reçue ne
 
 ## Comprendre les erreurs
 
-Quand le parsing échoue, `exec` affiche une erreur interprétée puis sort avec le code `1`. L'erreur indique la commande concernée, l'option ou le sujet fautif, la valeur reçue et ce qui était attendu.
+Quand le parsing échoue, `exec` affiche une erreur interprétée puis sort avec le code `1`. L'erreur indique le chemin de commande, l'option/l'argument fautif, la valeur reçue et ce qui était attendu.
 
 <TerminalBlock title="find-like">
 <span class="terminal-line terminal-info">$ find-like --type socket</span>
@@ -69,7 +69,7 @@ Ce comportement est utile pour les outils internes: vous pouvez garder des contr
 
 ## Sous-commandes
 
-Pour une CLI avec plusieurs actions, créez des commandes avec `SC.create`, puis passez-les comme sujet d'une commande parente.
+Pour une CLI avec plusieurs actions, créez des commandes avec `SC.create`, puis passez-les comme `subjects` d'une commande parente.
 
 ```ts twoslash
 // @version: 0
@@ -81,7 +81,7 @@ Pour une CLI avec plusieurs actions, créez des commandes avec `SC.create`, puis
 install typescript without prompt
 </TerminalBlock>
 
-Chaque sous-commande peut avoir sa propre description, ses options, son sujet et son handler. Le help suit l'arbre de commandes.
+Chaque sous-commande peut avoir sa propre description, ses options, ses arguments de sujet et son handler. Le help suit l'arbre de commandes.
 
 ## Help généré
 
@@ -90,23 +90,24 @@ Chaque sous-commande peut avoir sa propre description, ses options, son sujet et
 <TerminalBlock title="apt-like">
 <span class="terminal-line terminal-info">$ apt-like --help</span>
 <span class="terminal-line"></span>
-<span class="terminal-line"><span class="terminal-key">NAME:</span>root</span>
+<span class="terminal-line"><span class="terminal-key">COMMAND:</span> root</span>
 <span class="terminal-line terminal-indent-1"><span class="terminal-key">DESCRIPTION:</span></span>
 <span class="terminal-line terminal-indent-1">Package manager</span>
-<span class="terminal-line terminal-indent-1"><span class="terminal-key">NAME:</span>install</span>
+<span class="terminal-line terminal-indent-1"><span class="terminal-key">COMMAND:</span> install</span>
 <span class="terminal-line terminal-indent-2"><span class="terminal-key">DESCRIPTION:</span></span>
 <span class="terminal-line terminal-indent-2">Install a package</span>
 <span class="terminal-line terminal-indent-2"><span class="terminal-key">OPTIONS:</span></span>
 <span class="terminal-line terminal-indent-2">- <span class="terminal-info">yes:</span> -y, --yes</span>
 <span class="terminal-line terminal-indent-3">Answer yes to prompts</span>
-<span class="terminal-line terminal-indent-2"><span class="terminal-key">SUBJECT:</span>&lt;string&gt;</span>
+<span class="terminal-line terminal-indent-2"><span class="terminal-key">ARGUMENTS:</span> &lt;packageName&gt;</span>
+<span class="terminal-line terminal-indent-2">- <span class="terminal-info">packageName:</span> string</span>
 </TerminalBlock>
 
 Il est donc important de renseigner les descriptions des commandes et des options: elles deviennent la documentation embarquée de votre outil.
 
 ## Version légère avec execOptions
 
-Quand vous écrivez un script qui n'a pas de sous-commandes ni de sujet positionnel, `execOptions` suffit. Il parse seulement les options du process et retourne un objet typé.
+Quand vous écrivez un script qui n'a pas de sous-commandes ni d'argument positionnel, `execOptions` suffit. Il parse seulement les options du process et retourne un objet typé.
 
 ```ts twoslash
 // @version: 0

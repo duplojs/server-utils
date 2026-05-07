@@ -1,8 +1,8 @@
 ---
 outline: [2, 3]
 prev:
-  text: "create"
-  link: "/fr/v0/api/command/create"
+  text: "createArgument"
+  link: "/fr/v0/api/command/createArgument"
 next:
   text: "createOption"
   link: "/fr/v0/api/command/createOption"

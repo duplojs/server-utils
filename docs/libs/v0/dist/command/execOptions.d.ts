@@ -1,5 +1,6 @@
 import type { AnyTuple, SimplifyTopLevel } from "@duplojs/utils";
 import type { Option } from "./options";
+import type { ForbiddenDuplicateName } from "./types";
 type ComputeResult<GenericOptions extends AnyTuple<Option>> = SimplifyTopLevel<{
     [GenericOption in GenericOptions[number] as GenericOption extends Option<infer GenericName, unknown> ? GenericName : never]: GenericOption extends Option<string, infer GenericResult> ? GenericResult : never;
 }>;
@@ -36,11 +37,11 @@ type ComputeResult<GenericOptions extends AnyTuple<Option>> = SimplifyTopLevel<{
  * ```
  * 
  * @remarks
- * Use this helper when your CLI only needs option parsing and does not need a command subject.
+ * Use this helper when your CLI only needs option parsing and does not need command subjects.
  * 
  * @see https://server-utils.duplojs.dev/en/v0/api/command/execOptions
  * @namespace SC
  * 
  */
-export declare function execOptions<GenericOptions extends AnyTuple<Option>>(...options: GenericOptions): Promise<ComputeResult<GenericOptions>>;
+export declare function execOptions<GenericOptions extends AnyTuple<Option>>(...options: GenericOptions & ForbiddenDuplicateName<GenericOptions, "option">): Promise<ComputeResult<GenericOptions>>;
 export {};

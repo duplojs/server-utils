@@ -4,15 +4,15 @@ prev:
   text: "execOptions"
   link: "/en/v0/api/command/execOptions"
 next:
-  text: "createBooleanOption"
-  link: "/en/v0/api/command/createBooleanOption"
-description: "Creates a CLI command with a name, optional options/subject, and an execute handler."
+  text: "createArgument"
+  link: "/en/v0/api/command/createArgument"
+description: "Creates a CLI command with a name, optional options/subjects, and an execute handler."
 ---
 
 # create
 
 `create` declares a CLI command.
-You provide a name and an execute function, and you can also add options, a subject for positional arguments, or child commands.
+You provide a name and an execute function, and you can also add options, positional arguments, or child commands.
 
 ## Example
 
@@ -31,12 +31,12 @@ function create(
 
 function create<
   GenericOptions extends readonly Option[],
-  GenericSubject extends Subject
+  GenericSubjects extends Subjects
 >(
   name: string,
-  params: CreateCommandParams<GenericOptions, GenericSubject>,
+  params: CreateCommandParams<GenericOptions, GenericSubjects>,
   execute: (
-    params: CreateCommandExecuteParams<GenericOptions, GenericSubject>
+    params: CreateCommandExecuteParams<GenericOptions, GenericSubjects>
   ) => MaybePromise<void>
 ): Command
 ```
@@ -47,8 +47,8 @@ function create<
 - `params` (`CreateCommandParams`, optional) : command configuration.
 - `params.description` (`string`, optional) : help description.
 - `params.options` (`Option[]`, optional) : option parsers.
-- `params.subject` (`Subject | Command[]`, optional) : parser-like contract for positional data or sub-commands list.
-- `execute` : command handler. Receives typed `options` and, when present, a typed `subject`.
+- `params.subjects` (`Argument[] | Command[]`, optional) : either a list of positional arguments built with [`createArgument`](/en/v0/api/command/createArgument), or a list of child commands.
+- `execute` : command handler. Receives typed `options` and, when positional arguments are declared, typed `args`.
 
 ## Return value
 
@@ -66,5 +66,6 @@ function create<
 ## See also
 
 - [`exec`](/en/v0/api/command/exec) - Runs a root command from process arguments.
+- [`createArgument`](/en/v0/api/command/createArgument) - Builds a positional argument used in `subjects`.
 - [`createOption`](/en/v0/api/command/createOption) - Builds a single-value option.
 - [`createArrayOption`](/en/v0/api/command/createArrayOption) - Builds an array option.

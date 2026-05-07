@@ -1,6 +1,15 @@
+import { type Kind } from "@duplojs/utils";
+import type * as DDP from "@duplojs/utils/dataParser";
 import { type Option } from "./base";
-import type { EligibleContract } from "../types";
-import type { ComputeOptionContract } from "./types";
+import type { EligibleSpec } from "../types";
+import type { ComputeOptionSpec } from "./types";
+export declare const simpleOptionKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/command-simple-option", unknown>>;
+type _SimpleOption<GenericName extends string = string, GenericExecuteOutputValue extends unknown = unknown> = (Option<GenericName, GenericExecuteOutputValue> & Kind<typeof simpleOptionKind.definition>);
+export interface SimpleOption<GenericName extends string = string, GenericExecuteOutputValue extends unknown = unknown> extends _SimpleOption<GenericName, GenericExecuteOutputValue> {
+    readonly spec: EligibleSpec;
+    readonly dataParser: DDP.DataParser;
+    readonly required: boolean;
+}
 /**
  * Create an option with a single parsed value.
  * 
@@ -49,12 +58,13 @@ import type { ComputeOptionContract } from "./types";
  * @namespace SC
  * 
  */
-export declare function createOption<GenericName extends string, GenericContract extends EligibleContract, GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>>(name: GenericName, contract: GenericContract, params: {
+export declare function createOption<GenericName extends string, GenericSpec extends EligibleSpec, GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>>(name: GenericName, spec: GenericSpec, params: {
     description?: string;
     aliases?: readonly string[];
     required: true;
-}): Option<GenericName, GenericOutput>;
-export declare function createOption<GenericName extends string, GenericContract extends EligibleContract, GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>>(name: GenericName, contract: GenericContract, params?: {
+}): SimpleOption<GenericName, GenericOutput>;
+export declare function createOption<GenericName extends string, GenericSpec extends EligibleSpec, GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>>(name: GenericName, spec: GenericSpec, params?: {
     description?: string;
     aliases?: readonly string[];
-}): Option<GenericName, GenericOutput | undefined>;
+}): SimpleOption<GenericName, GenericOutput | undefined>;
+export {};

@@ -13,6 +13,4 @@ export type EligibleDataParser = (DDP.DataParserString | DDP.DataParserNumber | 
 }>> | DDP.DataParserPipe<SimplifyTopLevel<Omit<DDP.DataParserDefinitionPipe, "input" | "output"> & {
     readonly input: EligibleDataParser;
     readonly output: DDP.DataParser;
-}>> | DDP.DataParserOptional<SimplifyTopLevel<Omit<DDP.DataParserDefinitionOptional, "inner"> & {
-    readonly inner: EligibleDataParser;
 }>> | SDP.DataParserFile);

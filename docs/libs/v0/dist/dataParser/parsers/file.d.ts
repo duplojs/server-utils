@@ -13,7 +13,7 @@ export interface DataParserDefinitionFile extends DDP.DataParserDefinition<DataP
     readonly checkExist: boolean;
 }
 export declare const fileKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtilsDataParser/file", unknown>>;
-type _DataParserFile<GenericDefinition extends DataParserDefinitionFile> = (DDP.DataParser<GenericDefinition, FileInterface, FileInterface> & Kind<typeof fileKind.definition>);
+type _DataParserFile<GenericDefinition extends DataParserDefinitionFile> = (DDP.DataParserBase<GenericDefinition, FileInterface, FileInterface> & Kind<typeof fileKind.definition>);
 export interface DataParserFile<GenericDefinition extends DataParserDefinitionFile = DataParserDefinitionFile> extends _DataParserFile<GenericDefinition> {
     addChecker<GenericChecker extends readonly [
         DataParserFileCheckers,

@@ -1,6 +1,6 @@
 import type * as DDP from "@duplojs/utils/dataParser";
 export interface CommandErrorIssue {
-    readonly type: "command" | "option" | "subject";
+    readonly type: "argument" | "command" | "option";
     readonly commandPath: readonly string[];
     readonly target?: string;
     readonly parserPath?: string;
@@ -17,7 +17,7 @@ export type SymbolCommandError = typeof SymbolCommandError;
 export declare function createError(commandName: string): CommandError;
 export declare function addIssue(error: CommandError, issue: Omit<CommandErrorIssue, "commandPath">): SymbolCommandError;
 export declare function addIssueDataParser(error: CommandError, parseError: DDP.DataParserError, params: {
-    type: "option" | "subject";
+    type: "argument" | "option";
     target?: string;
 }): SymbolCommandError;
 export declare function interpretCommandError(error: CommandError): string;

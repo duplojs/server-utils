@@ -12,21 +12,26 @@ const deployCommand = SC.create(
 				{ required: true },
 			),
 		],
-		subject: DP.union([
-			DP.templateLiteral([
-				"v",
-				DP.number(),
-				".",
-				DP.number(),
-				".",
-				DP.number(),
-			]),
-			DP.literal("latest"),
-		]),
+		subjects: [
+			SC.createArgument(
+				"version",
+				DP.union([
+					DP.templateLiteral([
+						"v",
+						DP.number(),
+						".",
+						DP.number(),
+						".",
+						DP.number(),
+					]),
+					DP.literal("latest"),
+				]),
+			),
+		],
 	},
-	({ options: { environment }, subject }) => {
+	({ options: { environment }, args: { version } }) => {
 		type check = ExpectType<
-			typeof subject,
+			typeof version,
 			`v${number}.${number}.${number}` | "latest",
 			"strict"
 		>;
@@ -41,10 +46,9 @@ const deployCommand = SC.create(
 const releaseCommand = SC.create(
 	"release",
 	{
-		subject: [deployCommand],
+		subjects: [deployCommand],
 	},
 	() => {
 		console.log("select a release sub-command");
 	},
 );
-

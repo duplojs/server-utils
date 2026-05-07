@@ -26,6 +26,9 @@ export interface Argument<
 	>;
 }
 
+/**
+ * {@include command/createArgument/index.md}
+ */
 export function createArgument<
 	GenericName extends string,
 	GenericEligibleSpec extends EligibleSpec,

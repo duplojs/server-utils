@@ -11,7 +11,7 @@ next:
 
 # Command
 
-Utilitaires de commandes CLI pour composer des arbres de commandes, parser options/sujets, afficher le help et exécuter les handlers.
+Utilitaires de commandes CLI pour composer des arbres de commandes, parser options/arguments, afficher le help et exécuter les handlers.
 
 ## Comment faire les imports ?
 
@@ -34,7 +34,10 @@ parse uniquement les options depuis les arguments du process.
 ## Construction de commandes
 
 ### [`create`](/fr/v0/api/command/create)
-crée une commande avec description, options et sujet optionnels.
+crée une commande avec description, options et sujets optionnels.
+
+### [`createArgument`](/fr/v0/api/command/createArgument)
+crée un parseur d'argument positionnel à utiliser dans `subjects`.
 
 ## Construction d'options
 
