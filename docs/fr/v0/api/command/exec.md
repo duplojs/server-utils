@@ -31,11 +31,11 @@ function exec(
 
 function exec<
   GenericOptions extends readonly Option[],
-  GenericSubject extends Subject
+  GenericSubjects extends Subjects
 >(
-  params: CreateCommandParams<GenericOptions, GenericSubject>,
+  params: CreateCommandParams<GenericOptions, GenericSubjects>,
   execute: (
-    params: CreateCommandExecuteParams<GenericOptions, GenericSubject>
+    params: CreateCommandExecuteParams<GenericOptions, GenericSubjects>
   ) => MaybePromise<void>
 ): Promise<void>
 ```
@@ -46,8 +46,8 @@ function exec<
 - `params` (`CreateCommandParams`) : configuration de la commande racine.
 - `params.description` (`string`, optionnel) : affiché dans le rendu du help.
 - `params.options` (`Option[]`, optionnel) : définitions d'options parsées avant exécution.
-- `params.subject` (`Subject | Command[]`, optionnel) : sujet DataParser ou liste de sous-commandes.
-- `execute` (surcharge 2) : reçoit `options` typées et `subject` typé optionnel.
+- `params.subjects` (`Argument[] | Command[]`, optionnel) : liste d'arguments positionnels ou liste de sous-commandes.
+- `execute` (surcharge 2) : reçoit `options` typées et `args` typés optionnels.
 
 ## Valeur de retour
 
@@ -72,6 +72,7 @@ function exec<
 ## Voir aussi
 
 - [`create`](/fr/v0/api/command/create) - Construit un noeud de commande.
+- [`createArgument`](/fr/v0/api/command/createArgument) - Construit des arguments positionnels utilisés dans `subjects`.
 - [`createBooleanOption`](/fr/v0/api/command/createBooleanOption) - Construit une option drapeau booléenne.
 - [`createOption`](/fr/v0/api/command/createOption) - Construit une option à valeur unique.
 - [`createArrayOption`](/fr/v0/api/command/createArrayOption) - Construit une option tableau.

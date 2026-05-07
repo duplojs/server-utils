@@ -18,12 +18,10 @@ await SC.exec(
 
 await SC.exec(
 	{
-		subject: DP.tuple([DP.string()]),
+		subjects: [SC.createArgument("taskName", DP.string())],
 	},
-	({ subject }) => {
-		if (subject) {
-			const [taskName] = subject;
-			// taskName: string
-		}
+	({ args }) => {
+		const { taskName } = args;
+		// taskName: string
 	},
 );

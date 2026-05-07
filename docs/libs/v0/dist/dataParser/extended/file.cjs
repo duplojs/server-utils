@@ -27,7 +27,7 @@ var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
  * {@include dataParserExtended/file/index.md}
  */
 function file(params, definition) {
-    const self = DDP__namespace.dataParserExtendedInit(file$1.file(params, definition), {
+    const self = DDP__namespace.dataParserBaseExtendedInit(file$1.file(params, definition), {
         mimeType(self, value) {
             return file({
                 mimeType: value,

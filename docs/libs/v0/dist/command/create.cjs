@@ -4,12 +4,10 @@ var utils = require('@duplojs/utils');
 var AA = require('@duplojs/utils/array');
 var GG = require('@duplojs/utils/generator');
 var OO = require('@duplojs/utils/object');
-var EE = require('@duplojs/utils/either');
-var kind = require('../../kind.cjs');
-var exitProcess = require('../../common/exitProcess.cjs');
-var error = require('../error.cjs');
-var help = require('../help.cjs');
-var subject = require('./subject.cjs');
+var kind = require('../kind.cjs');
+var exitProcess = require('../common/exitProcess.cjs');
+var error = require('./error.cjs');
+var help = require('./help.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -31,13 +29,12 @@ function _interopNamespaceDefault(e) {
 var AA__namespace = /*#__PURE__*/_interopNamespaceDefault(AA);
 var GG__namespace = /*#__PURE__*/_interopNamespaceDefault(GG);
 var OO__namespace = /*#__PURE__*/_interopNamespaceDefault(OO);
-var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
 
 const commandKind = kind.createDuplojsServerUtilsKind("command");
-function isCommand(input) {
+function isCommands(input) {
     return input instanceof Array
         ? input.every(commandKind.has)
-        : commandKind.has(input);
+        : false;
 }
 function create(...args) {
     const [name, params, execute] = args.length === 2
@@ -47,25 +44,24 @@ function create(...args) {
         name,
         description: params.description ?? null,
         options: params.options ?? [],
-        children: utils.justExec(() => {
-            if (isCommand(params.subject)) {
+        subject: utils.justExec(() => {
+            if (isCommands(params.subjects)) {
                 return {
                     type: "subCommand",
-                    subCommands: AA__namespace.coalescing(params.subject),
+                    subCommands: params.subjects,
                 };
             }
-            else if (params.subject) {
+            else if (params.subjects) {
                 return {
-                    type: "subject",
-                    subject: params.subject,
-                    dataParser: subject.subjectToDataParser(params.subject),
+                    type: "argument",
+                    args: params.subjects,
                 };
             }
             return null;
         }),
         execute: async (args, error$1) => {
-            if (self.children?.type === "subCommand") {
-                for (const command of self.children.subCommands) {
+            if (self.subject?.type === "subCommand") {
+                for (const command of self.subject.subCommands) {
                     if (args[0] === command.name) {
                         error$1.currentCommandPath[error$1.currentCommandPath.length] = command.name;
                         return command.execute(AA__namespace.shift(args), error$1);
@@ -98,33 +94,38 @@ function create(...args) {
             if (commandOptions === error.SymbolCommandError) {
                 return error.SymbolCommandError;
             }
-            if (self.children?.type === "subject") {
-                const hasMultiSubject = subject.isMultiSubject(self.children.subject);
-                if (!hasMultiSubject
-                    && commandOptions.restArgs.length > 1) {
+            if (self.subject?.type === "argument") {
+                if (self.subject.args.length !== commandOptions.restArgs.length) {
+                    const expectedCount = self.subject.args.length;
+                    const receivedCount = commandOptions.restArgs.length;
                     error.addIssue(error$1, {
                         type: "command",
-                        expected: "exactly one subject argument",
+                        expected: `${expectedCount} declared argument${expectedCount > 1 ? "s" : ""}`,
                         received: commandOptions.restArgs,
-                        message: `Expected exactly one subject argument, received ${commandOptions.restArgs.length}.`,
+                        message: `Declared arguments count does not match received arguments count: expected ${expectedCount}, received ${receivedCount}.`,
                     });
                     return error.SymbolCommandError;
                 }
-                const subjectInput = hasMultiSubject
-                    ? commandOptions.restArgs
-                    : commandOptions.restArgs[0];
-                const subjectResult = self.children.dataParser.isAsynchronous()
-                    ? await self.children.dataParser.asyncParse(subjectInput)
-                    : self.children.dataParser.parse(subjectInput);
-                if (EE__namespace.isLeft(subjectResult)) {
-                    error.addIssueDataParser(error$1, utils.unwrap(subjectResult), {
-                        type: "subject",
+                const commandArguments = await GG__namespace.asyncReduce(self.subject.args, GG__namespace.reduceFrom({
+                    args: {},
+                    restArgs: commandOptions.restArgs,
+                }), async ({ element: argument, lastValue, next, exit }) => {
+                    const firstArgument = AA__namespace.first(lastValue.restArgs);
+                    const argumentResult = await argument.execute(firstArgument, error$1);
+                    if (argumentResult === error.SymbolCommandError) {
+                        return exit(error.SymbolCommandError);
+                    }
+                    return next({
+                        args: OO__namespace.override(lastValue.args, { [argument.name]: argumentResult }),
+                        restArgs: AA__namespace.shift(lastValue.restArgs),
                     });
+                });
+                if (commandArguments === error.SymbolCommandError) {
                     return error.SymbolCommandError;
                 }
                 await execute({
                     options: commandOptions.options,
-                    subject: utils.unwrap(subjectResult),
+                    args: commandArguments.args,
                 });
             }
             else {
@@ -146,4 +147,4 @@ function create(...args) {
 }
 
 exports.create = create;
-exports.isCommand = isCommand;
+exports.isCommands = isCommands;

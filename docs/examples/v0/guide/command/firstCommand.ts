@@ -13,10 +13,12 @@ await SC.exec(
 				},
 			),
 		],
-		subject: DP.tuple([DP.string(), DP.string()]),
+		subjects: [
+			SC.createArgument("pattern", DP.string()),
+			SC.createArgument("filePath", DP.string()),
+		],
 	},
-	({ options, subject }) => {
-		const [pattern, filePath] = subject;
+	({ options, args: { pattern, filePath } }) => {
 		const sensitivity = options["ignore-case"] ? "case-insensitive" : "case-sensitive";
 
 		console.log(`search "${pattern}" in ${filePath} (${sensitivity})`);

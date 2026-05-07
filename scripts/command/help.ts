@@ -1,15 +1,16 @@
-import { hasSomeKinds, justReturn, pipe, Printer } from "@duplojs/utils";
+import { justReturn, pipe, Printer } from "@duplojs/utils";
 import * as AA from "@duplojs/utils/array";
 import * as PP from "@duplojs/utils/pattern";
 import * as DDP from "@duplojs/utils/dataParser";
 import * as SDP from "@scripts/dataParser";
 import type { Command } from "./create";
-import { createBooleanOption, type Option } from "./options";
+import type { Argument } from "./argument";
+import { arrayOptionKind, createBooleanOption, simpleOptionKind, type Options } from "./options";
 
 export const helpOption = createBooleanOption("help", { aliases: ["h"] });
 
-export function formatSubject(subject: DDP.DataParser): string {
-	return PP.match(subject)
+export function formatDataParser(dataParser: DDP.DataParser): string {
+	return PP.match(dataParser)
 		.when(
 			DDP.identifier(DDP.stringKind),
 			justReturn("string"),
@@ -48,11 +49,11 @@ export function formatSubject(subject: DDP.DataParser): string {
 		)
 		.when(
 			DDP.identifier(DDP.templateLiteralKind),
-			(subject) => pipe(
-				subject.definition.template,
+			(dataParser) => pipe(
+				dataParser.definition.template,
 				AA.map(
 					(part) => DDP.identifier(part, DDP.dataParserKind)
-						? `\${${formatSubject(part)}}`
+						? `\${${formatDataParser(part)}}`
 						: String(part),
 				),
 				AA.join(""),
@@ -60,38 +61,38 @@ export function formatSubject(subject: DDP.DataParser): string {
 		)
 		.when(
 			DDP.identifier(DDP.unionKind),
-			(subject) => pipe(
-				subject.definition.options,
-				AA.map(formatSubject),
+			(dataParser) => pipe(
+				dataParser.definition.options,
+				AA.map(formatDataParser),
 				AA.join(" | "),
 			),
 		)
 		.when(
 			DDP.identifier(DDP.transformKind),
-			(subject) => formatSubject(subject.definition.inner),
+			(dataParser) => formatDataParser(dataParser.definition.inner),
 		)
 		.when(
 			DDP.identifier(DDP.pipeKind),
-			(subject) => formatSubject(subject.definition.input),
+			(dataParser) => formatDataParser(dataParser.definition.input),
 		)
 		.when(
 			DDP.identifier(DDP.optionalKind),
-			(subject) => `${formatSubject(subject.definition.inner)}?`,
+			(dataParser) => `${formatDataParser(dataParser.definition.inner)}?`,
 		)
 		.when(
 			DDP.identifier(DDP.arrayKind),
-			(subject) => `${formatSubject(subject.definition.element)}[]`,
+			(dataParser) => `${formatDataParser(dataParser.definition.element)}[]`,
 		)
 		.when(
 			DDP.identifier(DDP.tupleKind),
-			(subject) => {
+			(dataParser) => {
 				const parts = pipe(
-					subject.definition.shape,
-					AA.map(formatSubject),
+					dataParser.definition.shape,
+					AA.map(formatDataParser),
 					AA.join(", "),
 				);
-				const rest = subject.definition.rest
-					? `${parts ? ", " : ""}...${formatSubject(subject.definition.rest)}[]`
+				const rest = dataParser.definition.rest
+					? `${parts ? ", " : ""}...${formatDataParser(dataParser.definition.rest)}[]`
 					: "";
 
 				return `[${parts}${rest}]`;
@@ -100,36 +101,92 @@ export function formatSubject(subject: DDP.DataParser): string {
 		.otherwise(justReturn("unknown"));
 }
 
+function getOptionMetadata(option: Options) {
+	if (
+		!simpleOptionKind.has(option)
+		&& !arrayOptionKind.has(option)
+	) {
+		return null;
+	}
+
+	const metadata = [`[${formatDataParser(option.dataParser)}]`];
+
+	if (option.required) {
+		metadata.push("required");
+	}
+
+	return metadata.join(" ");
+}
+
 export function renderOptionsHelp(
-	options: readonly Option[],
+	options: readonly Options[],
+	depth: number,
+): string {
+	return Printer.renderParagraph([
+		`${Printer.indent(depth)}${Printer.colorizedBold("OPTIONS:", "blue")}`,
+		AA.map(
+			options,
+			(option) => {
+				const optionMetadata = getOptionMetadata(option);
+
+				return Printer.renderParagraph([
+					Printer.renderLine([
+						Printer.indent(depth),
+						Printer.dash,
+						Printer.colorized(`${option.name}:`, "cyan"),
+						Printer.colorized(
+							pipe(
+								option.aliases,
+								AA.map((alias) => `-${alias},`),
+								AA.push(`--${option.name}`),
+								AA.join(" "),
+							),
+							"gray",
+						),
+						optionMetadata && Printer.colorized(optionMetadata, "gray"),
+					]),
+					option.description && `${Printer.indent(depth)}  ${option.description}`,
+				]);
+			},
+		),
+	]);
+}
+
+export function renderArgumentsHelp(
+	args: readonly Argument[],
 	depth: number,
 ): string {
 	return Printer.renderParagraph(
 		[
-			`${Printer.indent(depth)}${Printer.colorizedBold("OPTIONS:", "blue")}`,
+			Printer.renderLine([
+				Printer.indent(depth),
+				Printer.colorizedBold("ARGUMENTS:", "magenta"),
+				Printer.colorized(
+					pipe(
+						args,
+						AA.map((argument) => argument.optional ? `<?${argument.name}>` : `<${argument.name}>`),
+						AA.join(" "),
+					),
+					"gray",
+				),
+			]),
 			AA.map(
-				options,
-				(option) => Printer.renderParagraph(
+				args,
+				(argument) => Printer.renderParagraph(
 					[
-						AA.join(
-							[
-								Printer.indent(depth),
-								Printer.dash,
-								Printer.colorized(` ${option.name}: `, "cyan"),
-								Printer.colorized(
-									pipe(
-										option.aliases,
-										AA.map((alias) => `-${alias},`),
-										AA.push(`--${option.name}`),
-										AA.join(" "),
-									),
-									"gray",
-								),
-							],
-							"",
-						),
-						option.description
-						&& `${Printer.indent(depth)}  ${option.description}`,
+						Printer.renderLine([
+							Printer.indent(depth),
+							Printer.dash,
+							Printer.colorized(`${argument.name}:`, "cyan"),
+							Printer.colorized(
+								argument.optional
+									? `${formatDataParser(argument.dataParser)} | undefined`
+									: formatDataParser(argument.dataParser),
+								"gray",
+							),
+						]),
+						argument.description
+						&& `${Printer.indent(depth)}  ${argument.description}`,
 					],
 				),
 			),
@@ -144,7 +201,7 @@ export function renderCommandHelp(
 	const logs: string[] = [];
 
 	logs.push(
-		`${Printer.indent(depth)}${Printer.colorizedBold("NAME:", "green")}${command.name}`,
+		`${Printer.indent(depth)}${Printer.colorizedBold("COMMAND:", "green")} ${command.name}`,
 	);
 
 	if (command.description) {
@@ -162,25 +219,12 @@ export function renderCommandHelp(
 		logs.push(renderOptionsHelp(command.options, depth + 1));
 	}
 
-	if (command.children?.type === "subCommand") {
-		for (const subCommand of command.children.subCommands) {
+	if (command.subject?.type === "subCommand") {
+		for (const subCommand of command.subject.subCommands) {
 			logs.push(...renderCommandHelp(subCommand, depth + 1));
 		}
-	} else if (command.children?.type === "subject") {
-		const formattedSubject = formatSubject(command.children.dataParser);
-
-		logs.push(
-			AA.join(
-				[
-					Printer.indent(depth + 1),
-					Printer.colorizedBold("SUBJECT:", "magenta"),
-					hasSomeKinds(command.children.dataParser, [DDP.tupleKind, DDP.arrayKind])
-						? formattedSubject
-						: `<${formattedSubject}>`,
-				],
-				"",
-			),
-		);
+	} else if (command.subject?.type === "argument") {
+		logs.push(renderArgumentsHelp(command.subject.args, depth + 1));
 	}
 
 	return logs;
@@ -198,7 +242,7 @@ export function logCommandHelp(
 }
 
 export function renderExecOptionHelp(
-	options: readonly Option[],
+	options: readonly Options[],
 	depth: number,
 ): string[] {
 	return [
@@ -208,7 +252,7 @@ export function renderExecOptionHelp(
 }
 
 export function logExecOptionHelp(
-	options: readonly Option[],
+	options: readonly Options[],
 ) {
 	// eslint-disable-next-line no-console
 	console.log(

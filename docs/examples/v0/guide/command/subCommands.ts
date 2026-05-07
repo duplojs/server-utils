@@ -14,17 +14,17 @@ const installCommand = SC.create(
 				},
 			),
 		],
-		subject: DP.string(),
+		subjects: [SC.createArgument("packageName", DP.string())],
 	},
-	({ options, subject }) => {
-		console.log(`install ${subject}${options.yes ? " without prompt" : ""}`);
+	({ options, args: { packageName } }) => {
+		console.log(`install ${packageName}${options.yes ? " without prompt" : ""}`);
 	},
 );
 
 await SC.exec(
 	{
 		description: "Package manager",
-		subject: [installCommand],
+		subjects: [installCommand],
 	},
 	() => {
 		console.log("select a package command");

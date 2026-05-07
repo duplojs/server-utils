@@ -1,10 +1,12 @@
 import * as DDP from "@duplojs/utils/dataParser";
 import type { Command } from "./create";
-import { type Option } from "./options";
-export declare const helpOption: Option<"help", boolean>;
-export declare function formatSubject(subject: DDP.DataParser): string;
-export declare function renderOptionsHelp(options: readonly Option[], depth: number): string;
+import type { Argument } from "./argument";
+import { type Options } from "./options";
+export declare const helpOption: import("./options").BooleanOption<"help">;
+export declare function formatDataParser(dataParser: DDP.DataParser): string;
+export declare function renderOptionsHelp(options: readonly Options[], depth: number): string;
+export declare function renderArgumentsHelp(args: readonly Argument[], depth: number): string;
 export declare function renderCommandHelp(command: Command, depth: number): string[];
 export declare function logCommandHelp(command: Command): void;
-export declare function renderExecOptionHelp(options: readonly Option[], depth: number): string[];
-export declare function logExecOptionHelp(options: readonly Option[]): void;
+export declare function renderExecOptionHelp(options: readonly Options[], depth: number): string[];
+export declare function logExecOptionHelp(options: readonly Options[]): void;

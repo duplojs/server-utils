@@ -9,7 +9,7 @@ const fileKind = createDataParserKind("file");
  * {@include dataParser/file/index.md}
  */
 function file(params, definition) {
-    const self = DDP.dataParserInit(fileKind, {
+    const self = DDP.dataParserBaseInit(fileKind, {
         errorMessage: definition?.errorMessage,
         checkers: definition?.checkers ?? [],
         coerce: definition?.coerce ?? false,

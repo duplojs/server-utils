@@ -31,11 +31,11 @@ function exec(
 
 function exec<
   GenericOptions extends readonly Option[],
-  GenericSubject extends Subject
+  GenericSubjects extends Subjects
 >(
-  params: CreateCommandParams<GenericOptions, GenericSubject>,
+  params: CreateCommandParams<GenericOptions, GenericSubjects>,
   execute: (
-    params: CreateCommandExecuteParams<GenericOptions, GenericSubject>
+    params: CreateCommandExecuteParams<GenericOptions, GenericSubjects>
   ) => MaybePromise<void>
 ): Promise<void>
 ```
@@ -46,8 +46,8 @@ function exec<
 - `params` (`CreateCommandParams`) : command configuration for root.
 - `params.description` (`string`, optional) : displayed in help output.
 - `params.options` (`Option[]`, optional) : option definitions parsed before execute.
-- `params.subject` (`Subject | Command[]`, optional) : DataParser subject or sub-command list.
-- `execute` (overload 2) : receives typed `options` and optional typed `subject`.
+- `params.subjects` (`Argument[] | Command[]`, optional) : positional arguments list or sub-command list.
+- `execute` (overload 2) : receives typed `options` and optional typed `args`.
 
 ## Return value
 
@@ -72,6 +72,7 @@ function exec<
 ## See also
 
 - [`create`](/en/v0/api/command/create) - Builds a command node.
+- [`createArgument`](/en/v0/api/command/createArgument) - Builds positional arguments used in `subjects`.
 - [`createBooleanOption`](/en/v0/api/command/createBooleanOption) - Builds a boolean flag option.
 - [`createOption`](/en/v0/api/command/createOption) - Builds a single-value option.
 - [`createArrayOption`](/en/v0/api/command/createArrayOption) - Builds an array option.

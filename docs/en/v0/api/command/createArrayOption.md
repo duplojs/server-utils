@@ -25,11 +25,11 @@ Creates an option that parses a delimited list into a typed array.
 ```typescript
 function createArrayOption<
   GenericName extends string,
-  GenericContract extends EligibleContract,
+  GenericSpec extends EligibleSpec,
   GenericMinValues extends number
 >(
   name: GenericName,
-  contract: GenericContract,
+  spec: GenericSpec,
   params: {
     description?: string
     aliases?: readonly string[]
@@ -41,18 +41,18 @@ function createArrayOption<
 ): Option<
   GenericName,
   [
-    ...A.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
-    ...ComputeOptionContract<GenericContract>[]
+    ...A.CreateTuple<ComputeOptionSpec<GenericSpec>, GenericMinValues>,
+    ...ComputeOptionSpec<GenericSpec>[]
   ]
 >
 
 function createArrayOption<
   GenericName extends string,
-  GenericContract extends EligibleContract,
+  GenericSpec extends EligibleSpec,
   GenericMinValues extends number
 >(
   name: GenericName,
-  contract: GenericContract,
+  spec: GenericSpec,
   params?: {
     description?: string
     aliases?: readonly string[]
@@ -63,8 +63,8 @@ function createArrayOption<
 ): Option<
   GenericName,
   | [
-      ...A.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
-      ...ComputeOptionContract<GenericContract>[]
+      ...A.CreateTuple<ComputeOptionSpec<GenericSpec>, GenericMinValues>,
+      ...ComputeOptionSpec<GenericSpec>[]
     ]
   | undefined
 >
@@ -73,7 +73,7 @@ function createArrayOption<
 ## Parameters
 
 - `name` (`string`) : option name used as `--name`.
-- `contract` (`EligibleContract`) : parser or clean contract for each array element.
+- `spec` (`EligibleSpec`) : parser or clean spec for each array element.
 - `params` (optional) : option metadata and array constraints.
 - `params.required` (`true`, optional) : throws when option is missing.
 - `params.min` (`number`, optional) : minimum number of values.

@@ -91,4 +91,4 @@ function initOption(name, execute, params) {
     return self;
 }
 
-export { initOption };
+export { initOption, optionKind };

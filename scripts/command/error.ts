@@ -2,7 +2,7 @@ import { Printer } from "@duplojs/utils";
 import type * as DDP from "@duplojs/utils/dataParser";
 
 export interface CommandErrorIssue {
-	readonly type: "command" | "option" | "subject";
+	readonly type: "argument" | "command" | "option";
 	readonly commandPath: readonly string[];
 	readonly target?: string;
 	readonly parserPath?: string;
@@ -46,7 +46,7 @@ export function addIssueDataParser(
 	error: CommandError,
 	parseError: DDP.DataParserError,
 	params: {
-		type: "option" | "subject";
+		type: "argument" | "option";
 		target?: string;
 	},
 ): SymbolCommandError {
@@ -90,17 +90,18 @@ export function interpretCommandError(
 						&& Printer.render(
 							[
 								Printer.indent(1),
-								Printer.colorizedBold("OPTION: ", "magenta"),
+								Printer.colorizedBold("OPTION: ", "blue"),
 								`--${issue.target}`,
 							],
 							"",
 						),
-						issue.type === "subject"
-						&& issue.parserPath
+						issue.type === "argument"
+						&& issue.target
 						&& Printer.render(
 							[
 								Printer.indent(1),
-								Printer.colorizedBold("SUBJECT:", "magenta"),
+								Printer.colorizedBold("ARGUMENT: ", "magenta"),
+								issue.target,
 							],
 							"",
 						),
@@ -137,7 +138,7 @@ export function interpretExecOptionError(
 						&& Printer.render(
 							[
 								Printer.indent(1),
-								Printer.colorizedBold("OPTION: ", "magenta"),
+								Printer.colorizedBold("OPTION: ", "blue"),
 								`--${issue.target}`,
 							],
 							"",

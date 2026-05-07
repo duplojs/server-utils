@@ -1,60 +1,47 @@
-import { hasSomeKinds, unwrap } from '@duplojs/utils';
-import * as DDP from '@duplojs/utils/dataParser';
+import { unwrap } from '@duplojs/utils';
 import * as EE from '@duplojs/utils/either';
-import * as CC from '@duplojs/utils/clean';
 import { initOption } from './base.mjs';
 import { addIssue, addIssueDataParser } from '../error.mjs';
-import { fileKind } from '../../dataParser/parsers/file.mjs';
+import { specToDataParser } from '../spec.mjs';
+import { createDuplojsServerUtilsKind } from '../../kind.mjs';
 
-function createOption(name, contract, params) {
-    let computeDataParser = undefined;
-    if (hasSomeKinds(contract, [
-        DDP.stringKind,
-        DDP.numberKind,
-        DDP.bigIntKind,
-        DDP.dateKind,
-        DDP.timeKind,
-        DDP.nilKind,
-        fileKind,
-    ])) {
-        const clone = contract.clone();
-        clone.definition.coerce = true;
-        computeDataParser = clone;
-    }
-    else if (DDP.identifier(contract, DDP.dataParserKind)) {
-        computeDataParser = contract;
-    }
-    else {
-        computeDataParser = CC.toMapDataParser(contract, { coerce: true });
-    }
-    const dataParser = params?.required
-        ? computeDataParser
-        : DDP.optional(computeDataParser);
-    return initOption(name, async ({ isHere, value }, error) => {
-        if (!isHere && params?.required) {
-            return addIssue(error, {
-                type: "option",
-                target: name,
-                expected: `required option --${name}`,
-                received: value,
-                message: `Option "${name}" is required.`,
-            });
-        }
-        const result = dataParser.isAsynchronous()
-            ? await dataParser.asyncParse(value)
-            : dataParser.parse(value);
-        if (EE.isLeft(result)) {
-            return addIssueDataParser(error, unwrap(result), {
-                type: "option",
-                target: name,
-            });
-        }
-        return unwrap(result);
-    }, {
-        description: params?.description,
-        aliases: params?.aliases,
-        hasValue: true,
+const simpleOptionKind = createDuplojsServerUtilsKind("command-simple-option");
+function createOption(name, spec, params) {
+    const dataParser = specToDataParser(spec);
+    const self = simpleOptionKind.setTo({
+        spec,
+        dataParser,
+        required: params?.required ?? false,
+        ...initOption(name, async ({ isHere, value }, error) => {
+            if (!isHere && self.required === true) {
+                return addIssue(error, {
+                    type: "option",
+                    target: name,
+                    expected: `required option --${name}`,
+                    received: value,
+                    message: `Option "${name}" is required.`,
+                });
+            }
+            if (!isHere && self.required === false) {
+                return undefined;
+            }
+            const result = dataParser.isAsynchronous()
+                ? await dataParser.asyncParse(value)
+                : dataParser.parse(value);
+            if (EE.isLeft(result)) {
+                return addIssueDataParser(error, unwrap(result), {
+                    type: "option",
+                    target: name,
+                });
+            }
+            return unwrap(result);
+        }, {
+            description: params?.description,
+            aliases: params?.aliases,
+            hasValue: true,
+        }),
     });
+    return self;
 }
 
-export { createOption };
+export { createOption, simpleOptionKind };

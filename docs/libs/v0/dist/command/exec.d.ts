@@ -1,10 +1,16 @@
-import type { MaybePromise, AnyTuple } from "@duplojs/utils";
-import { type Command, type Subject, type CreateCommandExecuteParams, type CreateCommandParams } from "./create";
+import { type AnyTuple, type MaybePromise } from "@duplojs/utils";
+import { type CreateCommandExecuteParams, type CreateCommandParams, type Subjects } from "./create";
 import type { Option } from "./options";
+export type ExecCommandParams<GenericOptions extends AnyTuple<Option> = AnyTuple<Option>, GenericSubjects extends Subjects = Subjects> = (CreateCommandParams<GenericOptions, GenericSubjects> & {
+    /**
+     * @default "root"
+     */
+    displayName?: string;
+});
 /**
  * Execute a root command from process arguments.
  * 
- * `exec` creates an implicit `root` command, reads runtime arguments, parses options/subject, then runs your handler.
+ * `exec` creates an implicit `root` command, reads runtime arguments, parses options/subjects, then runs your handler.
  * 
  * ```ts
  * await SC.exec(() => {
@@ -24,15 +30,14 @@ import type { Option } from "./options";
  * 
  * await SC.exec(
  * 	{
- * 		subject: DP.tuple([DP.string()]),
+ * 		subjects: [SC.createArgument("taskName", DP.string())],
  * 	},
- * 	({ subject }) => {
- * 		if (subject) {
- * 			const [taskName] = subject;
- * 			// taskName: string
- * 		}
+ * 	({ args }) => {
+ * 		const { taskName } = args;
+ * 		// taskName: string
  * 	},
  * );
+ * 
  * ```
  * 
  * @remarks
@@ -42,5 +47,5 @@ import type { Option } from "./options";
  * @namespace SC
  * 
  */
-export declare function exec(execute: () => void): Promise<void>;
-export declare function exec<GenericOptions extends readonly Option[], GenericSubject extends Subject | Command | AnyTuple<Command> | undefined>(params: CreateCommandParams<GenericOptions, GenericSubject>, execute: (params: CreateCommandExecuteParams<GenericOptions, GenericSubject>) => MaybePromise<void>): Promise<void>;
+export declare function exec(execute: () => void): Promise<never>;
+export declare function exec<const GenericOptions extends AnyTuple<Option> = never, GenericSubjects extends Subjects = never>(params: ExecCommandParams<GenericOptions, GenericSubjects>, execute: (params: CreateCommandExecuteParams<GenericOptions, GenericSubjects>) => MaybePromise<void>): Promise<never>;

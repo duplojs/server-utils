@@ -1,6 +1,6 @@
 Execute a root command from process arguments.
 
-`exec` creates an implicit `root` command, reads runtime arguments, parses options/subject, then runs your handler.
+`exec` creates an implicit `root` command, reads runtime arguments, parses options/subjects, then runs your handler.
 
 ```ts
 {@include command/exec/example.ts[4,29]}

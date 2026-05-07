@@ -1,3 +1,4 @@
 export * from "./eligibleDataParser";
 export * from "./eligibleCleanType";
-export * from "./eligibleContract";
+export * from "./eligibleSpec";
+export * from "./forbiddenDuplicateName";

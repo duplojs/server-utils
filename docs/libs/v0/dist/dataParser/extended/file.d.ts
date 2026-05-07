@@ -2,7 +2,7 @@ import { type AnyTuple, type BytesInString, type FixDeepFunctionInfer, type Kind
 import * as DDP from "@duplojs/utils/dataParser";
 import * as dataParsers from "../parsers";
 import { type FileInterface } from "../../file";
-type _DataParserFileExtended<GenericDefinition extends dataParsers.DataParserDefinitionFile> = (Kind<typeof dataParsers.fileKind.definition> & DDP.DataParserExtended<GenericDefinition, FileInterface, FileInterface>);
+type _DataParserFileExtended<GenericDefinition extends dataParsers.DataParserDefinitionFile> = (Kind<typeof dataParsers.fileKind.definition> & DDP.DataParserBaseExtended<GenericDefinition, FileInterface, FileInterface>);
 export interface DataParserFileExtended<GenericDefinition extends dataParsers.DataParserDefinitionFile = dataParsers.DataParserDefinitionFile> extends _DataParserFileExtended<GenericDefinition> {
     addChecker<GenericChecker extends readonly [
         dataParsers.DataParserFileCheckers,

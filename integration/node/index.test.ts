@@ -241,26 +241,30 @@ describe("node integration", () => {
 							description: "force execution",
 						},
 					),
+					SC.createOption("str", DP.string(), { description: "test option" }),
 				],
-				subject: DP.tuple([DP.string()]),
+				subjects: [SC.createArgument("src", DP.string())],
 			},
-			({ options, subject }) => {
+			({ options, args }) => {
 				type _CheckOptions = ExpectType<
 					typeof options,
 					{
+						str: string | undefined;
 						force: boolean;
 					},
 					"strict"
 				>;
 				type _CheckSubject = ExpectType<
-					typeof subject,
-					[string],
+					typeof args,
+					{
+						src: string;
+					},
 					"strict"
 				>;
 
 				subCommandExecuteSpy({
 					options,
-					subject,
+					args,
 				});
 			},
 		);
@@ -269,7 +273,7 @@ describe("node integration", () => {
 			"db",
 			{
 				description: "Database commands",
-				subject: [subHelpCommand, subCommand],
+				subjects: [subHelpCommand, subCommand],
 			},
 			commandExecuteSpy,
 		);
@@ -277,7 +281,7 @@ describe("node integration", () => {
 		getProcessArgumentsSpy.mockReturnValue(["--help"]);
 		await SC.exec(
 			{
-				subject: command,
+				subjects: [command],
 			},
 			rootExecuteSpy,
 		);
@@ -293,7 +297,7 @@ describe("node integration", () => {
 		getProcessArgumentsSpy.mockReturnValue(["db", "--help"]);
 		await SC.exec(
 			{
-				subject: command,
+				subjects: [command],
 			},
 			rootExecuteSpy,
 		);
@@ -307,7 +311,7 @@ describe("node integration", () => {
 		getProcessArgumentsSpy.mockReturnValue(["db", "help-db", "--help"]);
 		await SC.exec(
 			{
-				subject: command,
+				subjects: [command],
 			},
 			rootExecuteSpy,
 		);
@@ -320,7 +324,7 @@ describe("node integration", () => {
 		getProcessArgumentsSpy.mockReturnValue(["db", "seed", "--force", "users"]);
 		await SC.exec(
 			{
-				subject: command,
+				subjects: [command],
 			},
 			rootExecuteSpy,
 		);
@@ -332,7 +336,9 @@ describe("node integration", () => {
 			options: {
 				force: true,
 			},
-			subject: ["users"],
+			args: {
+				src: "users",
+			},
 		});
 
 		setEnvironment("NODE");
@@ -366,7 +372,7 @@ describe("node integration", () => {
 						},
 					),
 				],
-				subject: DP.tuple([DP.string()]),
+				subjects: [SC.createArgument("src", DP.string())],
 			},
 			subCommandExecuteSpy,
 		);
@@ -375,7 +381,7 @@ describe("node integration", () => {
 			"db",
 			{
 				description: "Database commands",
-				subject: [subCommand],
+				subjects: [subCommand],
 			},
 			commandExecuteSpy,
 		);
@@ -383,7 +389,7 @@ describe("node integration", () => {
 		getProcessArgumentsSpy.mockReturnValue(["db", "seed", "--force=true", "users"]);
 		await SC.exec(
 			{
-				subject: command,
+				subjects: [command],
 			},
 			rootExecuteSpy,
 		);

@@ -1,18 +1,21 @@
-import { SC } from "@server-utils/v0";
 import { DP } from "@duplojs/utils";
+import { SC } from "@server-utils/v0";
 
 await SC.exec(
 	{
 		options: [SC.createBooleanOption("version")],
-		subject: DP.tuple([DP.string(), DP.string()]),
+		subjects: [
+			SC.createArgument("sourcePath", DP.string()),
+			SC.createArgument("targetPath", DP.string()),
+		],
 	},
-	({ subject, options }) => {
+	({ args, options }) => {
 		if (options.version) {
 			console.log("1.0.0");
 			return;
 		}
 
-		const [sourcePath, targetPath] = subject;
+		const { sourcePath, targetPath } = args;
 		console.log(`copy ${sourcePath} to ${targetPath}`);
 	},
 );

@@ -25,11 +25,11 @@ Crée une option à valeur unique depuis un DataParser ou un contrat clean.
 ```typescript
 function createOption<
   GenericName extends string,
-  GenericContract extends EligibleContract,
-  GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>
+  GenericSpec extends EligibleSpec,
+  GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>
 >(
   name: GenericName,
-  contract: GenericContract,
+  spec: GenericSpec,
   params: {
     description?: string
     aliases?: readonly string[]
@@ -39,11 +39,11 @@ function createOption<
 
 function createOption<
   GenericName extends string,
-  GenericContract extends EligibleContract,
-  GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>
+  GenericSpec extends EligibleSpec,
+  GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>
 >(
   name: GenericName,
-  contract: GenericContract,
+  spec: GenericSpec,
   params?: {
     description?: string
     aliases?: readonly string[]
@@ -54,7 +54,7 @@ function createOption<
 ## Paramètres
 
 - `name` (`string`) : nom de l'option utilisé comme `--name`.
-- `contract` (`EligibleContract`) : parseur ou contrat clean utilisé pour valider/transformer la valeur.
+- `spec` (`EligibleSpec`) : parseur ou spec clean utilisée pour valider/transformer la valeur.
 - `params` (optionnel) : métadonnées d'option et comportement d'obligation.
 - `params.required` (`true`, optionnel) : déclenche une erreur si l'option est absente.
 - `params.description` (`string`, optionnel) : description dans le help.

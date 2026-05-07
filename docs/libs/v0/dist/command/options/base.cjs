@@ -114,3 +114,4 @@ function initOption(name, execute, params) {
 }
 
 exports.initOption = initOption;
+exports.optionKind = optionKind;

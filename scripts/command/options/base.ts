@@ -4,7 +4,7 @@ import * as SS from "@duplojs/utils/string";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import { addIssue, type CommandError, SymbolCommandError } from "../error";
 
-const optionKind = createDuplojsServerUtilsKind("command-option");
+export const optionKind = createDuplojsServerUtilsKind("command-option");
 const regexOption = /^(?<dashes>-{1,2})(?<key>[A-Za-z0-9][A-Za-z0-9_-]*)(?:=(?<value>.*))?$/;
 
 export interface Option<

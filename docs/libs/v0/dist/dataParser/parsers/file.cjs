@@ -31,7 +31,7 @@ const fileKind = kind.createDataParserKind("file");
  * {@include dataParser/file/index.md}
  */
 function file(params, definition) {
-    const self = DDP__namespace.dataParserInit(fileKind, {
+    const self = DDP__namespace.dataParserBaseInit(fileKind, {
         errorMessage: definition?.errorMessage,
         checkers: definition?.checkers ?? [],
         coerce: definition?.coerce ?? false,

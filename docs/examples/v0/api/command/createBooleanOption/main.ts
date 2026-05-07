@@ -14,12 +14,11 @@ const forceOption = SC.createBooleanOption("force");
 await SC.exec({
 	options: [verboseOption, forceOption],
 }, ({ options }) => {
-	type check = ExpectType<
-		typeof options,
-		{
-			verbose: boolean;
-			force: boolean;
-		},
-		"strict"
-	>;
+	//    ^?
+
+
+
+
+
+
 });

@@ -11,7 +11,7 @@ next:
 
 # Command
 
-CLI command utilities to compose command trees, parse options/subjects, render help, and execute handlers.
+CLI command utilities to compose command trees, parse options/arguments, render help, and execute handlers.
 
 ## How to import?
 
@@ -34,7 +34,10 @@ only parses options from process arguments.
 ## Command builder
 
 ### [`create`](/en/v0/api/command/create)
-creates a command with optional description, options, and subject.
+creates a command with optional description, options, and subjects.
+
+### [`createArgument`](/en/v0/api/command/createArgument)
+creates a positional argument parser used in command `subjects`.
 
 ## Option builders
 

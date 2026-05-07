@@ -1,27 +1,52 @@
-import { hasSomeKinds, pipe, unwrap } from "@duplojs/utils";
+import { type Kind, pipe, type RemoveKind, unwrap } from "@duplojs/utils";
 import * as SS from "@duplojs/utils/string";
 import * as DDP from "@duplojs/utils/dataParser";
 import type * as AA from "@duplojs/utils/array";
 import * as EE from "@duplojs/utils/either";
-import * as CC from "@duplojs/utils/clean";
-import * as SDP from "@scripts/dataParser";
 import { initOption, type Option } from "./base";
-import type { EligibleContract } from "../types";
-import type { ComputeOptionContract } from "./types";
+import type { EligibleSpec } from "../types";
+import type { ComputeOptionSpec } from "./types";
 import { addIssue, addIssueDataParser } from "../error";
+import { specToDataParser } from "../spec";
+import { createDuplojsServerUtilsKind } from "@scripts/kind";
 
 const defaultSeparator = ",";
+
+export const arrayOptionKind = createDuplojsServerUtilsKind("command-array-option");
+
+type _ArrayOption<
+	GenericName extends string = string,
+	GenericExecuteOutputValue extends unknown = unknown,
+> = (
+	& Option<
+		GenericName,
+		GenericExecuteOutputValue
+	>
+	& Kind<typeof arrayOptionKind.definition>
+);
+
+export interface ArrayOption<
+	GenericName extends string = string,
+	GenericExecuteOutputValue extends unknown = unknown,
+> extends _ArrayOption<GenericName, GenericExecuteOutputValue> {
+	readonly spec: EligibleSpec;
+	readonly dataParser: DDP.DataParser;
+	readonly required: boolean;
+	readonly separator: string;
+	readonly min?: number;
+	readonly max?: number;
+}
 
 /**
  * {@include command/createArrayOption/index.md}
  */
 export function createArrayOption<
 	GenericName extends string,
-	GenericContract extends EligibleContract,
+	GenericSpec extends EligibleSpec,
 	GenericMinValues extends number,
 >(
 	name: GenericName,
-	contract: GenericContract,
+	spec: GenericSpec,
 	params: {
 		description?: string;
 		aliases?: readonly string[];
@@ -30,24 +55,24 @@ export function createArrayOption<
 		required: true;
 		separator?: string;
 	},
-): Option<
+): ArrayOption<
 	GenericName,
 	[
 		...AA.CreateTuple<
-			ComputeOptionContract<GenericContract>,
+			ComputeOptionSpec<GenericSpec>,
 			GenericMinValues
 		>,
-		...ComputeOptionContract<GenericContract>[],
+		...ComputeOptionSpec<GenericSpec>[],
 	]
 >;
 
 export function createArrayOption<
 	GenericName extends string,
-	GenericContract extends EligibleContract,
+	GenericSpec extends EligibleSpec,
 	GenericMinValues extends number,
 >(
 	name: GenericName,
-	contract: GenericContract,
+	spec: GenericSpec,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -55,21 +80,21 @@ export function createArrayOption<
 		max?: number;
 		separator?: string;
 	},
-): Option<
+): ArrayOption<
 	GenericName,
 	| [
 		...AA.CreateTuple<
-			ComputeOptionContract<GenericContract>,
+			ComputeOptionSpec<GenericSpec>,
 			GenericMinValues
 		>,
-		...ComputeOptionContract<GenericContract>[],
+		...ComputeOptionSpec<GenericSpec>[],
 	]
 	| undefined
 >;
 
 export function createArrayOption(
 	name: string,
-	contract: EligibleContract,
+	spec: EligibleSpec,
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
@@ -78,91 +103,76 @@ export function createArrayOption(
 		max?: number;
 		separator?: string;
 	},
-) {
-	let computeDataParser: DDP.Contract<unknown, unknown> | undefined = undefined;
-
-	if (
-		hasSomeKinds(contract, [
-			DDP.stringKind,
-			DDP.numberKind,
-			DDP.bigIntKind,
-			DDP.dateKind,
-			DDP.timeKind,
-			DDP.nilKind,
-			SDP.fileKind,
-		])
-	) {
-		const clone = contract.clone();
-
-		(clone.definition.coerce as any) = true;
-
-		computeDataParser = clone;
-	} else if (
-		DDP.identifier(contract, DDP.dataParserKind)
-	) {
-		computeDataParser = contract;
-	} else {
-		computeDataParser = CC.toMapDataParser(
-			contract as never,
-			{ coerce: true },
-		);
-	}
-
+): any {
 	const dataParser = pipe(
-		computeDataParser,
+		spec,
+		specToDataParser,
 		DDP.array,
-		(schema) => params?.min
-			? schema.addChecker(DDP.checkerArrayMin(params.min))
-			: schema,
-		(schema) => params?.max
-			? schema.addChecker(DDP.checkerArrayMax(params.max))
-			: schema,
-		(schema) => params?.required
-			? schema
-			: DDP.optional(schema),
+		(parser) => params?.min
+			? parser.addChecker(DDP.checkerArrayMin(params.min))
+			: parser,
+		(parser) => params?.max
+			? parser.addChecker(DDP.checkerArrayMax(params.max))
+			: parser,
 	);
 
-	return initOption(
-		name,
-		async({ isHere, value }, error) => {
-			if (!isHere && params?.required) {
-				return addIssue(
-					error,
-					{
-						type: "option",
-						target: name,
-						expected: `required option --${name}`,
-						received: value,
-						message: `Option "${name}" is required.`,
-					},
-				);
-			}
-
-			const values = value !== undefined
-				? SS.split(value, params?.separator ?? defaultSeparator)
-				: undefined;
-
-			const result = dataParser.isAsynchronous()
-				? await dataParser.asyncParse(values)
-				: dataParser.parse(values);
-
-			if (EE.isLeft(result)) {
-				return addIssueDataParser(
-					error,
-					unwrap(result),
-					{
-						type: "option",
-						target: name,
-					},
-				);
-			}
-
-			return unwrap(result);
-		},
+	const self: ArrayOption = arrayOptionKind.setTo(
 		{
-			description: params?.description,
-			aliases: params?.aliases,
-			hasValue: true,
-		},
+			spec,
+			dataParser,
+			required: params?.required ?? false,
+			min: params?.min,
+			max: params?.max,
+			separator: params?.separator ?? defaultSeparator,
+			...initOption(
+				name,
+				async({ isHere, value }, error) => {
+					if (!isHere && self.required === true) {
+						return addIssue(
+							error,
+							{
+								type: "option",
+								target: name,
+								expected: `required option --${name}`,
+								received: value,
+								message: `Option "${name}" is required.`,
+							},
+						);
+					}
+
+					if (!isHere && self.required === false) {
+						return undefined;
+					}
+
+					const values = value !== undefined
+						? SS.split(value, self.separator)
+						: undefined;
+
+					const result = dataParser.isAsynchronous()
+						? await dataParser.asyncParse(values)
+						: dataParser.parse(values);
+
+					if (EE.isLeft(result)) {
+						return addIssueDataParser(
+							error,
+							unwrap(result),
+							{
+								type: "option",
+								target: name,
+							},
+						);
+					}
+
+					return unwrap(result);
+				},
+				{
+					description: params?.description,
+					aliases: params?.aliases,
+					hasValue: true,
+				},
+			),
+		} satisfies RemoveKind<ArrayOption<string, unknown>>,
 	);
+
+	return self;
 }

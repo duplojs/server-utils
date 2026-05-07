@@ -1,7 +1,19 @@
+import { type Kind } from "@duplojs/utils";
+import * as DDP from "@duplojs/utils/dataParser";
 import type * as AA from "@duplojs/utils/array";
 import { type Option } from "./base";
-import type { EligibleContract } from "../types";
-import type { ComputeOptionContract } from "./types";
+import type { EligibleSpec } from "../types";
+import type { ComputeOptionSpec } from "./types";
+export declare const arrayOptionKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/command-array-option", unknown>>;
+type _ArrayOption<GenericName extends string = string, GenericExecuteOutputValue extends unknown = unknown> = (Option<GenericName, GenericExecuteOutputValue> & Kind<typeof arrayOptionKind.definition>);
+export interface ArrayOption<GenericName extends string = string, GenericExecuteOutputValue extends unknown = unknown> extends _ArrayOption<GenericName, GenericExecuteOutputValue> {
+    readonly spec: EligibleSpec;
+    readonly dataParser: DDP.DataParser;
+    readonly required: boolean;
+    readonly separator: string;
+    readonly min?: number;
+    readonly max?: number;
+}
 /**
  * Create an option that parses an array of values.
  * 
@@ -34,7 +46,7 @@ import type { ComputeOptionContract } from "./types";
  * 	{
  * 		options: [tags, ids, paths, emails, userIds],
  * 	},
- * 	({ options: { ids, tags, paths, emails, userIds } }) => {
+ * 	({ options: { emails, ids, paths, tags, userIds } }) => {
  * 		// ids: [number, ...number[]]
  * 		// tags: string[] | undefined
  * 		// paths: string[] | undefined
@@ -51,24 +63,25 @@ import type { ComputeOptionContract } from "./types";
  * @namespace SC
  * 
  */
-export declare function createArrayOption<GenericName extends string, GenericContract extends EligibleContract, GenericMinValues extends number>(name: GenericName, contract: GenericContract, params: {
+export declare function createArrayOption<GenericName extends string, GenericSpec extends EligibleSpec, GenericMinValues extends number>(name: GenericName, spec: GenericSpec, params: {
     description?: string;
     aliases?: readonly string[];
     min?: GenericMinValues;
     max?: number;
     required: true;
     separator?: string;
-}): Option<GenericName, [
-    ...AA.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
-    ...ComputeOptionContract<GenericContract>[]
+}): ArrayOption<GenericName, [
+    ...AA.CreateTuple<ComputeOptionSpec<GenericSpec>, GenericMinValues>,
+    ...ComputeOptionSpec<GenericSpec>[]
 ]>;
-export declare function createArrayOption<GenericName extends string, GenericContract extends EligibleContract, GenericMinValues extends number>(name: GenericName, contract: GenericContract, params?: {
+export declare function createArrayOption<GenericName extends string, GenericSpec extends EligibleSpec, GenericMinValues extends number>(name: GenericName, spec: GenericSpec, params?: {
     description?: string;
     aliases?: readonly string[];
     min?: GenericMinValues;
     max?: number;
     separator?: string;
-}): Option<GenericName, [
-    ...AA.CreateTuple<ComputeOptionContract<GenericContract>, GenericMinValues>,
-    ...ComputeOptionContract<GenericContract>[]
+}): ArrayOption<GenericName, [
+    ...AA.CreateTuple<ComputeOptionSpec<GenericSpec>, GenericMinValues>,
+    ...ComputeOptionSpec<GenericSpec>[]
 ] | undefined>;
+export {};

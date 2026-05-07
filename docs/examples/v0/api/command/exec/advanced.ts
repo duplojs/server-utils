@@ -19,19 +19,24 @@ const migrateCommand = SC.create(
 				{ required: true },
 			),
 		],
-		subject: DP.union([
-			DP.templateLiteral([
-				"v",
-				DP.number(),
-				".",
-				DP.number(),
-				".",
-				DP.number(),
-			]),
-			DP.literal("latest"),
-		]),
+		subjects: [
+			SC.createArgument(
+				"targetVersion",
+				DP.union([
+					DP.templateLiteral([
+						"v",
+						DP.number(),
+						".",
+						DP.number(),
+						".",
+						DP.number(),
+					]),
+					DP.literal("latest"),
+				]),
+			),
+		],
 	},
-	({ options: { dryRun, environment }, subject: targetVersion }) => {
+	({ options: { dryRun, environment }, args: { targetVersion } }) => {
 		const mode = dryRun ? "preview" : "apply";
 
 		console.log(
@@ -61,7 +66,7 @@ await SC.exec(
 	{
 		description: "Project CLI entrypoint",
 		options: [SC.createBooleanOption("verbose", { aliases: ["v"] })],
-		subject: [migrateCommand, seedCommand],
+		subjects: [migrateCommand, seedCommand],
 	},
 	({ options }) => {
 		if (options.verbose) {

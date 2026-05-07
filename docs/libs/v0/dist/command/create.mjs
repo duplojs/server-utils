@@ -1,19 +1,17 @@
-import { justExec, unwrap } from '@duplojs/utils';
+import { justExec } from '@duplojs/utils';
 import * as AA from '@duplojs/utils/array';
 import * as GG from '@duplojs/utils/generator';
 import * as OO from '@duplojs/utils/object';
-import * as EE from '@duplojs/utils/either';
-import { createDuplojsServerUtilsKind } from '../../kind.mjs';
-import { exitProcess } from '../../common/exitProcess.mjs';
-import { SymbolCommandError, addIssue, addIssueDataParser } from '../error.mjs';
-import { helpOption, logCommandHelp } from '../help.mjs';
-import { isMultiSubject, subjectToDataParser } from './subject.mjs';
+import { createDuplojsServerUtilsKind } from '../kind.mjs';
+import { exitProcess } from '../common/exitProcess.mjs';
+import { SymbolCommandError, addIssue } from './error.mjs';
+import { helpOption, logCommandHelp } from './help.mjs';
 
 const commandKind = createDuplojsServerUtilsKind("command");
-function isCommand(input) {
+function isCommands(input) {
     return input instanceof Array
         ? input.every(commandKind.has)
-        : commandKind.has(input);
+        : false;
 }
 function create(...args) {
     const [name, params, execute] = args.length === 2
@@ -23,25 +21,24 @@ function create(...args) {
         name,
         description: params.description ?? null,
         options: params.options ?? [],
-        children: justExec(() => {
-            if (isCommand(params.subject)) {
+        subject: justExec(() => {
+            if (isCommands(params.subjects)) {
                 return {
                     type: "subCommand",
-                    subCommands: AA.coalescing(params.subject),
+                    subCommands: params.subjects,
                 };
             }
-            else if (params.subject) {
+            else if (params.subjects) {
                 return {
-                    type: "subject",
-                    subject: params.subject,
-                    dataParser: subjectToDataParser(params.subject),
+                    type: "argument",
+                    args: params.subjects,
                 };
             }
             return null;
         }),
         execute: async (args, error) => {
-            if (self.children?.type === "subCommand") {
-                for (const command of self.children.subCommands) {
+            if (self.subject?.type === "subCommand") {
+                for (const command of self.subject.subCommands) {
                     if (args[0] === command.name) {
                         error.currentCommandPath[error.currentCommandPath.length] = command.name;
                         return command.execute(AA.shift(args), error);
@@ -74,33 +71,38 @@ function create(...args) {
             if (commandOptions === SymbolCommandError) {
                 return SymbolCommandError;
             }
-            if (self.children?.type === "subject") {
-                const hasMultiSubject = isMultiSubject(self.children.subject);
-                if (!hasMultiSubject
-                    && commandOptions.restArgs.length > 1) {
+            if (self.subject?.type === "argument") {
+                if (self.subject.args.length !== commandOptions.restArgs.length) {
+                    const expectedCount = self.subject.args.length;
+                    const receivedCount = commandOptions.restArgs.length;
                     addIssue(error, {
                         type: "command",
-                        expected: "exactly one subject argument",
+                        expected: `${expectedCount} declared argument${expectedCount > 1 ? "s" : ""}`,
                         received: commandOptions.restArgs,
-                        message: `Expected exactly one subject argument, received ${commandOptions.restArgs.length}.`,
+                        message: `Declared arguments count does not match received arguments count: expected ${expectedCount}, received ${receivedCount}.`,
                     });
                     return SymbolCommandError;
                 }
-                const subjectInput = hasMultiSubject
-                    ? commandOptions.restArgs
-                    : commandOptions.restArgs[0];
-                const subjectResult = self.children.dataParser.isAsynchronous()
-                    ? await self.children.dataParser.asyncParse(subjectInput)
-                    : self.children.dataParser.parse(subjectInput);
-                if (EE.isLeft(subjectResult)) {
-                    addIssueDataParser(error, unwrap(subjectResult), {
-                        type: "subject",
+                const commandArguments = await GG.asyncReduce(self.subject.args, GG.reduceFrom({
+                    args: {},
+                    restArgs: commandOptions.restArgs,
+                }), async ({ element: argument, lastValue, next, exit }) => {
+                    const firstArgument = AA.first(lastValue.restArgs);
+                    const argumentResult = await argument.execute(firstArgument, error);
+                    if (argumentResult === SymbolCommandError) {
+                        return exit(SymbolCommandError);
+                    }
+                    return next({
+                        args: OO.override(lastValue.args, { [argument.name]: argumentResult }),
+                        restArgs: AA.shift(lastValue.restArgs),
                     });
+                });
+                if (commandArguments === SymbolCommandError) {
                     return SymbolCommandError;
                 }
                 await execute({
                     options: commandOptions.options,
-                    subject: unwrap(subjectResult),
+                    args: commandArguments.args,
                 });
             }
             else {
@@ -121,4 +123,4 @@ function create(...args) {
     return self;
 }
 
-export { create, isCommand };
+export { create, isCommands };

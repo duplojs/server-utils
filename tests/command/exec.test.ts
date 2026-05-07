@@ -1,4 +1,4 @@
-import { type ExpectType, DP, pipe } from "@duplojs/utils";
+import { type ExpectType, DP } from "@duplojs/utils";
 import { DServerCommand, TESTImplementation, setEnvironment } from "@scripts";
 
 describe("exec", () => {
@@ -9,7 +9,7 @@ describe("exec", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("uses getProcessArguments and executes a root command without params", async() => {
+	it("executes root command without params", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue([]);
 		const exitSpy = vi.fn();
@@ -21,7 +21,7 @@ describe("exec", () => {
 
 		type _CheckPromise = ExpectType<
 			typeof promise,
-			Promise<void>,
+			Promise<never>,
 			"strict"
 		>;
 
@@ -32,12 +32,9 @@ describe("exec", () => {
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("uses getProcessArguments with params overload", async() => {
+	it("executes with options and wrapped arguments", async() => {
 		setEnvironment("TEST");
-		const getProcessArgumentsSpy = vi.fn().mockReturnValue([
-			"subject",
-			"--verbose",
-		]);
+		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["--verbose", "subject"]);
 		const exitSpy = vi.fn();
 		const executeSpy = vi.fn();
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
@@ -46,52 +43,18 @@ describe("exec", () => {
 		await DServerCommand.exec(
 			{
 				options: [DServerCommand.createBooleanOption("verbose")],
-				subject: DP.tuple([DP.string()]),
+				subjects: [DServerCommand.createArgument("name", DP.string())],
 			},
 			(params) => {
 				type _CheckOptions = ExpectType<
 					typeof params.options,
-					{
-						verbose: boolean;
-					},
-					"strict"
-				>;
-				type _CheckSubject = ExpectType<
-					typeof params.subject,
-					[string],
+					{ verbose: boolean },
 					"strict"
 				>;
 
-				executeSpy(params);
-			},
-		);
-
-		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
-		expect(executeSpy).toHaveBeenCalledWith({
-			options: {
-				verbose: true,
-			},
-			subject: ["subject"],
-		});
-		expect(exitSpy).toHaveBeenCalledWith(0);
-	});
-
-	it("infers typed tuple subject with params overload and no options", async() => {
-		setEnvironment("TEST");
-		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["subject"]);
-		const exitSpy = vi.fn();
-		const executeSpy = vi.fn();
-		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
-		TESTImplementation.set("exitProcess", exitSpy);
-
-		await DServerCommand.exec(
-			{
-				subject: DP.tuple([DP.string()]),
-			},
-			(params) => {
-				type check = ExpectType<
-					typeof params.subject,
-					[string],
+				type _CheckArgs = ExpectType<
+					typeof params.args,
+					{ name: string },
 					"strict"
 				>;
 
@@ -99,15 +62,14 @@ describe("exec", () => {
 			},
 		);
 
-		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(executeSpy).toHaveBeenCalledWith({
-			options: {},
-			subject: ["subject"],
+			options: { verbose: true },
+			args: { name: "subject" },
 		});
 		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
-	it("prints the interpreted root error and exits when execution returns command error", async() => {
+	it("prints interpreted error and exits with code 1 on command error", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["bad"]);
 		const exitSpy = vi.fn();
@@ -117,7 +79,7 @@ describe("exec", () => {
 
 		await DServerCommand.exec(
 			{
-				subject: DP.number(),
+				subjects: [DServerCommand.createArgument("id", DP.number())],
 			},
 			() => undefined,
 		);

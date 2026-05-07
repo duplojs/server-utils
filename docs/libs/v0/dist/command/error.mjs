@@ -42,14 +42,15 @@ function interpretCommandError(error) {
                 && issue.target
                 && Printer.render([
                     Printer.indent(1),
-                    Printer.colorizedBold("OPTION: ", "magenta"),
+                    Printer.colorizedBold("OPTION: ", "blue"),
                     `--${issue.target}`,
                 ], ""),
-            issue.type === "subject"
-                && issue.parserPath
+            issue.type === "argument"
+                && issue.target
                 && Printer.render([
                     Printer.indent(1),
-                    Printer.colorizedBold("SUBJECT:", "magenta"),
+                    Printer.colorizedBold("ARGUMENT: ", "magenta"),
+                    issue.target,
                 ], ""),
             Printer.renderLine([
                 Printer.colorizedBold("✖", "red"),
@@ -72,7 +73,7 @@ function interpretExecOptionError(error) {
                 && issue.target
                 && Printer.render([
                     Printer.indent(1),
-                    Printer.colorizedBold("OPTION: ", "magenta"),
+                    Printer.colorizedBold("OPTION: ", "blue"),
                     `--${issue.target}`,
                 ], ""),
             Printer.renderLine([

@@ -25,11 +25,11 @@ Creates an option with a single parsed value from a DataParser or clean contract
 ```typescript
 function createOption<
   GenericName extends string,
-  GenericContract extends EligibleContract,
-  GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>
+  GenericSpec extends EligibleSpec,
+  GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>
 >(
   name: GenericName,
-  contract: GenericContract,
+  spec: GenericSpec,
   params: {
     description?: string
     aliases?: readonly string[]
@@ -39,11 +39,11 @@ function createOption<
 
 function createOption<
   GenericName extends string,
-  GenericContract extends EligibleContract,
-  GenericOutput extends ComputeOptionContract<GenericContract> = ComputeOptionContract<GenericContract>
+  GenericSpec extends EligibleSpec,
+  GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>
 >(
   name: GenericName,
-  contract: GenericContract,
+  spec: GenericSpec,
   params?: {
     description?: string
     aliases?: readonly string[]
@@ -54,7 +54,7 @@ function createOption<
 ## Parameters
 
 - `name` (`string`) : option name used as `--name`.
-- `contract` (`EligibleContract`) : parser or clean contract used to validate/transform the value.
+- `spec` (`EligibleSpec`) : parser or clean spec used to validate/transform the value.
 - `params` (optional) : option metadata and requirement behavior.
 - `params.required` (`true`, optional) : throws when option is missing.
 - `params.description` (`string`, optional) : help description.

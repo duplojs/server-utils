@@ -8,7 +8,6 @@ export type EligibleEntityProperty = (
 	| CC.NewTypeHandler<any, EligiblePrimitive, readonly any[], any>
 	| CC.EntityPropertyDefinitionUnion<AnyTuple<EligibleEntityProperty>>
 	| CC.EntityPropertyDefinitionNullable<EligibleEntityProperty>
-	| CC.EntityPropertyDefinitionArray<EligibleEntityProperty, CC.EntityPropertyDefinitionArrayParams>
 	| CC.EntityPropertyDefinitionIdentifier<string>
 );
 

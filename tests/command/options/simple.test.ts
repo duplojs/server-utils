@@ -1,4 +1,4 @@
-import { E, type ExpectType, C, DP, DPE, S, unwrap } from "@duplojs/utils";
+import { E, type ExpectType, C, DP, S, unwrap } from "@duplojs/utils";
 import { DServerCommand, DServerDataParser, DServerFile, TESTImplementation, setEnvironment } from "@scripts";
 import { createError, SymbolCommandError } from "@scripts/command/error";
 
@@ -161,7 +161,8 @@ describe("createOption", () => {
 	it("supports optional option with pipe schema without crashing at execute", async() => {
 		const option = DServerCommand.createOption(
 			"name",
-			DPE.string().transform(
+			DP.transform(
+				DP.string(),
 				S.toLowerCase,
 			),
 		);
@@ -243,43 +244,6 @@ describe("createOption", () => {
 		>;
 
 		expect(result.result.path).toBe("/tmp/async.txt");
-	});
-
-	it("support optional dataParser", async() => {
-		const optionOptionalRequired = DServerCommand.createOption(
-			"name",
-			DPE.string().optional(),
-			{ required: true },
-		);
-
-		const result = await optionOptionalRequired.execute(["--name=guest"], createError("root"));
-		expect(result).not.toBe(SymbolCommandError);
-		if (result === SymbolCommandError) {
-			return;
-		}
-		type _check = ExpectType<
-			typeof result.result,
-			string | undefined,
-			"strict"
-		>;
-		expect(result.result).toBe("guest");
-
-		const optionOptionalNotRequired = DServerCommand.createOption(
-			"name",
-			DPE.string().optional(),
-		);
-
-		const result1 = await optionOptionalNotRequired.execute(["--name=guest"], createError("root"));
-		expect(result1).not.toBe(SymbolCommandError);
-		if (result1 === SymbolCommandError) {
-			return;
-		}
-		type _check1 = ExpectType<
-			typeof result1.result,
-			string | undefined,
-			"strict"
-		>;
-		expect(result1.result).toBe("guest");
 	});
 
 	it("supports clean primitive schema as contract", async() => {

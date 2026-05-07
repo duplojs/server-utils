@@ -5,10 +5,10 @@ await SC.exec(
 	{
 		description: "Greet someone",
 		options: [SC.createBooleanOption("shout", { aliases: ["s"] })],
-		subject: DP.string(),
+		subjects: [SC.createArgument("name", DP.string())],
 	},
-	({ options, subject }) => {
-		const message = `hello ${subject}`;
+	({ options, args: { name } }) => {
+		const message = `hello ${name}`;
 
 		console.log(options.shout ? message.toUpperCase() : message);
 	},

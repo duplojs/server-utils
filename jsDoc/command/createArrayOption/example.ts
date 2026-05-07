@@ -27,7 +27,7 @@ SC.create(
 	{
 		options: [tags, ids, paths, emails, userIds],
 	},
-	({ options: { ids, tags, paths, emails, userIds } }) => {
+	({ options: { emails, ids, paths, tags, userIds } }) => {
 		// ids: [number, ...number[]]
 		// tags: string[] | undefined
 		// paths: string[] | undefined

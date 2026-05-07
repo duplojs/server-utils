@@ -1,5 +1,5 @@
 import { SC } from "@server-utils/v0";
-import { C, DP, type ExpectType } from "@duplojs/utils";
+import { C, DP } from "@duplojs/utils";
 
 const UserId = C.createNewType("user-id", DP.number(), C.Positive);
 
@@ -19,15 +19,14 @@ await SC.exec({
 		SC.createOption("userId", UserId),
 	],
 }, ({ options }) => {
-	type check = ExpectType<
-		typeof options,
-		{
-			host: string | undefined;
-			port: number;
-			environment: "dev" | "prod" | undefined;
-			email: C.Email | undefined;
-			userId: C.GetNewType<typeof UserId> | undefined;
-		},
-		"strict"
-	>;
+	//    ^?
+
+
+
+
+
+
+
+
+
 });
