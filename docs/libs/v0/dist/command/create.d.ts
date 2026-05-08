@@ -34,13 +34,13 @@ export interface CreateCommandParams<GenericOptions extends AnyTuple<Option> = A
         ComputedTypeError<string>
     ]> extends [infer InferredResult] ? NeverCoalescing<InferredResult, unknown> : unknown));
 }
-export type CreateCommandExecuteParams<GenericOptions extends AnyTuple<Option>, GenericSubjects extends Subjects> = ((IsEqual<GenericOptions, never> extends true ? {} : {
+export type CreateCommandExecuteParams<GenericOptions extends AnyTuple<Option>, GenericArguments extends AnyTuple<Argument>> = ((IsEqual<GenericOptions, never> extends true ? {} : {
     options: {
         [GenericOption in GenericOptions[number] as GenericOption["name"]]: Exclude<Awaited<ReturnType<GenericOption["execute"]>>, SymbolCommandError>["result"];
     };
-}) & (IsEqual<GenericSubjects, never> extends true ? {} : {
+}) & (IsEqual<GenericArguments, never> extends true ? {} : {
     args: {
-        [GenericArgument in GenericSubjects[number] as GenericArgument["name"]]: Exclude<Awaited<ReturnType<GenericArgument["execute"]>>, SymbolCommandError>;
+        [GenericArgument in GenericArguments[number] as GenericArgument["name"]]: Exclude<Awaited<ReturnType<GenericArgument["execute"]>>, SymbolCommandError>;
     };
 }));
 /**
@@ -100,5 +100,5 @@ export type CreateCommandExecuteParams<GenericOptions extends AnyTuple<Option>, 
  * 
  */
 export declare function create<GenericName extends string>(name: GenericName, execute: () => void): Command<GenericName>;
-export declare function create<GenericName extends string, const GenericOptions extends AnyTuple<Option> = never, GenericSubjects extends Subjects = never>(name: GenericName, params: CreateCommandParams<GenericOptions, GenericSubjects>, execute: (params: CreateCommandExecuteParams<GenericOptions, GenericSubjects>) => MaybePromise<void>): Command<GenericName>;
+export declare function create<GenericName extends string, const GenericOptions extends AnyTuple<Option> = never, GenericSubjects extends Subjects = never>(name: GenericName, params: CreateCommandParams<GenericOptions, GenericSubjects>, execute: (params: CreateCommandExecuteParams<GenericOptions, Extract<GenericSubjects, AnyTuple<Argument>>>) => MaybePromise<void>): Command<GenericName>;
 export {};

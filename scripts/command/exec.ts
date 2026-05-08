@@ -1,8 +1,9 @@
-import { type AnyFunction, type AnyTuple, type MaybePromise } from "@duplojs/utils";
+import type { AnyFunction, AnyTuple, MaybePromise } from "@duplojs/utils";
 import { exitProcess, getProcessArguments } from "@scripts/common";
 import { type CreateCommandExecuteParams, type CreateCommandParams, type Subjects, create } from "./create";
-import type { Option } from "./options";
 import { createError, interpretCommandError, SymbolCommandError } from "./error";
+import type { Option } from "./options";
+import type { Argument } from "./argument";
 
 export type ExecCommandParams<
 	GenericOptions extends AnyTuple<Option> = AnyTuple<Option>,
@@ -36,7 +37,10 @@ export function exec<
 		GenericSubjects
 	>,
 	execute: (
-		params: CreateCommandExecuteParams<GenericOptions, GenericSubjects>,
+		params: CreateCommandExecuteParams<
+			GenericOptions,
+			Extract<GenericSubjects, AnyTuple<Argument>>
+		>,
 	) => MaybePromise<void>,
 ): Promise<never>;
 

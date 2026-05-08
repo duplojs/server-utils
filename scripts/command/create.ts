@@ -82,7 +82,7 @@ export interface CreateCommandParams<
 
 export type CreateCommandExecuteParams<
 	GenericOptions extends AnyTuple<Option>,
-	GenericSubjects extends Subjects,
+	GenericArguments extends AnyTuple<Argument>,
 > = (
 	& (
 		IsEqual<GenericOptions, never> extends true
@@ -99,11 +99,11 @@ export type CreateCommandExecuteParams<
 			}
 	)
 	& (
-		IsEqual<GenericSubjects, never> extends true
+		IsEqual<GenericArguments, never> extends true
 			? {}
 			: {
 				args: {
-					[GenericArgument in GenericSubjects[number] as GenericArgument["name"]]: Exclude<
+					[GenericArgument in GenericArguments[number] as GenericArgument["name"]]: Exclude<
 						Awaited<ReturnType<
 							GenericArgument["execute"]
 						>>,
@@ -135,7 +135,10 @@ export function create<
 		GenericSubjects
 	>,
 	execute: (
-		params: CreateCommandExecuteParams<GenericOptions, GenericSubjects>,
+		params: CreateCommandExecuteParams<
+			GenericOptions,
+			Extract<GenericSubjects, AnyTuple<Argument>>
+		>,
 	) => MaybePromise<void>,
 ): Command<GenericName>;
 

@@ -346,4 +346,20 @@ describe("create", () => {
 			},
 		);
 	});
+
+	it("not infer command in args", () => {
+		DServerCommand.create(
+			"root",
+			{
+				subjects: [DServerCommand.create("tt", () => {})],
+			},
+			(params) => {
+				type check = ExpectType<
+					typeof params,
+					{},
+					"strict"
+				>;
+			},
+		);
+	});
 });
