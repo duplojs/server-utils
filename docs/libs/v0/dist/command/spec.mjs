@@ -1,7 +1,7 @@
 import * as DDP from '@duplojs/utils/dataParser';
 import * as CC from '@duplojs/utils/clean';
 import { hasSomeKinds } from '@duplojs/utils';
-import { fileKind } from '../dataParser/parsers/file.mjs';
+import { fileKind } from '../dataParser/parsers/file/index.mjs';
 
 function specToDataParser(value) {
     if (hasSomeKinds(value, [

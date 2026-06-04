@@ -22,21 +22,27 @@ Builds a parser for files. `DServerDataParser.file()` ensures the input is a fil
 
 ## Parameters
 
-- `errorMessage`: custom message injected into each `issue` when the input is not a file or does not meet constraints.
+- `errorMessage`: custom message used when the input is not a file and as the default for checkers that do not define their own message.
+- `checkers`: array of checkers (`checkerFileSize`, `checkerFileExist`, `checkerFileMimeType`, `checkerRefine`, etc.) executed after the base validation.
 - `coerce`: `true` to transform a path into `FileInterface`. Defaults to `false`.
-- `mimeType?`: `string`, `[string, ...string[]]`, or `RegExp` applied to the file mime type.
-- `minSize?`: `number` or `BytesInString` (`${number}${"b" | "kb" | "mb"...}`) to enforce a minimum file size. This check is only executed through `asyncParse`.
-- `maxSize?`: `number` or `BytesInString` (`${number}${"b" | "kb" | "mb"...}`) to enforce a maximum file size. This check is only executed through `asyncParse`.
-- `checkExist?`: `true` to check whether the file really exists. This check is only executed through `asyncParse`.
 
 ## Return value
 
-A `DataParserFile` exposing `parse`, `asyncParse`, `isAsynchronous`, and `clone`.
+A `DataParserFile` exposing `parse`, `asyncParse`, `exec`, `asyncExec`, `addChecker`, and `clone`.
 
-- `schema.parse(data)` returns a `DEither.Success<FileInterface>` when synchronous checks pass, or a `DEither.Error<DataParserError>`. If `checkExist`, `minSize`, or `maxSize` are enabled, this synchronous mode immediately returns an error because these checks require async I/O.
-- `schema.asyncParse(data)` runs full validation (including real file existence and size constraints) and returns a `Promise<DEither.Success<FileInterface>>` when all validations pass, or a `Promise<DEither.Error<DataParserError>>` with paths (`path`), messages, and rejected values.
+The File parser is synchronous by default. `checkerFileMimeType` is also synchronous, while `checkerFileExist` and `checkerFileSize` are asynchronous because they read file information.
+
+- `schema.parse(data)` runs synchronous validations and returns a `DEither.Success<FileInterface>` or a `DEither.Error<DataParserError>`. It returns an error when the parser contains an asynchronous checker.
+- `schema.asyncParse(data)` awaits asynchronous checkers and returns a `Promise<DEither.Success<FileInterface>>` or a `Promise<DEither.Error<DataParserError>>`.
 
 ## Other examples
+
+### Custom checkers
+
+```ts twoslash
+// @version: 0
+<!--@include: @/examples/v0/api/dataParser/file/checkers.ts-->
+```
 
 ### Extended mode
 
@@ -51,6 +57,10 @@ A `DataParserFile` exposing `parse`, `asyncParse`, `isAsynchronous`, and `clone`
 // @version: 0
 <!--@include: @/examples/v0/api/dataParser/file/parse-vs-async.ts-->
 ```
+
+::: info
+This example uses `checkerFileExist` and `checkerFileSize`, two asynchronous checkers that read file information. You must therefore use `asyncParse` to await their result. Using `parse` on this parser returns a `DataParserError` because it cannot execute these asynchronous checkers.
+:::
 
 ## See also
 

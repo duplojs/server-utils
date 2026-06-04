@@ -5,7 +5,7 @@ import * as DDP from '@duplojs/utils/dataParser';
 import { createBooleanOption } from './options/boolean.mjs';
 import { simpleOptionKind } from './options/simple.mjs';
 import { arrayOptionKind } from './options/array.mjs';
-import { fileKind } from '../dataParser/parsers/file.mjs';
+import { fileKind } from '../dataParser/parsers/file/index.mjs';
 
 const helpOption = createBooleanOption("help", { aliases: ["h"] });
 function formatDataParser(dataParser) {

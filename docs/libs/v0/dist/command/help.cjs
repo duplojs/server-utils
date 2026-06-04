@@ -7,7 +7,7 @@ var DDP = require('@duplojs/utils/dataParser');
 var boolean = require('./options/boolean.cjs');
 var simple = require('./options/simple.cjs');
 var array = require('./options/array.cjs');
-var file = require('../dataParser/parsers/file.cjs');
+var index = require('../dataParser/parsers/file/index.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -39,7 +39,7 @@ function formatDataParser(dataParser) {
         .when(DDP__namespace.identifier(DDP__namespace.dateKind), utils.justReturn("date"))
         .when(DDP__namespace.identifier(DDP__namespace.timeKind), utils.justReturn("time"))
         .when(DDP__namespace.identifier(DDP__namespace.nilKind), utils.justReturn("null"))
-        .when(file.fileKind.has, utils.justReturn("file"))
+        .when(index.fileKind.has, utils.justReturn("file"))
         .when(DDP__namespace.identifier(DDP__namespace.literalKind), (subject) => utils.pipe(subject.definition.value, AA__namespace.map(String), AA__namespace.join(" | ")))
         .when(DDP__namespace.identifier(DDP__namespace.templateLiteralKind), (dataParser) => utils.pipe(dataParser.definition.template, AA__namespace.map((part) => DDP__namespace.identifier(part, DDP__namespace.dataParserKind)
         ? `\${${formatDataParser(part)}}`

@@ -37,4 +37,4 @@ import * as SDPE from "@duplojs/utils/dataParserExtended";
 ## File parsers
 
 ### [file](/en/v0/api/dataParser/file)
-Validates `FileInterface`, with constraints on file size and mime type. Supports coercion from a text input.
+Validates `FileInterface`: `size`, `exist`, and `mimeType` checkers, with support for coercion from a path.

@@ -1,69 +1,151 @@
-import { type AnyTuple, type BytesInString, type FixDeepFunctionInfer, type Kind, type NeverCoalescing } from "@duplojs/utils";
-import * as DDP from "@duplojs/utils/dataParser";
+import { type FixDeepFunctionInfer, type NeverCoalescing } from "@duplojs/utils";
+import * as DDataParser from "@duplojs/utils/dataParser";
 import * as dataParsers from "../parsers";
-import { type FileInterface } from "../../file";
-type _DataParserFileExtended<GenericDefinition extends dataParsers.DataParserDefinitionFile> = (Kind<typeof dataParsers.fileKind.definition> & DDP.DataParserBaseExtended<GenericDefinition, FileInterface, FileInterface>);
-export interface DataParserFileExtended<GenericDefinition extends dataParsers.DataParserDefinitionFile = dataParsers.DataParserDefinitionFile> extends _DataParserFileExtended<GenericDefinition> {
-    addChecker<GenericChecker extends readonly [
-        dataParsers.DataParserFileCheckers,
-        ...dataParsers.DataParserFileCheckers[]
+declare const DataParserFileExtended_base: DDataParser.DataParserExtendedBaseInit<typeof dataParsers.DataParserFile>;
+export declare class DataParserFileExtended<GenericDefinition extends dataParsers.DataParserDefinitionFile = dataParsers.DataParserDefinitionFile> extends DataParserFileExtended_base<GenericDefinition, DDataParser.Output<dataParsers.DataParserFile<GenericDefinition>>, DDataParser.Input<dataParsers.DataParserFile<GenericDefinition>>> {
+    get classConstructor(): typeof DataParserFileExtended & DDataParser.CheckedConstructorKind;
+    addChecker: <GenericChecker extends readonly [
+        DDataParser.DataParserChecker<DDataParser.Output<this>>,
+        ...DDataParser.DataParserChecker<DDataParser.Output<this>>[]
     ]>(...args: FixDeepFunctionInfer<readonly [
-        dataParsers.DataParserFileCheckers,
-        ...dataParsers.DataParserFileCheckers[]
-    ], GenericChecker>): DataParserFileExtended<DDP.AddCheckersToDefinition<GenericDefinition, GenericChecker>>;
-    refine(theFunction: (input: DDP.Output<this>) => boolean, definition?: Partial<Omit<DDP.DataParserCheckerDefinitionRefine, "theFunction">>): DataParserFileExtended<DDP.AddCheckersToDefinition<GenericDefinition, readonly [DDP.CheckerRefineImplementation<DDP.Output<this>>]>>;
-    /** Set a mime type constraint on the parsed file. */
-    mimeType(value: string | AnyTuple<string> | RegExp): DataParserFileExtended<GenericDefinition>;
+        DDataParser.DataParserChecker<DDataParser.Output<this>>,
+        ...DDataParser.DataParserChecker<DDataParser.Output<this>>[]
+    ], GenericChecker>) => DataParserFileExtended<DDataParser.AddCheckersToDefinition<GenericDefinition, GenericChecker>>;
+    refine: (theFunction: (input: DDataParser.Output<this>) => boolean, definition?: Partial<Omit<DDataParser.DataParserCheckerDefinitionRefine, "theFunction">>) => DataParserFileExtended<DDataParser.AddCheckersToDefinition<GenericDefinition, readonly [DDataParser.CheckerRefineImplementation<DDataParser.Output<this>>]>>;
     /**
-     * Set the minimum file size.
-     * This check requires async validation through `asyncParse`.
+     * Adds a file-size checker to an extended file parser.
+     * 
+     * The method returns a new parser that enforces optional minimum and maximum sizes expressed in bytes.
+     * 
+     * ```ts
+     * const maximumSizeParser = SDPE.file()
+     * 	.size({ max: 2_000_000 });
+     * await maximumSizeParser.asyncParse(
+     * 	SF.createFileInterface("/path/picture.png"),
+     * );
+     * 
+     * const rangedSizeParser = SDPE.file()
+     * 	.size({
+     * 		min: 10_000,
+     * 		max: 2_000_000,
+     * 	});
+     * await rangedSizeParser.asyncParse(
+     * 	SF.createFileInterface("/path/archive.zip"),
+     * );
+     * 
+     * const coerceParser = SDPE.coerce.file()
+     * 	.size({ min: 1 });
+     * await coerceParser.asyncParse("/path/document.pdf");
+     * ```
+     * 
+     * @remarks
+     * This method adds an asynchronous checker and rejects missing resources or resources that are not regular files. Use `asyncParse` on the returned parser.
+     * 
+     * @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
+     * @namespace SDPE
+     * 
      */
-    minSize(value: number | BytesInString): DataParserFileExtended<GenericDefinition>;
+    size(input: dataParsers.DataParserCheckerFileSizeInput, definition?: Partial<Omit<dataParsers.DataParserCheckerDefinitionFileSize, "min" | "max">>): DataParserFileExtended<DDataParser.AddCheckersToDefinition<GenericDefinition, readonly [dataParsers.DataParserCheckerFileSize]>>;
     /**
-     * Set the maximum file size.
-     * This check requires async validation through `asyncParse`.
+     * Adds an existing-file checker to an extended file parser.
+     * 
+     * The method returns a new parser that rejects missing resources and resources that are not regular files.
+     * 
+     * ```ts
+     * const parser = SDPE.file().exist();
+     * await parser.asyncParse(
+     * 	SF.createFileInterface("/path/document.pdf"),
+     * );
+     * 
+     * const coerceParser = SDPE.coerce.file().exist();
+     * await coerceParser.asyncParse("/path/picture.png");
+     * 
+     * const existingImageParser = SDPE.file()
+     * 	.mimeType(/^image\//)
+     * 	.exist();
+     * await existingImageParser.asyncParse(
+     * 	SF.createFileInterface("/path/picture.png"),
+     * );
+     * ```
+     * 
+     * @remarks
+     * This method adds an asynchronous checker. Use `asyncParse` on the returned parser.
+     * 
+     * @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
+     * @namespace SDPE
+     * 
      */
-    maxSize(value: number | BytesInString): DataParserFileExtended<GenericDefinition>;
+    exist(definition?: Partial<dataParsers.DataParserCheckerDefinitionFileExist>): DataParserFileExtended<DDataParser.AddCheckersToDefinition<GenericDefinition, readonly [dataParsers.DataParserCheckerFileExist]>>;
     /**
-     * Require the file to exist.
-     * This check requires async validation through `asyncParse`.
+     * Adds a MIME-type checker to an extended file parser.
+     * 
+     * The method returns a new parser that tests the MIME type inferred from the file extension against the provided regular expression.
+     * 
+     * ```ts
+     * const imageParser = SDPE.file()
+     * 	.mimeType(/^image\//);
+     * imageParser.parse(
+     * 	SF.createFileInterface("/path/picture.png"),
+     * );
+     * 
+     * const documentParser = SDPE.file()
+     * 	.mimeType(/^(?:application\/pdf|text\/plain)$/);
+     * documentParser.parse(
+     * 	SF.createFileInterface("/path/document.pdf"),
+     * );
+     * 
+     * const existingJsonParser = SDPE.file()
+     * 	.mimeType(/^application\/json$/)
+     * 	.exist();
+     * await existingJsonParser.asyncParse(
+     * 	SF.createFileInterface("/path/config.json"),
+     * );
+     * ```
+     * 
+     * @remarks
+     * When no MIME type can be inferred, the regular expression is tested against an empty string.
+     * 
+     * @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
+     * @namespace SDPE
+     * 
      */
-    mustExist(): DataParserFileExtended<GenericDefinition>;
+    mimeType(mimeType: RegExp, definition?: Partial<Omit<dataParsers.DataParserCheckerDefinitionFileMimeType, "mimeType">>): DataParserFileExtended<DDataParser.AddCheckersToDefinition<GenericDefinition, readonly [dataParsers.DataParserCheckerFileMimeType]>>;
+    /**
+     * Creates an extended data parser for `FileInterface` values.
+     * 
+     * The parser exposes the chainable `mimeType`, `size`, and `exist` methods to compose file-specific constraints.
+     * 
+     * ```ts
+     * const fileInterface = SF.createFileInterface("path/file.txt");
+     * 
+     * const mimeTypeParser = SDPE.file()
+     * 	.mimeType(/^image\/(?:png|jpeg)$/);
+     * mimeTypeParser.parse(fileInterface);
+     * // Error<DataParserError> | Success<SF.FileInterface>
+     * 
+     * const sizeParser = SDPE.file()
+     * 	.size({
+     * 		min: 10_000,
+     * 		max: 2_000_000,
+     * 	});
+     * await sizeParser.asyncParse(fileInterface);
+     * // Promise<Error<DataParserError> | Success<SF.FileInterface>>
+     * 
+     * const existingImageParser = SDPE.coerce.file()
+     * 	.mimeType(/^image\//)
+     * 	.exist();
+     * await existingImageParser.asyncParse("/path/picture.png");
+     * // Promise<Error<DataParserError> | Success<SF.FileInterface>>
+     * ```
+     * 
+     * @remarks
+     * Use `asyncParse` after adding `size` or `exist`, because these methods add asynchronous checkers.
+     * 
+     * @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
+     * @namespace SDPE
+     * 
+     */
+    static create<const GenericDefinition extends DDataParser.PrepareDataParserDefinition<dataParsers.DataParserDefinitionFile> = never>(definition?: FixDeepFunctionInfer<DDataParser.PrepareDataParserDefinition<dataParsers.DataParserDefinitionFile>, GenericDefinition>): DataParserFileExtended<DDataParser.MergeDefinition<dataParsers.DataParserDefinitionFile, NeverCoalescing<GenericDefinition, {}>>>;
 }
-/**
- * Build an extended file parser with chainable helpers.
- * 
- * This parser exposes fluent helpers such as `mimeType`, `minSize`, `maxSize`, and `mustExist` to compose constraints progressively.
- * 
- * ```ts
- * const maybeFile: SF.FileInterface | undefined = SF.createFileInterface("path/file.txt");
- * 
- * const byMimeType = SDPE.file()
- * 	.mimeType(["image/png", "image/jpeg"]);
- * byMimeType.parse(maybeFile);
- * // Error<DataParserError> | Success<SF.FileInterface>
- * 
- * const withMinAndMax = SDPE.coerce.file()
- * 	.minSize("10kb")
- * 	.maxSize("2mb");
- * await withMinAndMax.asyncParse("/path/archive.zip");
- * // Promise<Error<DataParserError> | Success<SF.FileInterface>>
- * 
- * const mustExist = SDPE.coerce.file()
- * 	.mustExist();
- * await mustExist.asyncParse("/path/document.pdf");
- * // Promise<Error<DataParserError> | Success<SF.FileInterface>>
- * ```
- * 
- * @remarks
- * Methods `minSize`, `maxSize`, and `mustExist` enable checks that require `asyncParse`.
- * 
- * @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
- * @namespace SDPE
- * 
- */
-export declare function file<const GenericDefinition extends Omit<Partial<dataParsers.DataParserDefinitionFile>, "mimeType" | "minSize" | "maxSize"> = never>(params?: dataParsers.DataParserFileParams, definition?: GenericDefinition): DataParserFileExtended<DDP.MergeDefinition<dataParsers.DataParserDefinitionFile, NeverCoalescing<GenericDefinition, {}>>>;
-export declare namespace file {
-    var overrideHandler: import("@duplojs/utils").OverrideHandler<DataParserFileExtended<dataParsers.DataParserDefinitionFile>>;
-}
+export declare const file: typeof DataParserFileExtended.create;
 export {};

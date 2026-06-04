@@ -24,6 +24,7 @@
 	"deno.config": "./integration/deno/deno.json",
 	"js/ts.tsdk.path": "node_modules/typescript/lib",
 	"cSpell.words": [
+		"SDPE",
 		"shikijs",
 		"vitest"
 	]

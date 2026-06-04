@@ -100,6 +100,7 @@ export default defineConfig({
 			},
 			transformerTwoslash({
 				twoslashOptions: {
+					customTags: ["annotate", "log", "warn", "error"],
 					compilerOptions: {
 						module: ModuleKind.ESNext,
 						moduleResolution: ModuleResolutionKind.Bundler,

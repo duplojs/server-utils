@@ -2,7 +2,10 @@
 
 var utils = require('@duplojs/utils');
 var DDP = require('@duplojs/utils/dataParser');
-var file$1 = require('../parsers/file.cjs');
+var index = require('../parsers/file/index.cjs');
+var size = require('../parsers/file/checkers/size.cjs');
+var exist = require('../parsers/file/checkers/exist.cjs');
+var mimeType = require('../parsers/file/checkers/mimeType.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -23,62 +26,36 @@ function _interopNamespaceDefault(e) {
 
 var DDP__namespace = /*#__PURE__*/_interopNamespaceDefault(DDP);
 
-/**
- * {@include dataParserExtended/file/index.md}
- */
-function file(params, definition) {
-    const self = DDP__namespace.dataParserBaseExtendedInit(file$1.file(params, definition), {
-        mimeType(self, value) {
-            return file({
-                mimeType: value,
-                minSize: self.definition.minSize,
-                maxSize: self.definition.maxSize,
-                checkExist: self.definition.checkExist,
-            }, {
-                checkers: self.definition.checkers,
-                errorMessage: self.definition.errorMessage,
-                coerce: self.definition.coerce,
-            });
-        },
-        minSize(self, value) {
-            return file({
-                mimeType: self.definition.mimeType,
-                minSize: value,
-                maxSize: self.definition.maxSize,
-                checkExist: self.definition.checkExist,
-            }, {
-                checkers: self.definition.checkers,
-                errorMessage: self.definition.errorMessage,
-                coerce: self.definition.coerce,
-            });
-        },
-        maxSize(self, value) {
-            return file({
-                mimeType: self.definition.mimeType,
-                minSize: self.definition.minSize,
-                maxSize: value,
-                checkExist: self.definition.checkExist,
-            }, {
-                checkers: self.definition.checkers,
-                errorMessage: self.definition.errorMessage,
-                coerce: self.definition.coerce,
-            });
-        },
-        mustExist(self) {
-            return file({
-                mimeType: self.definition.mimeType,
-                minSize: self.definition.minSize,
-                maxSize: self.definition.maxSize,
-                checkExist: true,
-            }, {
-                checkers: self.definition.checkers,
-                errorMessage: self.definition.errorMessage,
-                coerce: self.definition.coerce,
-            });
-        },
-    }, file.overrideHandler);
-    return self;
+class DataParserFileExtended extends DDP__namespace.DataParserBaseExtended.initExtended(index.DataParserFile) {
+    get classConstructor() {
+        return this.checkConstructor(DataParserFileExtended);
+    }
+    /**
+     * {@include dataParserExtended/file/size/index.md}
+     */
+    size(input, definition) {
+        return this.addChecker(size.checkerFileSize(input, definition));
+    }
+    /**
+     * {@include dataParserExtended/file/exist/index.md}
+     */
+    exist(definition) {
+        return this.addChecker(exist.checkerFileExist(definition));
+    }
+    /**
+     * {@include dataParserExtended/file/mimeType/index.md}
+     */
+    mimeType(mimeType$1, definition) {
+        return this.addChecker(mimeType.checkerFileMimeType(mimeType$1, definition));
+    }
+    /**
+     * {@include dataParserExtended/file/index.md}
+     */
+    static create(definition) {
+        return new DataParserFileExtended(this.prepareDefinition(definition));
+    }
 }
-file.overrideHandler = utils.createOverride("@duplojs/utils/data-parser-extended/bigint");
+const file = utils.detachObjectMethod(DataParserFileExtended, "create");
 
+exports.DataParserFileExtended = DataParserFileExtended;
 exports.file = file;

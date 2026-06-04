@@ -1,9 +1,9 @@
 'use strict';
 
-var file$1 = require('../file.cjs');
+var index = require('../file/index.cjs');
 
-function file(params, definition) {
-    return file$1.file(params, {
+function file(definition) {
+    return index.file({
         ...definition,
         coerce: true,
     });

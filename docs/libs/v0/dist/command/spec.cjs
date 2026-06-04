@@ -3,7 +3,7 @@
 var DDP = require('@duplojs/utils/dataParser');
 var CC = require('@duplojs/utils/clean');
 var utils = require('@duplojs/utils');
-var file = require('../dataParser/parsers/file.cjs');
+var index = require('../dataParser/parsers/file/index.cjs');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -33,7 +33,7 @@ function specToDataParser(value) {
         DDP__namespace.dateKind,
         DDP__namespace.timeKind,
         DDP__namespace.nilKind,
-        file.fileKind,
+        index.fileKind,
     ])) {
         const clone = value.clone();
         clone.definition.coerce = true;

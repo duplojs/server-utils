@@ -2,8 +2,8 @@
 
 var file$1 = require('../file.cjs');
 
-function file(params, definition) {
-    return file$1.file(params, {
+function file(definition) {
+    return file$1.file({
         ...definition,
         coerce: true,
     });

@@ -2,22 +2,16 @@ import { SDP, type SF } from "@server-utils/v0";
 import { E, type DP, type ExpectType } from "@duplojs/utils";
 
 const schema = SDP.coerce.file({
-	checkExist: true,
-	maxSize: "2mb",
+	checkers: [
+		SDP.checkerFileExist(),
+		SDP.checkerFileSize({ max: 2_000_000 }),
+	],
 });
 
-// parse returns an Either immediately and cannot execute async I/O checks.
+// @error: Incorrect: parse cannot execute asynchronous checkers.
 const syncResult = schema.parse("/path/file.json");
 
-if (E.isLeft(syncResult)) {
-	type check = ExpectType<
-		typeof syncResult,
-		E.Error<DP.DataParserError>,
-		"strict"
-	>;
-}
-
-// asyncParse runs full checks (existence and size) and returns Promise<Either>.
+// @annotate: Correct: asyncParse awaits asynchronous checkers.
 const asyncResult = await schema.asyncParse("/path/file.json");
 
 if (E.isRight(asyncResult)) {

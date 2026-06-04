@@ -4,9 +4,9 @@ import { E, type ExpectType, type DP } from "@duplojs/utils";
 const schema = SDPE
 	.coerce
 	.file()
-	.mustExist()
-	.mimeType(["image/png", "image/jpeg"])
-	.maxSize("5mb");
+	.exist()
+	.mimeType(/^image\/(?:png|jpeg)$/)
+	.size({ max: 5_000_000 });
 
 const result = await schema.asyncParse("/path/image.png");
 
