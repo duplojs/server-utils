@@ -1,20 +1,23 @@
 import { SDP, SF } from "@scripts";
 
-const maybeFile: SF.FileInterface | undefined = SF.createFileInterface("path/file.txt");
+const fileInterface = SF.createFileInterface("path/file.txt");
 
-const basic = SDP.file({
-	mimeType: "application/json",
-});
-basic.parse(maybeFile);
+const basicParser = SDP.file();
+basicParser.parse(fileInterface);
 // Error<DataParserError> | Success<SF.FileInterface>
 
-const withCoerce = SDP.coerce.file();
-withCoerce.parse("/path/readme.md");
+const coerceParser = SDP.coerce.file();
+coerceParser.parse("/path/readme.md");
 // Error<DataParserError> | Success<SF.FileInterface>
 
-const withAsyncChecks = SDP.coerce.file({
-	checkExist: true,
-	maxSize: "2mb",
+const constrainedParser = SDP.file({
+	checkers: [
+		SDP.checkerFileMimeType(/^image\//),
+		SDP.checkerFileExist(),
+		SDP.checkerFileSize({ max: 2_000_000 }),
+	],
 });
-await withAsyncChecks.asyncParse("/path/picture.png");
+await constrainedParser.asyncParse(
+	SF.createFileInterface("/path/picture.png"),
+);
 // Promise<Error<DataParserError> | Success<SF.FileInterface>>

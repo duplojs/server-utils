@@ -268,7 +268,9 @@ describe("createArrayOption", () => {
 
 		const option = DServerCommand.createArrayOption(
 			"files",
-			DServerDataParser.file({ checkExist: true }),
+			DServerDataParser.file({
+				checkers: [DServerDataParser.checkerFileExist()],
+			}),
 			{
 				required: true,
 				min: 1,

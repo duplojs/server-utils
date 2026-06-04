@@ -227,7 +227,9 @@ describe("createOption", () => {
 
 		const option = DServerCommand.createOption(
 			"file",
-			DServerDataParser.file({ checkExist: true }),
+			DServerDataParser.file({
+				checkers: [DServerDataParser.checkerFileExist()],
+			}),
 			{ required: true },
 		);
 

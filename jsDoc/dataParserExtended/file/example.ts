@@ -1,19 +1,22 @@
 import { SDPE, SF } from "@scripts";
 
-const maybeFile: SF.FileInterface | undefined = SF.createFileInterface("path/file.txt");
+const fileInterface = SF.createFileInterface("path/file.txt");
 
-const byMimeType = SDPE.file()
-	.mimeType(["image/png", "image/jpeg"]);
-byMimeType.parse(maybeFile);
+const mimeTypeParser = SDPE.file()
+	.mimeType(/^image\/(?:png|jpeg)$/);
+mimeTypeParser.parse(fileInterface);
 // Error<DataParserError> | Success<SF.FileInterface>
 
-const withMinAndMax = SDPE.coerce.file()
-	.minSize("10kb")
-	.maxSize("2mb");
-await withMinAndMax.asyncParse("/path/archive.zip");
+const sizeParser = SDPE.file()
+	.size({
+		min: 10_000,
+		max: 2_000_000,
+	});
+await sizeParser.asyncParse(fileInterface);
 // Promise<Error<DataParserError> | Success<SF.FileInterface>>
 
-const mustExist = SDPE.coerce.file()
-	.mustExist();
-await mustExist.asyncParse("/path/document.pdf");
+const existingImageParser = SDPE.coerce.file()
+	.mimeType(/^image\//)
+	.exist();
+await existingImageParser.asyncParse("/path/picture.png");
 // Promise<Error<DataParserError> | Success<SF.FileInterface>>

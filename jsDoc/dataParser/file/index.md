@@ -1,14 +1,13 @@
-Build a file parser.
+Creates a data parser for `FileInterface` values.
 
-This parser validates that the input is a `FileInterface` (or coerces from a path when configured). It can also validate mime type, existence, and size constraints.
+The parser validates `FileInterface` inputs and supports path coercion through `SDP.coerce.file()`. File-specific constraints are composed with the `checkers` definition property or `.addChecker(...)`.
 
 ```ts
-{@include dataParser/file/example.ts[3,20]}
+{@include dataParser/file/example.ts[3,23]}
 ```
 
 @remarks
-`parse` returns `E.Either` directly for synchronous checks.  
-`asyncParse` returns `Promise<E.Either>` and is required for `checkExist`, `minSize`, and `maxSize`.
+Use `asyncParse` when the parser contains asynchronous checkers such as `checkerFileExist` or `checkerFileSize`.
 
 @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
 @namespace SDP
