@@ -44,7 +44,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						error,
 						"existing file",
 						value,
-						"File not exist.",
+						self.definition.errorMessage ?? dataParser.definition.errorMessage,
 					);
 				}
 
@@ -55,7 +55,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						error,
 						"file",
 						value,
-						"Resource doesn't File",
+						self.definition.errorMessage ?? dataParser.definition.errorMessage,
 					);
 				}
 
@@ -67,7 +67,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						error,
 						`file with sizeBytes <= ${self.definition.max}`,
 						fileStat.sizeBytes,
-						"File is to large.",
+						self.definition.errorMessage ?? dataParser.definition.errorMessage,
 					);
 				}
 
@@ -79,7 +79,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						error,
 						`file with sizeBytes >= ${self.definition.min}`,
 						fileStat.sizeBytes,
-						"File is to small.",
+						self.definition.errorMessage ?? dataParser.definition.errorMessage,
 					);
 				}
 

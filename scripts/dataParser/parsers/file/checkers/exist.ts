@@ -36,7 +36,7 @@ export class DataParserCheckerFileExist extends DDataParser.DataParserCheckerBas
 						error,
 						"existing file",
 						value,
-						"File not exist.",
+						self.definition.errorMessage ?? dataParser.definition.errorMessage,
 					);
 				}
 
@@ -47,7 +47,7 @@ export class DataParserCheckerFileExist extends DDataParser.DataParserCheckerBas
 						error,
 						"file",
 						value,
-						"Resource doesn't File",
+						self.definition.errorMessage ?? dataParser.definition.errorMessage,
 					);
 				}
 

@@ -53,7 +53,12 @@ export class DataParserFileExtended<
 		definition?: Partial<
 			Omit<dataParsers.DataParserCheckerDefinitionFileSize, "min" | "max">
 		>,
-	) {
+	): DataParserFileExtended<
+			DDataParser.AddCheckersToDefinition<
+				GenericDefinition,
+				readonly [dataParsers.DataParserCheckerFileSize]
+			>
+		> {
 		return this.addChecker(dataParsers.checkerFileSize(input, definition));
 	}
 
@@ -62,7 +67,12 @@ export class DataParserFileExtended<
 	 */
 	public exist(
 		definition?: Partial<dataParsers.DataParserCheckerDefinitionFileExist>,
-	) {
+	): DataParserFileExtended<
+			DDataParser.AddCheckersToDefinition<
+				GenericDefinition,
+				readonly [dataParsers.DataParserCheckerFileExist]
+			>
+		> {
 		return this.addChecker(dataParsers.checkerFileExist(definition));
 	}
 
@@ -74,7 +84,12 @@ export class DataParserFileExtended<
 		definition?: Partial<
 			Omit<dataParsers.DataParserCheckerDefinitionFileMimeType, "mimeType">
 		>,
-	) {
+	): DataParserFileExtended<
+			DDataParser.AddCheckersToDefinition<
+				GenericDefinition,
+				readonly [dataParsers.DataParserCheckerFileMimeType]
+			>
+		> {
 		return this.addChecker(dataParsers.checkerFileMimeType(mimeType, definition));
 	}
 

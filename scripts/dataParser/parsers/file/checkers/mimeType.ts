@@ -40,7 +40,7 @@ export class DataParserCheckerFileMimeType extends DDataParser.DataParserChecker
 				error,
 				`file with mime type matching ${self.definition.mimeType.source}`,
 				value,
-				"Wrong mimeType.",
+				self.definition.errorMessage ?? dataParser.definition.errorMessage,
 			);
 		}
 
