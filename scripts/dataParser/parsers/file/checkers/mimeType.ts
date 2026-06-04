@@ -1,4 +1,4 @@
-import { detachObjectMethod } from "@duplojs/utils";
+import { type AnyTuple, detachObjectMethod, toRegExp } from "@duplojs/utils";
 import * as DDataParser from "@duplojs/utils/dataParser";
 import type * as DServerFile from "@scripts/file";
 import { createDataParserKind } from "@scripts/dataParser/kind";
@@ -51,14 +51,14 @@ export class DataParserCheckerFileMimeType extends DDataParser.DataParserChecker
 	 * {@include dataParser/file/checkers/mimeType/index.md}
 	 */
 	public static override create(
-		mimeType: RegExp,
+		mimeType: RegExp | string | AnyTuple<string>,
 		definition: Partial<
 			Omit<DataParserCheckerDefinitionFileMimeType, "mimeType">
 		> = {},
 	) {
 		return new DataParserCheckerFileMimeType({
 			...definition,
-			mimeType,
+			mimeType: toRegExp(mimeType),
 		});
 	}
 }
