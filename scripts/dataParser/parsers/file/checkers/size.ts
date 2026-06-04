@@ -1,4 +1,4 @@
-import { callThen, detachObjectMethod, unwrap } from "@duplojs/utils";
+import { type BytesInString, callThen, detachObjectMethod, stringToBytes, unwrap } from "@duplojs/utils";
 import * as DDataParser from "@duplojs/utils/dataParser";
 import * as DEither from "@duplojs/utils/either";
 import type * as DServerFile from "@scripts/file";
@@ -10,8 +10,8 @@ export interface DataParserCheckerDefinitionFileSize extends DDataParser.DataPar
 }
 
 export interface DataParserCheckerFileSizeInput {
-	min?: number;
-	max?: number;
+	min?: number | BytesInString;
+	max?: number | BytesInString;
 }
 
 export const checkerFileSizeKind = createDataParserKind("checker-file-size");
@@ -99,7 +99,8 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 	) {
 		return new DataParserCheckerFileSize({
 			...definition,
-			...input,
+			min: input.min && stringToBytes(input.min),
+			max: input.max && stringToBytes(input.max),
 		});
 	}
 }
