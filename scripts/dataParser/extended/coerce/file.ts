@@ -1,28 +1,30 @@
 
-import type { NeverCoalescing } from "@duplojs/utils";
-import type * as DDP from "@duplojs/utils/dataParser";
+import type { FixDeepFunctionInfer, NeverCoalescing } from "@duplojs/utils";
+import type * as DDataParser from "@duplojs/utils/dataParser";
 import type * as dataParsers from "../../parsers";
 import * as dataParsersExtended from "..";
 
 export function file<
-	const GenericDefinition extends Omit<
-		Partial<dataParsers.DataParserDefinitionFile>,
-		"mimeType" | "minSize" | "maxSize" | "coerce"
+	const GenericDefinition extends DDataParser.PrepareDataParserDefinition<
+		dataParsers.DataParserDefinitionFile,
+		"coerce"
 	> = never,
 >(
-	params?: dataParsers.DataParserFileParams,
-	definition?: GenericDefinition,
+	definition?: FixDeepFunctionInfer<
+		DDataParser.PrepareDataParserDefinition<
+			dataParsers.DataParserDefinitionFile,
+			"coerce"
+		>,
+		GenericDefinition
+	>,
 ): dataParsersExtended.DataParserFileExtended<
-		DDP.MergeDefinition<
+		DDataParser.MergeDefinition<
 			dataParsers.DataParserDefinitionFile,
 			NeverCoalescing<GenericDefinition, {}> & { coerce: true }
 		>
 	> {
-	return dataParsersExtended.file(
-		params,
-		{
-			...definition,
-			coerce: true,
-		},
-	);
+	return dataParsersExtended.file({
+		...definition,
+		coerce: true,
+	});
 }

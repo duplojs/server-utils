@@ -1,56 +1,69 @@
-import { E, pipe, unwrap } from "@duplojs/utils";
+import { type DP, E, type ExpectType, pipe, unwrap } from "@duplojs/utils";
 import { DServerDataParser, DServerFile } from "@scripts";
 import * as DServerFileSource from "@scripts/file";
+import type { FileInterface } from "@scripts/file";
 
 describe("dataParser.coerce.file", () => {
 	afterEach(() => {
-		vi.clearAllMocks();
 		vi.restoreAllMocks();
 	});
 
-	it("coerces a string path to a file interface", async() => {
+	it("creates a file parser with coercion enabled and expected types", () => {
+		const parser = DServerDataParser.coerce.file();
+
+		type _CheckInput = ExpectType<
+			DP.Input<typeof parser>,
+			FileInterface,
+			"strict"
+		>;
+		type _CheckOutput = ExpectType<
+			DP.Output<typeof parser>,
+			FileInterface,
+			"strict"
+		>;
+
+		expect(parser.definition.coerce).toBe(true);
+		expect(parser.isAsynchronous()).toBe(false);
+	});
+
+	it("coerces a string path to a file interface", () => {
 		const file = DServerFile.createFileInterface("/tmp/demo.txt");
-		vi.spyOn(file, "stat").mockResolvedValue(E.success({
-			isFile: true,
-			sizeBytes: 5,
-		} as any));
 		const createFileInterfaceSpy = vi
 			.spyOn(DServerFileSource, "createFileInterface")
 			.mockReturnValue(file);
-		const schema = DServerDataParser.coerce.file();
 
-		const result = await schema.asyncParse("/tmp/demo.txt");
+		const result = DServerDataParser.coerce.file().parse("/tmp/demo.txt");
 
 		expect(createFileInterfaceSpy).toHaveBeenCalledWith("/tmp/demo.txt");
 		expect(E.isRight(result)).toBe(true);
 		expect(unwrap(result)).toBe(file);
 	});
 
-	it("fails for non string values that are not file interfaces", async() => {
-		const schema = DServerDataParser.coerce.file();
+	it("accepts an existing file interface without coercing it", () => {
+		const file = DServerFile.createFileInterface("/tmp/demo.txt");
+		const createFileInterfaceSpy = vi.spyOn(DServerFileSource, "createFileInterface");
 
-		const result = await schema.asyncParse({ path: "/tmp/demo.txt" });
+		const result = DServerDataParser.coerce.file().parse(file);
+
+		expect(createFileInterfaceSpy).not.toHaveBeenCalled();
+		expect(result).toStrictEqual(E.success(file));
+	});
+
+	it("rejects non-string values that are not file interfaces", () => {
+		const result = DServerDataParser.coerce.file().parse({
+			path: "/tmp/demo.txt",
+		});
 
 		expect(E.isLeft(result)).toBe(true);
 	});
 
-	it("works in pipe", async() => {
-		const schema = pipe(
-			{ mimeType: /^application\/json$/ },
+	it("works in pipe and keeps the provided definition", () => {
+		const parser = pipe(
+			{ errorMessage: "invalid-file" },
 			DServerDataParser.coerce.file,
 		);
-		const file = DServerFile.createFileInterface(
-			"/tmp/demo.json",
-		);
-		vi.spyOn(file, "stat").mockResolvedValue(E.success({
-			isFile: true,
-			sizeBytes: 5,
-		} as any));
-		vi.spyOn(DServerFileSource, "createFileInterface").mockReturnValue(file);
 
-		const result = await schema.asyncParse("/tmp/demo.json");
-
-		expect(E.isRight(result)).toBe(true);
-		expect(unwrap(result)).toBe(file);
+		expect(parser.definition.coerce).toBe(true);
+		expect(parser.definition.errorMessage).toBe("invalid-file");
 	});
 });

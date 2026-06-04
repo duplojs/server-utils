@@ -91,7 +91,7 @@
     "@duplojs/dev-tools": "0.2.0"
   },
   "peerDependencies": {
-    "@duplojs/utils": ">=1.8.0 <2.0.0"
+    "@duplojs/utils": ">=1.9.1 <2.0.0"
   },
   "workspaces": [
     "integration", 

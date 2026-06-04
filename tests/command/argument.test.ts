@@ -39,7 +39,9 @@ describe("argument", () => {
 
 		const argument = DServerCommand.createArgument(
 			"file",
-			DServerDataParser.file({ checkExist: true }),
+			DServerDataParser.file({
+				checkers: [DServerDataParser.checkerFileExist()],
+			}),
 		);
 		const error = createError("root");
 

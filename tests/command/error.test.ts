@@ -66,7 +66,7 @@ describe("error", () => {
 		expect(output).toContain("--enabled");
 		expect(output).toContain("ARGUMENT:");
 		expect(output).toContain("payload");
-		expect(output).toContain("[1]");
+		expect(output).toContain("[tuple: 1]");
 	});
 
 	it("interprets exec option error", () => {

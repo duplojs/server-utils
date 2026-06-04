@@ -1,164 +1,118 @@
-import { type AnyTuple, type BytesInString, type FixDeepFunctionInfer, type Kind, type NeverCoalescing, createOverride } from "@duplojs/utils";
-import * as DDP from "@duplojs/utils/dataParser";
+import { detachObjectMethod, type FixDeepFunctionInfer, type NeverCoalescing } from "@duplojs/utils";
+import * as DDataParser from "@duplojs/utils/dataParser";
 import * as dataParsers from "../parsers";
-import { type FileInterface } from "@scripts/file";
 
-type _DataParserFileExtended<
-	GenericDefinition extends dataParsers.DataParserDefinitionFile,
-> = (
-	& Kind<typeof dataParsers.fileKind.definition>
-	& DDP.DataParserBaseExtended<
-		GenericDefinition,
-		FileInterface,
-		FileInterface
-	>
-);
-
-export interface DataParserFileExtended<
+export class DataParserFileExtended<
 	GenericDefinition extends dataParsers.DataParserDefinitionFile = dataParsers.DataParserDefinitionFile,
-> extends _DataParserFileExtended<GenericDefinition> {
-	addChecker<
+> extends DDataParser.DataParserBaseExtended.initExtended(dataParsers.DataParserFile)<
+		GenericDefinition,
+		DDataParser.Output<dataParsers.DataParserFile<GenericDefinition>>,
+		DDataParser.Input<dataParsers.DataParserFile<GenericDefinition>>
+	> {
+	public get classConstructor() {
+		return this.checkConstructor(DataParserFileExtended);
+	}
+
+	public declare addChecker: <
 		GenericChecker extends readonly [
-			dataParsers.DataParserFileCheckers,
-			...dataParsers.DataParserFileCheckers[],
+			DDataParser.DataParserChecker<DDataParser.Output<this>>,
+			...DDataParser.DataParserChecker<DDataParser.Output<this>>[],
 		],
 	>(
 		...args: FixDeepFunctionInfer<
 			readonly [
-				dataParsers.DataParserFileCheckers,
-				...dataParsers.DataParserFileCheckers[],
+				DDataParser.DataParserChecker<DDataParser.Output<this>>,
+				...DDataParser.DataParserChecker<DDataParser.Output<this>>[],
 			],
 			GenericChecker
 		>
-	): DataParserFileExtended<
-		DDP.AddCheckersToDefinition<
+	) => DataParserFileExtended<
+		DDataParser.AddCheckersToDefinition<
 			GenericDefinition,
 			GenericChecker
 		>
 	>;
 
-	refine(
-		theFunction: (input: DDP.Output<this>) => boolean,
+	public declare refine: (
+		theFunction: (input: DDataParser.Output<this>) => boolean,
 		definition?: Partial<
-			Omit<DDP.DataParserCheckerDefinitionRefine, "theFunction">
-		>
-	): DataParserFileExtended<
-		DDP.AddCheckersToDefinition<
+			Omit<DDataParser.DataParserCheckerDefinitionRefine, "theFunction">
+		>,
+	) => DataParserFileExtended<
+		DDataParser.AddCheckersToDefinition<
 			GenericDefinition,
-			readonly [DDP.CheckerRefineImplementation<DDP.Output<this>>]
+			readonly [DDataParser.CheckerRefineImplementation<DDataParser.Output<this>>]
 		>
 	>;
 
-	/** Set a mime type constraint on the parsed file. */
-	mimeType(value: string | AnyTuple<string> | RegExp): DataParserFileExtended<GenericDefinition>;
+	/**
+	 * {@include dataParserExtended/file/size/index.md}
+	 */
+	public size(
+		input: dataParsers.DataParserCheckerFileSizeInput,
+		definition?: Partial<
+			Omit<dataParsers.DataParserCheckerDefinitionFileSize, "min" | "max">
+		>,
+	): DataParserFileExtended<
+			DDataParser.AddCheckersToDefinition<
+				GenericDefinition,
+				readonly [dataParsers.DataParserCheckerFileSize]
+			>
+		> {
+		return this.addChecker(dataParsers.checkerFileSize(input, definition));
+	}
 
 	/**
-	 * Set the minimum file size.
-	 * This check requires async validation through `asyncParse`.
+	 * {@include dataParserExtended/file/exist/index.md}
 	 */
-	minSize(value: number | BytesInString): DataParserFileExtended<GenericDefinition>;
+	public exist(
+		definition?: Partial<dataParsers.DataParserCheckerDefinitionFileExist>,
+	): DataParserFileExtended<
+			DDataParser.AddCheckersToDefinition<
+				GenericDefinition,
+				readonly [dataParsers.DataParserCheckerFileExist]
+			>
+		> {
+		return this.addChecker(dataParsers.checkerFileExist(definition));
+	}
 
 	/**
-	 * Set the maximum file size.
-	 * This check requires async validation through `asyncParse`.
+	 * {@include dataParserExtended/file/mimeType/index.md}
 	 */
-	maxSize(value: number | BytesInString): DataParserFileExtended<GenericDefinition>;
+	public mimeType(
+		mimeType: RegExp,
+		definition?: Partial<
+			Omit<dataParsers.DataParserCheckerDefinitionFileMimeType, "mimeType">
+		>,
+	): DataParserFileExtended<
+			DDataParser.AddCheckersToDefinition<
+				GenericDefinition,
+				readonly [dataParsers.DataParserCheckerFileMimeType]
+			>
+		> {
+		return this.addChecker(dataParsers.checkerFileMimeType(mimeType, definition));
+	}
 
 	/**
-	 * Require the file to exist.
-	 * This check requires async validation through `asyncParse`.
+	 * {@include dataParserExtended/file/index.md}
 	 */
-	mustExist(): DataParserFileExtended<GenericDefinition>;
-}
-
-/**
- * {@include dataParserExtended/file/index.md}
- */
-export function file<
-	const GenericDefinition extends Omit<
-		Partial<dataParsers.DataParserDefinitionFile>,
-		"mimeType" | "minSize" | "maxSize"
-	> = never,
->(
-	params?: dataParsers.DataParserFileParams,
-	definition?: GenericDefinition,
-): DataParserFileExtended<
-		DDP.MergeDefinition<
-			dataParsers.DataParserDefinitionFile,
-			NeverCoalescing<GenericDefinition, {}>
-		>
-	> {
-	const self = DDP.dataParserBaseExtendedInit<
-		dataParsers.DataParserFile,
-		DataParserFileExtended
+	public static override create<
+		const GenericDefinition extends DDataParser.PrepareDataParserDefinition<
+			dataParsers.DataParserDefinitionFile
+		> = never,
 	>(
-		dataParsers.file(params, definition),
-		{
-			mimeType(self, value) {
-				return file(
-					{
-						mimeType: value,
-						minSize: self.definition.minSize,
-						maxSize: self.definition.maxSize,
-						checkExist: self.definition.checkExist,
-					},
-					{
-						checkers: self.definition.checkers,
-						errorMessage: self.definition.errorMessage,
-						coerce: self.definition.coerce,
-					},
-				);
-			},
-			minSize(self, value) {
-				return file(
-					{
-						mimeType: self.definition.mimeType,
-						minSize: value,
-						maxSize: self.definition.maxSize,
-						checkExist: self.definition.checkExist,
-					},
-					{
-						checkers: self.definition.checkers,
-						errorMessage: self.definition.errorMessage,
-						coerce: self.definition.coerce,
-					},
-				);
-			},
-			maxSize(self, value) {
-				return file(
-					{
-						mimeType: self.definition.mimeType,
-						minSize: self.definition.minSize,
-						maxSize: value,
-						checkExist: self.definition.checkExist,
-					},
-					{
-						checkers: self.definition.checkers,
-						errorMessage: self.definition.errorMessage,
-						coerce: self.definition.coerce,
-					},
-				);
-			},
-			mustExist(self) {
-				return file(
-					{
-						mimeType: self.definition.mimeType,
-						minSize: self.definition.minSize,
-						maxSize: self.definition.maxSize,
-						checkExist: true,
-					},
-					{
-						checkers: self.definition.checkers,
-						errorMessage: self.definition.errorMessage,
-						coerce: self.definition.coerce,
-					},
-				);
-			},
-		},
-		file.overrideHandler,
-	);
-
-	return self as never;
+		definition?: FixDeepFunctionInfer<
+			DDataParser.PrepareDataParserDefinition<dataParsers.DataParserDefinitionFile>,
+			GenericDefinition
+		>,
+	): DataParserFileExtended<
+			DDataParser.MergeDefinition<
+				dataParsers.DataParserDefinitionFile,
+				NeverCoalescing<GenericDefinition, {}>
+			>
+		> {
+		return new DataParserFileExtended(this.prepareDefinition(definition)) as never;
+	}
 }
 
-file.overrideHandler = createOverride<DataParserFileExtended>("@duplojs/utils/data-parser-extended/bigint");
+export const file = detachObjectMethod(DataParserFileExtended, "create");

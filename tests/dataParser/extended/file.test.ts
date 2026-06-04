@@ -1,99 +1,100 @@
-import { type ExpectType, type DP, E, pipe, stringToBytes, unwrap } from "@duplojs/utils";
-import { DServerDataParser, DServerFile } from "@scripts";
+import { type DP, E, type ExpectType, pipe } from "@duplojs/utils";
+import { DServerDataParser, DServerFile, TESTImplementation, setEnvironment } from "@scripts";
 import type { FileInterface } from "@scripts/file";
 
 describe("dataParser.extended.file", () => {
 	afterEach(() => {
-		vi.clearAllMocks();
-		vi.restoreAllMocks();
+		TESTImplementation.clear();
 	});
 
-	it("builds extended file parser", async() => {
-		const schema = DServerDataParser.extended.file().mustExist();
+	it("creates an extended file parser with expected input and output types", () => {
+		const parser = DServerDataParser.extended.file();
 		const file = DServerFile.createFileInterface("/tmp/demo.txt");
-		vi.spyOn(file, "stat").mockResolvedValue(E.success({
-			isFile: true,
-			sizeBytes: 2,
-		} as any));
 
-		type _CheckOut = ExpectType<
-			DP.Output<typeof schema>,
+		type _CheckInput = ExpectType<
+			DP.Input<typeof parser>,
+			FileInterface,
+			"strict"
+		>;
+		type _CheckOutput = ExpectType<
+			DP.Output<typeof parser>,
 			FileInterface,
 			"strict"
 		>;
 
-		expect(schema.isAsynchronous()).toBe(true);
-		const result = await schema.asyncParse(file);
-		expect(E.isRight(result)).toBe(true);
-		expect(unwrap(result)).toBe(file);
+		expect(parser.parse(file)).toStrictEqual(E.success(file));
+		expect(parser.isAsynchronous()).toBe(false);
 	});
 
-	it("mimeType helper overrides mimeType and keeps base definition", () => {
-		const schema = DServerDataParser.extended.file(
-			{
-				minSize: "1kb",
-				maxSize: "3kb",
-			},
-			{
-				coerce: true,
-				errorMessage: "bad-file",
-			},
-		);
-		const next = schema.mimeType("text/plain");
+	it("adds a mime type checker with the mimeType helper", () => {
+		const parser = DServerDataParser.extended.file()
+			.mimeType(/^text\/plain$/);
 
-		expect(next.definition.coerce).toBe(true);
-		expect(next.definition.errorMessage).toBe("bad-file");
-		expect(next.definition.minSize).toBe(stringToBytes("1kb"));
-		expect(next.definition.maxSize).toBe(stringToBytes("3kb"));
-		expect(next.definition.mimeType?.test("text/plain")).toBe(true);
-		expect(next.definition.mimeType?.test("application/json")).toBe(false);
+		type _CheckChecker = ExpectType<
+			typeof parser.definition.checkers,
+			readonly [DServerDataParser.DataParserCheckerFileMimeType],
+			"strict"
+		>;
+
+		expect(parser.parse(
+			DServerFile.createFileInterface("/tmp/demo.txt"),
+		)).toStrictEqual(E.success(expect.any(Object)));
+		expect(E.isLeft(parser.parse(
+			DServerFile.createFileInterface("/tmp/demo.json"),
+		))).toBe(true);
 	});
 
-	it("minSize helper overrides minSize and keeps previous constraints", () => {
-		const mimeType = /^application\/json$/;
-		const schema = DServerDataParser.extended.file({
-			mimeType,
-			maxSize: "5kb",
-		});
-		const next = schema.minSize("2kb");
-
-		expect(next.definition.mimeType).toBe(mimeType);
-		expect(next.definition.minSize).toBe(stringToBytes("2kb"));
-		expect(next.definition.maxSize).toBe(stringToBytes("5kb"));
-	});
-
-	it("maxSize helper overrides maxSize and keeps previous constraints", () => {
-		const mimeType = /^text\/plain$/;
-		const schema = DServerDataParser.extended.file({
-			mimeType,
-			minSize: "1kb",
-		});
-		const next = schema.maxSize("4kb");
-
-		expect(next.definition.mimeType).toBe(mimeType);
-		expect(next.definition.minSize).toBe(stringToBytes("1kb"));
-		expect(next.definition.maxSize).toBe(stringToBytes("4kb"));
-	});
-
-	it("works in pipe with chained helpers", async() => {
-		const schema = pipe(
-			{
-				mimeType: "application/json",
-				minSize: 1,
-			},
-			DServerDataParser.extended.file,
-		).maxSize(20);
-		const file = DServerFile.createFileInterface(
-			"/tmp/demo.json",
-		);
-		vi.spyOn(file, "stat").mockResolvedValue(E.success({
+	it("adds an asynchronous existence checker with the exist helper", async() => {
+		setEnvironment("TEST");
+		TESTImplementation.set("stat", vi.fn().mockResolvedValue(E.success({
 			isFile: true,
-			sizeBytes: 10,
-		} as any));
+		} as never)));
+		const parser = DServerDataParser.extended.file().exist();
+		const file = DServerFile.createFileInterface("/tmp/demo.txt");
 
-		const result = await schema.asyncParse(file);
+		expect(parser.isAsynchronous()).toBe(true);
+		expect(await parser.asyncParse(file)).toStrictEqual(E.success(file));
+	});
 
-		expect(E.isRight(result)).toBe(true);
-		expect(unwrap(result)).toBe(file);
+	it("adds an asynchronous size checker with the size helper", async() => {
+		setEnvironment("TEST");
+		TESTImplementation.set("stat", vi.fn().mockResolvedValue(E.success({
+			isFile: true,
+			sizeBytes: 5,
+		} as never)));
+		const parser = DServerDataParser.extended.file()
+			.size({
+				min: 1,
+				max: 10,
+			});
+		const file = DServerFile.createFileInterface("/tmp/demo.txt");
+
+		expect(parser.isAsynchronous()).toBe(true);
+		expect(await parser.asyncParse(file)).toStrictEqual(E.success(file));
+	});
+
+	it("chains file helpers and works in pipe", async() => {
+		setEnvironment("TEST");
+		TESTImplementation.set("stat", vi.fn().mockResolvedValue(E.success({
+			isFile: true,
+			sizeBytes: 5,
+		} as never)));
+		const parser = pipe(
+			{ errorMessage: "invalid-file" },
+			DServerDataParser.extended.file,
+		)
+			.mimeType(/^application\/json$/)
+			.size({ max: 10 })
+			.exist();
+		const file = DServerFile.createFileInterface("/tmp/demo.json");
+
+		type _CheckOutput = ExpectType<
+			DP.Output<typeof parser>,
+			FileInterface,
+			"strict"
+		>;
+
+		expect(parser.definition.checkers).toHaveLength(3);
+		expect(await parser.asyncParse(file)).toStrictEqual(E.success(file));
 	});
 });
