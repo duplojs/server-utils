@@ -5,7 +5,6 @@ import type { FileInterface } from "@scripts/file";
 
 describe("dataParser.extended.coerce.file", () => {
 	afterEach(() => {
-		setEnvironment("NODE");
 		TESTImplementation.clear();
 		vi.restoreAllMocks();
 	});

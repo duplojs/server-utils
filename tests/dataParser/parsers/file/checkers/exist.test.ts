@@ -4,7 +4,6 @@ import type { FileInterface } from "@scripts/file";
 
 describe("dataParser.checkerFileExist", () => {
 	afterEach(() => {
-		setEnvironment("NODE");
 		TESTImplementation.clear();
 	});
 

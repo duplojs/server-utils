@@ -4,7 +4,6 @@ import type { FileInterface } from "@scripts/file";
 
 describe("dataParser.checkerFileSize", () => {
 	afterEach(() => {
-		setEnvironment("NODE");
 		TESTImplementation.clear();
 	});
 
