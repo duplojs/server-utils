@@ -1,4 +1,4 @@
-import { detachObjectMethod, type FixDeepFunctionInfer, type NeverCoalescing } from "@duplojs/utils";
+import { type AnyTuple, detachObjectMethod, type FixDeepFunctionInfer, type NeverCoalescing } from "@duplojs/utils";
 import * as DDataParser from "@duplojs/utils/dataParser";
 import * as dataParsers from "../parsers";
 
@@ -80,7 +80,7 @@ export class DataParserFileExtended<
 	 * {@include dataParserExtended/file/mimeType/index.md}
 	 */
 	public mimeType(
-		mimeType: RegExp,
+		mimeType: RegExp | string | AnyTuple<string>,
 		definition?: Partial<
 			Omit<dataParsers.DataParserCheckerDefinitionFileMimeType, "mimeType">
 		>,
