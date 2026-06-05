@@ -8,12 +8,12 @@ imageParser.parse(
 );
 
 const documentParser = SDP.file({
-	checkers: [SDP.checkerFileMimeType(/^(?:application\/pdf|text\/plain)$/)],
+	checkers: [SDP.checkerFileMimeType(["application/pdf", "text/plain"])],
 });
 documentParser.parse(
 	SF.createFileInterface("/path/document.pdf"),
 );
 
 SDP.file()
-	.addChecker(SDP.checkerFileMimeType(/^application\/json$/))
+	.addChecker(SDP.checkerFileMimeType("application/json"))
 	.parse(SF.createFileInterface("/path/config.json"));

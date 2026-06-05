@@ -1,3 +1,4 @@
+import { type BytesInString } from "@duplojs/utils";
 import * as DDataParser from "@duplojs/utils/dataParser";
 import type * as DServerFile from "../../../../file";
 export interface DataParserCheckerDefinitionFileSize extends DDataParser.DataParserCheckerDefinition {
@@ -5,8 +6,8 @@ export interface DataParserCheckerDefinitionFileSize extends DDataParser.DataPar
     max?: number;
 }
 export interface DataParserCheckerFileSizeInput {
-    min?: number;
-    max?: number;
+    min?: number | BytesInString;
+    max?: number | BytesInString;
 }
 export declare const checkerFileSizeKind: import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtilsDataParser/checker-file-size", unknown>>;
 declare const DataParserCheckerFileSize_base: DDataParser.DataParserCheckerBaseInit<import("@duplojs/utils").KindHandler<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtilsDataParser/checker-file-size", unknown>>>;
@@ -17,11 +18,11 @@ export declare class DataParserCheckerFileSize extends DataParserCheckerFileSize
     /**
      * Creates a checker that validates the size of an existing file.
      * 
-     * The checker reads the file statistics and enforces optional minimum and maximum sizes expressed in bytes.
+     * The checker reads the file statistics and enforces optional minimum and maximum sizes. Limits can be expressed as bytes with numbers or as byte strings such as `"10kb"`, `"2mb"`, or `"1.5gb"`.
      * 
      * ```ts
      * const maximumSizeParser = SDP.file({
-     * 	checkers: [SDP.checkerFileSize({ max: 2_000_000 })],
+     * 	checkers: [SDP.checkerFileSize({ max: "2mb" })],
      * });
      * await maximumSizeParser.asyncParse(
      * 	SF.createFileInterface("/path/picture.png"),
@@ -30,8 +31,8 @@ export declare class DataParserCheckerFileSize extends DataParserCheckerFileSize
      * const rangedSizeParser = SDP.file({
      * 	checkers: [
      * 		SDP.checkerFileSize({
-     * 			min: 10_000,
-     * 			max: 2_000_000,
+     * 			min: "10kb",
+     * 			max: "2mb",
      * 		}),
      * 	],
      * });

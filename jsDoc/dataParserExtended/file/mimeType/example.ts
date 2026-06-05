@@ -7,13 +7,13 @@ imageParser.parse(
 );
 
 const documentParser = SDPE.file()
-	.mimeType(/^(?:application\/pdf|text\/plain)$/);
+	.mimeType(["application/pdf", "text/plain"]);
 documentParser.parse(
 	SF.createFileInterface("/path/document.pdf"),
 );
 
 const existingJsonParser = SDPE.file()
-	.mimeType(/^application\/json$/)
+	.mimeType("application/json")
 	.exist();
 await existingJsonParser.asyncParse(
 	SF.createFileInterface("/path/config.json"),

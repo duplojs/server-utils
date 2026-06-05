@@ -59,7 +59,8 @@ class DataParserCheckerFileSize extends DDP__namespace.DataParserCheckerBase.ini
     static create(input, definition = {}) {
         return new DataParserCheckerFileSize({
             ...definition,
-            ...input,
+            min: input.min && utils.stringToBytes(input.min),
+            max: input.max && utils.stringToBytes(input.max),
         });
     }
 }

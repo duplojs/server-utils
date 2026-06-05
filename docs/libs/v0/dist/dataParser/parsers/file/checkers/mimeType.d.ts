@@ -1,3 +1,4 @@
+import { type AnyTuple } from "@duplojs/utils";
 import * as DDataParser from "@duplojs/utils/dataParser";
 import type * as DServerFile from "../../../../file";
 export interface DataParserCheckerDefinitionFileMimeType extends DDataParser.DataParserCheckerDefinition {
@@ -12,7 +13,7 @@ export declare class DataParserCheckerFileMimeType extends DataParserCheckerFile
     /**
      * Creates a checker that validates a file MIME type.
      * 
-     * The checker tests the MIME type inferred from the file extension against the provided regular expression.
+     * The checker tests the MIME type inferred from the file extension against the provided input. A regular expression is used as-is, while a string or string tuple is converted to an exact-match regular expression.
      * 
      * ```ts
      * const imageParser = SDP.file({
@@ -23,25 +24,25 @@ export declare class DataParserCheckerFileMimeType extends DataParserCheckerFile
      * );
      * 
      * const documentParser = SDP.file({
-     * 	checkers: [SDP.checkerFileMimeType(/^(?:application\/pdf|text\/plain)$/)],
+     * 	checkers: [SDP.checkerFileMimeType(["application/pdf", "text/plain"])],
      * });
      * documentParser.parse(
      * 	SF.createFileInterface("/path/document.pdf"),
      * );
      * 
      * SDP.file()
-     * 	.addChecker(SDP.checkerFileMimeType(/^application\/json$/))
+     * 	.addChecker(SDP.checkerFileMimeType("application/json"))
      * 	.parse(SF.createFileInterface("/path/config.json"));
      * ```
      * 
      * @remarks
-     * When no MIME type can be inferred, the regular expression is tested against an empty string.
+     * String inputs are useful for strict MIME-type checks, and tuple inputs allow several strict values without writing an alternation regex. When no MIME type can be inferred, the resolved regular expression is tested against an empty string.
      * 
      * @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
      * @namespace SDP
      * 
      */
-    static create(mimeType: RegExp, definition?: Partial<Omit<DataParserCheckerDefinitionFileMimeType, "mimeType">>): DataParserCheckerFileMimeType;
+    static create(mimeType: RegExp | string | AnyTuple<string>, definition?: Partial<Omit<DataParserCheckerDefinitionFileMimeType, "mimeType">>): DataParserCheckerFileMimeType;
 }
 export declare const checkerFileMimeType: typeof DataParserCheckerFileMimeType.create;
 export {};

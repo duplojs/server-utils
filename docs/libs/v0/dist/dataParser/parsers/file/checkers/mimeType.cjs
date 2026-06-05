@@ -47,7 +47,7 @@ class DataParserCheckerFileMimeType extends DDP__namespace.DataParserCheckerBase
     static create(mimeType, definition = {}) {
         return new DataParserCheckerFileMimeType({
             ...definition,
-            mimeType,
+            mimeType: utils.toRegExp(mimeType),
         });
     }
 }

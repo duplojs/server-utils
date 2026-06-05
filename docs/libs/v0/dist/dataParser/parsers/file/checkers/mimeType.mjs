@@ -1,4 +1,4 @@
-import { detachObjectMethod } from '@duplojs/utils';
+import { detachObjectMethod, toRegExp } from '@duplojs/utils';
 import * as DDP from '@duplojs/utils/dataParser';
 import { createDataParserKind } from '../../../kind.mjs';
 
@@ -26,7 +26,7 @@ class DataParserCheckerFileMimeType extends DDP.DataParserCheckerBase.init(check
     static create(mimeType, definition = {}) {
         return new DataParserCheckerFileMimeType({
             ...definition,
-            mimeType,
+            mimeType: toRegExp(mimeType),
         });
     }
 }

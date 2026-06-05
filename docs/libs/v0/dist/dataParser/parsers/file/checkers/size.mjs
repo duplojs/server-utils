@@ -1,4 +1,4 @@
-import { detachObjectMethod, callThen, unwrap } from '@duplojs/utils';
+import { detachObjectMethod, callThen, unwrap, stringToBytes } from '@duplojs/utils';
 import * as DDP from '@duplojs/utils/dataParser';
 import * as EE from '@duplojs/utils/either';
 import { createDataParserKind } from '../../../kind.mjs';
@@ -37,7 +37,8 @@ class DataParserCheckerFileSize extends DDP.DataParserCheckerBase.init(checkerFi
     static create(input, definition = {}) {
         return new DataParserCheckerFileSize({
             ...definition,
-            ...input,
+            min: input.min && stringToBytes(input.min),
+            max: input.max && stringToBytes(input.max),
         });
     }
 }

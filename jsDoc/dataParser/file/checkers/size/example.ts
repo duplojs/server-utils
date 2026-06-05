@@ -1,7 +1,7 @@
 import { SDP, SF } from "@scripts";
 
 const maximumSizeParser = SDP.file({
-	checkers: [SDP.checkerFileSize({ max: 2_000_000 })],
+	checkers: [SDP.checkerFileSize({ max: "2mb" })],
 });
 await maximumSizeParser.asyncParse(
 	SF.createFileInterface("/path/picture.png"),
@@ -10,8 +10,8 @@ await maximumSizeParser.asyncParse(
 const rangedSizeParser = SDP.file({
 	checkers: [
 		SDP.checkerFileSize({
-			min: 10_000,
-			max: 2_000_000,
+			min: "10kb",
+			max: "2mb",
 		}),
 	],
 });

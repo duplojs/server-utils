@@ -1,6 +1,6 @@
 Creates a checker that validates the size of an existing file.
 
-The checker reads the file statistics and enforces optional minimum and maximum sizes expressed in bytes.
+The checker reads the file statistics and enforces optional minimum and maximum sizes. Limits can be expressed as bytes with numbers or as byte strings such as `"10kb"`, `"2mb"`, or `"1.5gb"`.
 
 ```ts
 {@include dataParser/file/checkers/size/example.ts[3,24]}

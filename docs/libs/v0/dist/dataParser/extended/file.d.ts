@@ -1,4 +1,4 @@
-import { type FixDeepFunctionInfer, type NeverCoalescing } from "@duplojs/utils";
+import { type AnyTuple, type FixDeepFunctionInfer, type NeverCoalescing } from "@duplojs/utils";
 import * as DDataParser from "@duplojs/utils/dataParser";
 import * as dataParsers from "../parsers";
 declare const DataParserFileExtended_base: DDataParser.DataParserExtendedBaseInit<typeof dataParsers.DataParserFile>;
@@ -15,19 +15,19 @@ export declare class DataParserFileExtended<GenericDefinition extends dataParser
     /**
      * Adds a file-size checker to an extended file parser.
      * 
-     * The method returns a new parser that enforces optional minimum and maximum sizes expressed in bytes.
+     * The method returns a new parser that enforces optional minimum and maximum sizes. Limits can be expressed as bytes with numbers or as byte strings such as `"10kb"`, `"2mb"`, or `"1.5gb"`.
      * 
      * ```ts
      * const maximumSizeParser = SDPE.file()
-     * 	.size({ max: 2_000_000 });
+     * 	.size({ max: "2mb" });
      * await maximumSizeParser.asyncParse(
      * 	SF.createFileInterface("/path/picture.png"),
      * );
      * 
      * const rangedSizeParser = SDPE.file()
      * 	.size({
-     * 		min: 10_000,
-     * 		max: 2_000_000,
+     * 		min: "10kb",
+     * 		max: "2mb",
      * 	});
      * await rangedSizeParser.asyncParse(
      * 	SF.createFileInterface("/path/archive.zip"),
@@ -79,7 +79,7 @@ export declare class DataParserFileExtended<GenericDefinition extends dataParser
     /**
      * Adds a MIME-type checker to an extended file parser.
      * 
-     * The method returns a new parser that tests the MIME type inferred from the file extension against the provided regular expression.
+     * The method returns a new parser that tests the MIME type inferred from the file extension against the provided input. A regular expression is used as-is, while a string or string tuple is converted to an exact-match regular expression.
      * 
      * ```ts
      * const imageParser = SDPE.file()
@@ -89,13 +89,13 @@ export declare class DataParserFileExtended<GenericDefinition extends dataParser
      * );
      * 
      * const documentParser = SDPE.file()
-     * 	.mimeType(/^(?:application\/pdf|text\/plain)$/);
+     * 	.mimeType(["application/pdf", "text/plain"]);
      * documentParser.parse(
      * 	SF.createFileInterface("/path/document.pdf"),
      * );
      * 
      * const existingJsonParser = SDPE.file()
-     * 	.mimeType(/^application\/json$/)
+     * 	.mimeType("application/json")
      * 	.exist();
      * await existingJsonParser.asyncParse(
      * 	SF.createFileInterface("/path/config.json"),
@@ -103,13 +103,13 @@ export declare class DataParserFileExtended<GenericDefinition extends dataParser
      * ```
      * 
      * @remarks
-     * When no MIME type can be inferred, the regular expression is tested against an empty string.
+     * String inputs are useful for strict MIME-type checks, and tuple inputs allow several strict values without writing an alternation regex. When no MIME type can be inferred, the resolved regular expression is tested against an empty string.
      * 
      * @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
      * @namespace SDPE
      * 
      */
-    mimeType(mimeType: RegExp, definition?: Partial<Omit<dataParsers.DataParserCheckerDefinitionFileMimeType, "mimeType">>): DataParserFileExtended<DDataParser.AddCheckersToDefinition<GenericDefinition, readonly [dataParsers.DataParserCheckerFileMimeType]>>;
+    mimeType(mimeType: RegExp | string | AnyTuple<string>, definition?: Partial<Omit<dataParsers.DataParserCheckerDefinitionFileMimeType, "mimeType">>): DataParserFileExtended<DDataParser.AddCheckersToDefinition<GenericDefinition, readonly [dataParsers.DataParserCheckerFileMimeType]>>;
     /**
      * Creates an extended data parser for `FileInterface` values.
      * 
