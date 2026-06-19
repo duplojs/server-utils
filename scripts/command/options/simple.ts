@@ -57,6 +57,7 @@ export function createOption<
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
+		required?: boolean;
 	},
 ): SimpleOption<GenericName, GenericOutput | undefined>;
 
@@ -66,7 +67,7 @@ export function createOption(
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
-		required?: true;
+		required?: boolean;
 	},
 ): any {
 	const dataParser = specToDataParser(spec);

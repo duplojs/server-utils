@@ -76,6 +76,7 @@ export function createArrayOption<
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
+		required?: boolean;
 		min?: GenericMinValues;
 		max?: number;
 		separator?: string;
@@ -98,7 +99,7 @@ export function createArrayOption(
 	params?: {
 		description?: string;
 		aliases?: readonly string[];
-		required?: true;
+		required?: boolean;
 		min?: number;
 		max?: number;
 		separator?: string;

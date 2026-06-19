@@ -66,5 +66,6 @@ export declare function createOption<GenericName extends string, GenericSpec ext
 export declare function createOption<GenericName extends string, GenericSpec extends EligibleSpec, GenericOutput extends ComputeOptionSpec<GenericSpec> = ComputeOptionSpec<GenericSpec>>(name: GenericName, spec: GenericSpec, params?: {
     description?: string;
     aliases?: readonly string[];
+    required?: boolean;
 }): SimpleOption<GenericName, GenericOutput | undefined>;
 export {};

@@ -77,6 +77,7 @@ export declare function createArrayOption<GenericName extends string, GenericSpe
 export declare function createArrayOption<GenericName extends string, GenericSpec extends EligibleSpec, GenericMinValues extends number>(name: GenericName, spec: GenericSpec, params?: {
     description?: string;
     aliases?: readonly string[];
+    required?: boolean;
     min?: GenericMinValues;
     max?: number;
     separator?: string;

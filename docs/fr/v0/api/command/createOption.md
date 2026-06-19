@@ -47,6 +47,7 @@ function createOption<
   params?: {
     description?: string
     aliases?: readonly string[]
+    required?: boolean
   }
 ): Option<GenericName, GenericOutput | undefined>
 ```
@@ -56,7 +57,7 @@ function createOption<
 - `name` (`string`) : nom de l'option utilisé comme `--name`.
 - `spec` (`EligibleSpec`) : parseur ou spec clean utilisée pour valider/transformer la valeur.
 - `params` (optionnel) : métadonnées d'option et comportement d'obligation.
-- `params.required` (`true`, optionnel) : déclenche une erreur si l'option est absente.
+- `params.required` (`boolean`, optionnel) : déclenche une erreur si l'option est absente quand sa valeur est `true`.
 - `params.description` (`string`, optionnel) : description dans le help.
 - `params.aliases` (`string[]`, optionnel) : alias courts.
 

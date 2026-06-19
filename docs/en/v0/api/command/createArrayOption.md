@@ -56,6 +56,7 @@ function createArrayOption<
   params?: {
     description?: string
     aliases?: readonly string[]
+    required?: boolean
     min?: GenericMinValues
     max?: number
     separator?: string
@@ -75,7 +76,7 @@ function createArrayOption<
 - `name` (`string`) : option name used as `--name`.
 - `spec` (`EligibleSpec`) : parser or clean spec for each array element.
 - `params` (optional) : option metadata and array constraints.
-- `params.required` (`true`, optional) : throws when option is missing.
+- `params.required` (`boolean`, optional) : throws when option is missing if its value is `true`.
 - `params.min` (`number`, optional) : minimum number of values.
 - `params.max` (`number`, optional) : maximum number of values.
 - `params.separator` (`string`, default `","`) : input separator.

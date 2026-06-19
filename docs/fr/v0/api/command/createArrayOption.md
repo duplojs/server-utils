@@ -56,6 +56,7 @@ function createArrayOption<
   params?: {
     description?: string
     aliases?: readonly string[]
+    required?: boolean
     min?: GenericMinValues
     max?: number
     separator?: string
@@ -75,7 +76,7 @@ function createArrayOption<
 - `name` (`string`) : nom de l'option utilisé comme `--name`.
 - `spec` (`EligibleSpec`) : parseur ou spec clean pour chaque élément du tableau.
 - `params` (optionnel) : métadonnées et contraintes de tableau.
-- `params.required` (`true`, optionnel) : déclenche une erreur si l'option est absente.
+- `params.required` (`boolean`, optionnel) : déclenche une erreur si l'option est absente quand sa valeur est `true`.
 - `params.min` (`number`, optionnel) : nombre minimal de valeurs.
 - `params.max` (`number`, optionnel) : nombre maximal de valeurs.
 - `params.separator` (`string`, par défaut `","`) : séparateur d'entrée.
