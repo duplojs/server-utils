@@ -27,7 +27,7 @@ export class DataParserCheckerFileExist extends DDataParser.DataParserCheckerBas
 		error: DDataParser.DataParserError,
 		self: DataParserCheckerFileExist,
 		dataParser: DDataParser.DataParser,
-	) {
+	): unknown {
 		return callThen(
 			value.stat(),
 			(fileStatResult) => {
@@ -37,6 +37,7 @@ export class DataParserCheckerFileExist extends DDataParser.DataParserCheckerBas
 						"existing file",
 						value,
 						self.definition.errorMessage ?? dataParser.definition.errorMessage,
+						self,
 					);
 				}
 
@@ -48,6 +49,7 @@ export class DataParserCheckerFileExist extends DDataParser.DataParserCheckerBas
 						"file",
 						value,
 						self.definition.errorMessage ?? dataParser.definition.errorMessage,
+						self,
 					);
 				}
 

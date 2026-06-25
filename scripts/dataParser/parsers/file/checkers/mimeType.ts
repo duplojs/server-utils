@@ -28,7 +28,7 @@ export class DataParserCheckerFileMimeType extends DDataParser.DataParserChecker
 		error: DDataParser.DataParserError,
 		self: DataParserCheckerFileMimeType,
 		dataParser: DDataParser.DataParser,
-	) {
+	): unknown {
 		if (
 			self.definition.mimeType
 			&& !self
@@ -41,6 +41,7 @@ export class DataParserCheckerFileMimeType extends DDataParser.DataParserChecker
 				`file with mime type matching ${self.definition.mimeType.source}`,
 				value,
 				self.definition.errorMessage ?? dataParser.definition.errorMessage,
+				self,
 			);
 		}
 

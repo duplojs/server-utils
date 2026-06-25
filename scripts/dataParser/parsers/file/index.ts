@@ -52,7 +52,7 @@ export class DataParserFile<
 		self: DataParserFile,
 		data: unknown,
 		error: DDataParser.DataParserError,
-	) {
+	): unknown {
 		let fileInterface = data;
 
 		if (self.definition.coerce && typeof fileInterface === "string") {
@@ -65,6 +65,7 @@ export class DataParserFile<
 				"file",
 				data,
 				self.definition.errorMessage,
+				self,
 			);
 		}
 

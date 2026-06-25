@@ -1,4 +1,4 @@
-import { asyncPipe, pipe } from "@duplojs/utils";
+import { pipe } from "@duplojs/utils";
 import * as EE from "@duplojs/utils/either";
 import { implementFunction, nodeFileSystem } from "@scripts/implementor";
 import type { FileSystemLeft } from "./types";
@@ -33,21 +33,20 @@ export const writeJsonFile = implementFunction(
 						params?.space,
 					),
 				),
-				EE.whenIsRight(
-					(value) => fs.writeFile(
-						path,
-						value,
-						{ encoding: "utf-8" },
-					)
+				EE.matchInformation({
+					"safe-callback-error": (value) => EE.left("file-system-write-json-file", value),
+					"safe-callback-success": (value) => fs
+						.writeFile(
+							path,
+							value,
+							{ encoding: "utf-8" },
+						)
 						.then(EE.ok)
 						.catch((value) => EE.left("file-system-write-json-file", value)),
-				),
-				EE.whenIsLeft(
-					(value) => EE.left("file-system-write-json-file", value),
-				),
+				}),
 			);
 		},
-		DENO: (path, data, params) => asyncPipe(
+		DENO: async(path, data, params) => pipe(
 			EE.safeCallback(
 				() => JSON.stringify(
 					data,
@@ -55,19 +54,18 @@ export const writeJsonFile = implementFunction(
 					params?.space,
 				),
 			),
-			EE.whenIsRight(
-				(value) => Deno.writeTextFile(
-					path,
-					value,
-				)
+			EE.matchInformation({
+				"safe-callback-error": (value) => EE.left("file-system-write-json-file", value),
+				"safe-callback-success": (value) => Deno
+					.writeTextFile(
+						path,
+						value,
+					)
 					.then(EE.ok)
 					.catch((value) => EE.left("file-system-write-json-file", value)),
-			),
-			EE.whenIsLeft(
-				(value) => EE.left("file-system-write-json-file", value),
-			),
+			}),
 		),
-		BUN: (path, data, params) => asyncPipe(
+		BUN: async(path, data, params) => pipe(
 			EE.safeCallback(
 				() => JSON.stringify(
 					data,
@@ -75,15 +73,13 @@ export const writeJsonFile = implementFunction(
 					params?.space,
 				),
 			),
-			EE.whenIsRight(
-				(value) => Bun.file(path)
+			EE.matchInformation({
+				"safe-callback-error": (value) => EE.left("file-system-write-json-file", value),
+				"safe-callback-success": (value) => Bun.file(path)
 					.write(value)
 					.then(EE.ok)
 					.catch((value) => EE.left("file-system-write-json-file", value)),
-			),
-			EE.whenIsLeft(
-				(value) => EE.left("file-system-write-json-file", value),
-			),
+			}),
 		),
 	},
 );

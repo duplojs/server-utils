@@ -35,7 +35,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 		error: DDataParser.DataParserError,
 		self: DataParserCheckerFileSize,
 		dataParser: DDataParser.DataParser,
-	) {
+	): unknown {
 		return callThen(
 			value.stat(),
 			(fileStatResult) => {
@@ -45,6 +45,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						"existing file",
 						value,
 						self.definition.errorMessage ?? dataParser.definition.errorMessage,
+						self,
 					);
 				}
 
@@ -56,6 +57,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						"file",
 						value,
 						self.definition.errorMessage ?? dataParser.definition.errorMessage,
+						self,
 					);
 				}
 
@@ -68,6 +70,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						`file with sizeBytes <= ${self.definition.max}`,
 						fileStat.sizeBytes,
 						self.definition.errorMessage ?? dataParser.definition.errorMessage,
+						self,
 					);
 				}
 
@@ -80,6 +83,7 @@ export class DataParserCheckerFileSize extends DDataParser.DataParserCheckerBase
 						`file with sizeBytes >= ${self.definition.min}`,
 						fileStat.sizeBytes,
 						self.definition.errorMessage ?? dataParser.definition.errorMessage,
+						self,
 					);
 				}
 

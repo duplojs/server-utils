@@ -99,4 +99,36 @@ describe("writeJsonFile", () => {
 		expect(E.isLeft(result)).toBe(true);
 		expect(fs.writeFile).not.toHaveBeenCalled();
 	});
+
+	it("returns fail when JSON stringify throws in DENO env", async() => {
+		setEnvironment("DENO");
+		const spy = vi.fn();
+		setDenoMock({
+			writeTextFile: spy,
+		});
+		const circular: { self?: unknown } = {};
+		circular.self = circular;
+
+		const result = await DServerFile.writeJsonFile("/tmp/mock.json", circular);
+
+		expect(E.isLeft(result)).toBe(true);
+		expect(spy).not.toHaveBeenCalled();
+	});
+
+	it("returns fail when JSON stringify throws in BUN env", async() => {
+		setEnvironment("BUN");
+		const writeSpy = vi.fn();
+		const fileSpy = vi.fn().mockReturnValue({ write: writeSpy });
+		setBunMock({
+			file: fileSpy,
+		});
+		const circular: { self?: unknown } = {};
+		circular.self = circular;
+
+		const result = await DServerFile.writeJsonFile("/tmp/mock.json", circular);
+
+		expect(E.isLeft(result)).toBe(true);
+		expect(fileSpy).not.toHaveBeenCalled();
+		expect(writeSpy).not.toHaveBeenCalled();
+	});
 });
