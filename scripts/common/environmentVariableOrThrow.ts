@@ -3,7 +3,7 @@ import * as EE from "@duplojs/utils/either";
 import type * as DDP from "@duplojs/utils/dataParser";
 import { createDuplojsServerUtilsKind } from "@scripts/kind";
 import type * as SF from "@scripts/file";
-import { type EnvironmentVariableParams, environmentVariable } from "./environmentVariable";
+import { type EnvironmentVariableFileParams, environmentVariable } from "./environmentVariable";
 
 export class EnvironmentVariableError extends kindHeritage(
 	"environment-variable-error",
@@ -24,9 +24,9 @@ export async function environmentVariableOrThrow<
 	GenericShape extends DDP.DataParserObjectShape,
 >(
 	shape: GenericShape,
-	params?: EnvironmentVariableParams,
+	envFileParams?: EnvironmentVariableFileParams,
 ): Promise<DDP.DataParserObjectShapeOutput<GenericShape>> {
-	const result = await environmentVariable(shape, params);
+	const result = await environmentVariable(shape, envFileParams);
 
 	if (EE.isLeft(result)) {
 		throw new EnvironmentVariableError(result);

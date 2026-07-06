@@ -26,7 +26,7 @@ describe("environmentVariable", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: false,
 				justRead: false,
 			},
@@ -47,6 +47,35 @@ describe("environmentVariable", () => {
 			expect(env.APP_NAME).toBe("duplo");
 		}
 		expect(process.env.APP_NAME).toBe("duplo");
+	});
+
+	it("uses includedFiles instead of deprecated paths when both are defined", async() => {
+		setEnvironment("NODE");
+		process.env = {};
+		setFsPromisesMock({
+			readFile: vi.fn((path: string) => Promise.resolve(
+				path === "/tmp/included.env"
+					? "APP_NAME=included"
+					: "APP_NAME=deprecated",
+			)),
+		});
+
+		const result = await environmentVariable(
+			{
+				APP_NAME: DP.string(),
+			},
+			{
+				includedFiles: ["/tmp/included.env"],
+				paths: ["/tmp/deprecated.env"],
+				override: false,
+				justRead: true,
+			},
+		);
+
+		expect(E.isRight(result)).toBe(true);
+		if (E.isRight(result)) {
+			expect(unwrap(result).APP_NAME).toBe("included");
+		}
 	});
 
 	it("uses default params in NODE when params are omitted", async() => {
@@ -80,7 +109,7 @@ describe("environmentVariable", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: false,
 				justRead: true,
 			},
@@ -102,7 +131,7 @@ describe("environmentVariable", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: false,
 				justRead: false,
 			},
@@ -127,7 +156,7 @@ describe("environmentVariable", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: true,
 				justRead: false,
 			},
@@ -151,7 +180,7 @@ describe("environmentVariable", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/missing.env"],
+				includedFiles: ["/tmp/missing.env"],
 				override: false,
 				justRead: false,
 			},
@@ -171,7 +200,7 @@ describe("environmentVariable", () => {
 				PORT: DP.number(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: false,
 				justRead: false,
 			},
@@ -191,7 +220,7 @@ describe("environmentVariable", () => {
 				MESSAGE: DP.string(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: false,
 				justRead: true,
 			},
@@ -222,7 +251,7 @@ describe("environmentVariable", () => {
 				SECOND: DP.string(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: true,
 				justRead: true,
 			},
@@ -260,7 +289,7 @@ describe("environmentVariable", () => {
 				COMPOSED: DP.string(),
 			},
 			{
-				paths: ["/tmp/deno.env"],
+				includedFiles: ["/tmp/deno.env"],
 				override: false,
 				justRead: false,
 			},
@@ -335,7 +364,7 @@ describe("environmentVariable", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/deno.env"],
+				includedFiles: ["/tmp/deno.env"],
 				override: false,
 				justRead: true,
 			},
@@ -360,7 +389,7 @@ describe("environmentVariable", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/deno.env"],
+				includedFiles: ["/tmp/deno.env"],
 				override: false,
 				justRead: false,
 			},
@@ -384,7 +413,7 @@ describe("environmentVariable", () => {
 				PORT: DP.number(),
 			},
 			{
-				paths: ["/tmp/deno.env"],
+				includedFiles: ["/tmp/deno.env"],
 				override: false,
 				justRead: false,
 			},
@@ -407,7 +436,7 @@ describe("environmentVariable", () => {
 			(shape) => environmentVariable(
 				shape,
 				{
-					paths: ["/tmp/app.env"],
+					includedFiles: ["/tmp/app.env"],
 					override: false,
 					justRead: true,
 				},

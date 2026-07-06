@@ -34,8 +34,8 @@ class EnvironmentVariableError extends utils.kindHeritage("environment-variable-
 /**
  * {@include common/environmentVariableOrThrow/index.md}
  */
-async function environmentVariableOrThrow(shape, params) {
-    const result = await index.environmentVariable(shape, params);
+async function environmentVariableOrThrow(shape, envFileParams) {
+    const result = await index.environmentVariable(shape, envFileParams);
     if (EE__namespace.isLeft(result)) {
         throw new EnvironmentVariableError(result);
     }

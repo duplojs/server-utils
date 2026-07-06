@@ -48,5 +48,5 @@ export type ExecCommandParams<GenericOptions extends AnyTuple<Option> = AnyTuple
  * @namespace SC
  * 
  */
-export declare function exec(execute: () => void): Promise<never>;
-export declare function exec<const GenericOptions extends AnyTuple<Option> = never, GenericSubjects extends Subjects = never>(params: ExecCommandParams<GenericOptions, GenericSubjects>, execute: (params: CreateCommandExecuteParams<GenericOptions, Extract<GenericSubjects, AnyTuple<Argument>>>) => MaybePromise<void>): Promise<never>;
+export declare function exec(execute: () => void): Promise<void>;
+export declare function exec<const GenericOptions extends AnyTuple<Option> = never, GenericSubjects extends Subjects = never>(params: ExecCommandParams<GenericOptions, GenericSubjects>, execute: (params: CreateCommandExecuteParams<GenericOptions, Extract<GenericSubjects, AnyTuple<Argument>>>) => MaybePromise<void>): Promise<void>;

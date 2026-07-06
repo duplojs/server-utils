@@ -50,7 +50,7 @@ function environmentVariable<
 
 - `shape` (`GenericShape`) : schema used to parse and validate environment variables.
 - `params` (`EnvironmentVariableParams`, optional) : behavior options.
-- `params.paths` (`string[]`, optional) : env file paths to read.
+- `params.includedFiles` (`string[]`, optional) : env file paths to read.
 - `params.override` (`boolean`, default `false`) : allows file values to replace existing runtime values.
 - `params.justRead` (`boolean`, default `false`) : reads and validates without writing back to runtime environment variables.
 

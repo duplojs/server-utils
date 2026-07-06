@@ -9,7 +9,7 @@ declare const DataParserCheckerFileMimeType_base: DDataParser.DataParserCheckerB
 export declare class DataParserCheckerFileMimeType extends DataParserCheckerFileMimeType_base<DataParserCheckerDefinitionFileMimeType, DServerFile.FileInterface> {
     get classConstructor(): typeof DataParserCheckerFileMimeType & DDataParser.CheckedConstructorKind;
     isAsynchronous(): boolean;
-    static execCheck(value: DServerFile.FileInterface, error: DDataParser.DataParserError, self: DataParserCheckerFileMimeType, dataParser: DDataParser.DataParser): DServerFile.FileInterface | typeof DDataParser.SymbolDataParserError;
+    static execCheck(value: DServerFile.FileInterface, error: DDataParser.DataParserError, self: DataParserCheckerFileMimeType, dataParser: DDataParser.DataParser): unknown;
     /**
      * Creates a checker that validates a file MIME type.
      * 

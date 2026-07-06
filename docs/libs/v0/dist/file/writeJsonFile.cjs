@@ -29,17 +29,28 @@ var EE__namespace = /*#__PURE__*/_interopNamespaceDefault(EE);
 const writeJsonFile = implementor.implementFunction("writeJsonFile", {
     NODE: async (path, data, params) => {
         const fs = await implementor.nodeFileSystem.value;
-        return utils.pipe(EE__namespace.safeCallback(() => JSON.stringify(data, null, params?.space)), EE__namespace.whenIsRight((value) => fs.writeFile(path, value, { encoding: "utf-8" })
-            .then(EE__namespace.ok)
-            .catch((value) => EE__namespace.left("file-system-write-json-file", value))), EE__namespace.whenIsLeft((value) => EE__namespace.left("file-system-write-json-file", value)));
+        return utils.pipe(EE__namespace.safeCallback(() => JSON.stringify(data, null, params?.space)), EE__namespace.matchInformation({
+            "safe-callback-error": (value) => EE__namespace.left("file-system-write-json-file", value),
+            "safe-callback-success": (value) => fs
+                .writeFile(path, value, { encoding: "utf-8" })
+                .then(EE__namespace.ok)
+                .catch((value) => EE__namespace.left("file-system-write-json-file", value)),
+        }));
     },
-    DENO: (path, data, params) => utils.asyncPipe(EE__namespace.safeCallback(() => JSON.stringify(data, null, params?.space)), EE__namespace.whenIsRight((value) => Deno.writeTextFile(path, value)
-        .then(EE__namespace.ok)
-        .catch((value) => EE__namespace.left("file-system-write-json-file", value))), EE__namespace.whenIsLeft((value) => EE__namespace.left("file-system-write-json-file", value))),
-    BUN: (path, data, params) => utils.asyncPipe(EE__namespace.safeCallback(() => JSON.stringify(data, null, params?.space)), EE__namespace.whenIsRight((value) => Bun.file(path)
-        .write(value)
-        .then(EE__namespace.ok)
-        .catch((value) => EE__namespace.left("file-system-write-json-file", value))), EE__namespace.whenIsLeft((value) => EE__namespace.left("file-system-write-json-file", value))),
+    DENO: async (path, data, params) => utils.pipe(EE__namespace.safeCallback(() => JSON.stringify(data, null, params?.space)), EE__namespace.matchInformation({
+        "safe-callback-error": (value) => EE__namespace.left("file-system-write-json-file", value),
+        "safe-callback-success": (value) => Deno
+            .writeTextFile(path, value)
+            .then(EE__namespace.ok)
+            .catch((value) => EE__namespace.left("file-system-write-json-file", value)),
+    })),
+    BUN: async (path, data, params) => utils.pipe(EE__namespace.safeCallback(() => JSON.stringify(data, null, params?.space)), EE__namespace.matchInformation({
+        "safe-callback-error": (value) => EE__namespace.left("file-system-write-json-file", value),
+        "safe-callback-success": (value) => Bun.file(path)
+            .write(value)
+            .then(EE__namespace.ok)
+            .catch((value) => EE__namespace.left("file-system-write-json-file", value)),
+    })),
 });
 
 exports.writeJsonFile = writeJsonFile;

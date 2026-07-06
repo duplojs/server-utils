@@ -7,7 +7,7 @@ const parsedVariables = await environmentVariableOrThrow(
 		APPLICATION_PORT: DP.number(),
 	},
 	{
-		paths: [".env"],
+		includedFiles: [".env"],
 		override: false,
 		justRead: true,
 	},

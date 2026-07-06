@@ -24,7 +24,7 @@ describe("environmentVariableOrThrow", () => {
 				APP_NAME: DP.string(),
 			},
 			{
-				paths: ["/tmp/app.env"],
+				includedFiles: ["/tmp/app.env"],
 				override: false,
 				justRead: true,
 			},
@@ -55,7 +55,7 @@ describe("environmentVariableOrThrow", () => {
 					APP_NAME: DP.string(),
 				},
 				{
-					paths: ["/tmp/missing.env"],
+					includedFiles: ["/tmp/missing.env"],
 					override: false,
 					justRead: false,
 				},
@@ -75,7 +75,7 @@ describe("environmentVariableOrThrow", () => {
 					PORT: DP.number(),
 				},
 				{
-					paths: ["/tmp/app.env"],
+					includedFiles: ["/tmp/app.env"],
 					override: false,
 					justRead: false,
 				},

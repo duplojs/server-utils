@@ -13,7 +13,7 @@ const fromFiles = await environmentVariableOrThrow(
 		PORT: DP.coerce.number(),
 	},
 	{
-		paths: [".env", ".env.local"],
+		includedFiles: [".env", ".env.local"],
 		override: true,
 		justRead: true,
 	},
@@ -26,7 +26,7 @@ try {
 			PORT: DP.number(), // not a number (add coerce)
 		},
 		{
-			paths: [".env"],
+			includedFiles: [".env"],
 		},
 	);
 } catch (error) {

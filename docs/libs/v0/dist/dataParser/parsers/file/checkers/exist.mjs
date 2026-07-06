@@ -14,11 +14,11 @@ class DataParserCheckerFileExist extends DDP.DataParserCheckerBase.init(checkerF
     static execCheck(value, error, self, dataParser) {
         return callThen(value.stat(), (fileStatResult) => {
             if (EE.isLeft(fileStatResult)) {
-                return DDP.addIssue(error, "existing file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP.addIssue(error, "existing file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             const fileStat = unwrap(fileStatResult);
             if (!fileStat.isFile) {
-                return DDP.addIssue(error, "file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP.addIssue(error, "file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             return value;
         });

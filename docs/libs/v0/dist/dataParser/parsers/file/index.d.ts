@@ -17,7 +17,7 @@ export declare class DataParserFile<GenericDefinition extends DataParserDefiniti
         DDataParser.DataParserChecker<DDataParser.Output<this>>,
         ...DDataParser.DataParserChecker<DDataParser.Output<this>>[]
     ], GenericChecker>) => DataParserFile<DDataParser.AddCheckersToDefinition<GenericDefinition, GenericChecker>>;
-    static execParse(self: DataParserFile, data: unknown, error: DDataParser.DataParserError): DServerFile.FileInterface | typeof DDataParser.SymbolDataParserError;
+    static execParse(self: DataParserFile, data: unknown, error: DDataParser.DataParserError): unknown;
     static dataParserIsAsynchronous(self: DataParserFile): boolean;
     static prepareDefinition(definition?: Partial<DataParserDefinitionFile>): DataParserDefinitionFile;
     /**

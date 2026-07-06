@@ -17,7 +17,7 @@ const secondResult = await environmentVariable(
 		API_URL: DP.string(),
 	},
 	{
-		paths: [".env", ".env.local"],
+		includedFiles: [".env", ".env.local"],
 		override: true,
 		justRead: true,
 	},

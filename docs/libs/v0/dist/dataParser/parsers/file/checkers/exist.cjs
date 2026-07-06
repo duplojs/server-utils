@@ -36,11 +36,11 @@ class DataParserCheckerFileExist extends DDP__namespace.DataParserCheckerBase.in
     static execCheck(value, error, self, dataParser) {
         return utils.callThen(value.stat(), (fileStatResult) => {
             if (EE__namespace.isLeft(fileStatResult)) {
-                return DDP__namespace.addIssue(error, "existing file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP__namespace.addIssue(error, "existing file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             const fileStat = utils.unwrap(fileStatResult);
             if (!fileStat.isFile) {
-                return DDP__namespace.addIssue(error, "file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP__namespace.addIssue(error, "file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             return value;
         });

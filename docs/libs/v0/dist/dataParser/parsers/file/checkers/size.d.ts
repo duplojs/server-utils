@@ -14,7 +14,7 @@ declare const DataParserCheckerFileSize_base: DDataParser.DataParserCheckerBaseI
 export declare class DataParserCheckerFileSize extends DataParserCheckerFileSize_base<DataParserCheckerDefinitionFileSize, DServerFile.FileInterface> {
     get classConstructor(): typeof DataParserCheckerFileSize & DDataParser.CheckedConstructorKind;
     isAsynchronous(): boolean;
-    static execCheck(value: DServerFile.FileInterface, error: DDataParser.DataParserError, self: DataParserCheckerFileSize, dataParser: DDataParser.DataParser): Promise<DServerFile.FileInterface | typeof DDataParser.SymbolDataParserError>;
+    static execCheck(value: DServerFile.FileInterface, error: DDataParser.DataParserError, self: DataParserCheckerFileSize, dataParser: DDataParser.DataParser): unknown;
     /**
      * Creates a checker that validates the size of an existing file.
      * 

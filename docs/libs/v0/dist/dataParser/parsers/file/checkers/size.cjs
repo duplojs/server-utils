@@ -36,19 +36,19 @@ class DataParserCheckerFileSize extends DDP__namespace.DataParserCheckerBase.ini
     static execCheck(value, error, self, dataParser) {
         return utils.callThen(value.stat(), (fileStatResult) => {
             if (EE__namespace.isLeft(fileStatResult)) {
-                return DDP__namespace.addIssue(error, "existing file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP__namespace.addIssue(error, "existing file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             const fileStat = utils.unwrap(fileStatResult);
             if (!fileStat.isFile) {
-                return DDP__namespace.addIssue(error, "file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP__namespace.addIssue(error, "file", value, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             if (self.definition.max !== undefined
                 && fileStat.sizeBytes > self.definition.max) {
-                return DDP__namespace.addIssue(error, `file with sizeBytes <= ${self.definition.max}`, fileStat.sizeBytes, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP__namespace.addIssue(error, `file with sizeBytes <= ${self.definition.max}`, fileStat.sizeBytes, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             if (self.definition.min !== undefined
                 && fileStat.sizeBytes < self.definition.min) {
-                return DDP__namespace.addIssue(error, `file with sizeBytes >= ${self.definition.min}`, fileStat.sizeBytes, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+                return DDP__namespace.addIssue(error, `file with sizeBytes >= ${self.definition.min}`, fileStat.sizeBytes, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
             }
             return value;
         });

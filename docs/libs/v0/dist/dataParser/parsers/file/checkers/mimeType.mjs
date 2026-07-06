@@ -16,7 +16,7 @@ class DataParserCheckerFileMimeType extends DDP.DataParserCheckerBase.init(check
                 .definition
                 .mimeType
                 .test(value.getMimeType() ?? "")) {
-            return DDP.addIssue(error, `file with mime type matching ${self.definition.mimeType.source}`, value, self.definition.errorMessage ?? dataParser.definition.errorMessage);
+            return DDP.addIssue(error, `file with mime type matching ${self.definition.mimeType.source}`, value, self.definition.errorMessage ?? dataParser.definition.errorMessage, self);
         }
         return value;
     }

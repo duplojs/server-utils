@@ -124,7 +124,7 @@ describe("bun integration", () => {
 					ESCAPED: DP.string(),
 				},
 				{
-					paths: [envApplicationPath, envServicePath],
+					includedFiles: [envApplicationPath, envServicePath],
 					override: false,
 					justRead: false,
 				},
@@ -159,7 +159,7 @@ describe("bun integration", () => {
 					NEW_KEY: DP.string(),
 				},
 				{
-					paths: [envApplicationPath, envServicePath, envRuntimePath],
+					includedFiles: [envApplicationPath, envServicePath, envRuntimePath],
 					override: true,
 					justRead: false,
 				},
@@ -191,7 +191,7 @@ describe("bun integration", () => {
 					COMPOSED: DP.string(),
 				},
 				{
-					paths: [envApplicationPath, envRuntimePath],
+					includedFiles: [envApplicationPath, envRuntimePath],
 					override: true,
 					justRead: true,
 				},

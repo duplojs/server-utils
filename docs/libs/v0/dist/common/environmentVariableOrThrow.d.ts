@@ -1,7 +1,7 @@
 import * as EE from "@duplojs/utils/either";
 import type * as DDP from "@duplojs/utils/dataParser";
 import type * as SF from "../file";
-import { type EnvironmentVariableParams } from "./environmentVariable";
+import { type EnvironmentVariableFileParams } from "./environmentVariable";
 declare const EnvironmentVariableError_base: new (params: {
     "@DuplojsServerUtils/environment-variable-error"?: unknown;
 }, parentParams: readonly [message?: string | undefined, options?: ErrorOptions | undefined]) => Error & import("@duplojs/utils").Kind<import("@duplojs/utils").KindDefinition<"@DuplojsServerUtils/environment-variable-error", unknown>, unknown> & import("@duplojs/utils").Kind<import("@duplojs/utils").KindDefinition<"environment-variable-error", unknown>, unknown>;
@@ -27,7 +27,7 @@ export declare class EnvironmentVariableError extends EnvironmentVariableError_b
  * 		PORT: DP.coerce.number(),
  * 	},
  * 	{
- * 		paths: [".env", ".env.local"],
+ * 		includedFiles: [".env", ".env.local"],
  * 		override: true,
  * 		justRead: true,
  * 	},
@@ -40,7 +40,7 @@ export declare class EnvironmentVariableError extends EnvironmentVariableError_b
  * 			PORT: DP.number(), // not a number (add coerce)
  * 		},
  * 		{
- * 			paths: [".env"],
+ * 			includedFiles: [".env"],
  * 		},
  * 	);
  * } catch (error) {
@@ -56,5 +56,5 @@ export declare class EnvironmentVariableError extends EnvironmentVariableError_b
  * @see https://server-utils.duplojs.dev/en/v0/api/common/environmentVariableOrThrow
  * @see https://server-utils.duplojs.dev/en/v0/api/common/environmentVariable
  */
-export declare function environmentVariableOrThrow<GenericShape extends DDP.DataParserObjectShape>(shape: GenericShape, params?: EnvironmentVariableParams): Promise<DDP.DataParserObjectShapeOutput<GenericShape>>;
+export declare function environmentVariableOrThrow<GenericShape extends DDP.DataParserObjectShape>(shape: GenericShape, envFileParams?: EnvironmentVariableFileParams): Promise<DDP.DataParserObjectShapeOutput<GenericShape>>;
 export {};

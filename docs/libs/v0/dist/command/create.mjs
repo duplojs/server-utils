@@ -117,7 +117,7 @@ function create(...args) {
                 }
                 await execute({ options: commandOptions.options });
             }
-            return void exitProcess(0);
+            return;
         },
     });
     return self;

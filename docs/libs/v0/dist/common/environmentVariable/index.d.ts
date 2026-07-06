@@ -1,7 +1,10 @@
 import { DP, E } from "@duplojs/utils";
 import type * as SF from "../../file";
-export interface EnvironmentVariableParams {
-    /** Env file paths to read and merge with runtime environment variables. */
+export interface EnvironmentVariableFileParams {
+    includedFiles?: string[];
+    /**
+     * @deprecated This property has been replaced by `includedFiles`.
+     */
     paths?: string[];
     /**
      * Allow values from env files to replace existing runtime environment values.
@@ -14,9 +17,13 @@ export interface EnvironmentVariableParams {
      */
     justRead?: boolean;
 }
+/**
+ * @deprecated Use `EnvironmentVariableFileParams` instead.
+ */
+export type EnvironmentVariableParams = EnvironmentVariableFileParams;
 declare module "../../implementor" {
     interface ServerUtilsFunction {
-        environmentVariable<GenericShape extends DP.DataParserObjectShape>(shape: GenericShape, params?: EnvironmentVariableParams): Promise<E.Success<DP.DataParserObjectShapeOutput<GenericShape>> | SF.FileSystemLeft<"read-text-file"> | E.Error<DP.DataParserError>>;
+        environmentVariable<GenericShape extends DP.DataParserObjectShape>(shape: GenericShape, envFileParams?: EnvironmentVariableFileParams): Promise<E.Success<DP.DataParserObjectShapeOutput<GenericShape>> | SF.FileSystemLeft<"read-text-file"> | E.Error<DP.DataParserError>>;
     }
 }
 /**
@@ -37,7 +44,7 @@ declare module "../../implementor" {
  * 		PORT: DP.coerce.number(),
  * 	},
  * 	{
- * 		paths: [".env", ".env.local"],
+ * 		includedFiles: [".env", ".env.local"],
  * 		override: true,
  * 		justRead: true, // not override runtime env
  * 	},
@@ -62,4 +69,4 @@ declare module "../../implementor" {
  * @see https://server-utils.duplojs.dev/en/v0/api/common/environmentVariable
  * 
  */
-export declare const environmentVariable: <GenericShape extends DP.DataParserObjectShape>(shape: GenericShape, params?: EnvironmentVariableParams) => Promise<E.Success<DP.DataParserObjectShapeOutput<GenericShape>> | SF.FileSystemLeft<"read-text-file"> | E.Error<DP.DataParserError>>;
+export declare const environmentVariable: <GenericShape extends DP.DataParserObjectShape>(shape: GenericShape, envFileParams?: EnvironmentVariableFileParams) => Promise<E.Success<DP.DataParserObjectShapeOutput<GenericShape>> | SF.FileSystemLeft<"read-text-file"> | E.Error<DP.DataParserError>>;

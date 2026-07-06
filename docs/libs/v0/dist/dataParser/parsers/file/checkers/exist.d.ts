@@ -7,7 +7,7 @@ declare const DataParserCheckerFileExist_base: DDataParser.DataParserCheckerBase
 export declare class DataParserCheckerFileExist extends DataParserCheckerFileExist_base<DataParserCheckerDefinitionFileExist, DServerFile.FileInterface> {
     get classConstructor(): typeof DataParserCheckerFileExist & DDataParser.CheckedConstructorKind;
     isAsynchronous(): boolean;
-    static execCheck(value: DServerFile.FileInterface, error: DDataParser.DataParserError, self: DataParserCheckerFileExist, dataParser: DDataParser.DataParser): Promise<DServerFile.FileInterface | typeof DDataParser.SymbolDataParserError>;
+    static execCheck(value: DServerFile.FileInterface, error: DDataParser.DataParserError, self: DataParserCheckerFileExist, dataParser: DDataParser.DataParser): unknown;
     /**
      * Creates a checker that requires an existing regular file.
      * 

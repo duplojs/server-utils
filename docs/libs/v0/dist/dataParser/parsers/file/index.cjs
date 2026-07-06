@@ -35,7 +35,7 @@ class DataParserFile extends DDP__namespace.DataParserBase.init(fileKind) {
             fileInterface$1 = fileInterface.createFileInterface(fileInterface$1);
         }
         if (!fileInterface.isFileInterface(fileInterface$1)) {
-            return DDP__namespace.addIssue(error, "file", data, self.definition.errorMessage);
+            return DDP__namespace.addIssue(error, "file", data, self.definition.errorMessage, self);
         }
         return fileInterface$1;
     }

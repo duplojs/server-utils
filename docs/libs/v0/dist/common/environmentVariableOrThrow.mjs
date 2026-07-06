@@ -13,8 +13,8 @@ class EnvironmentVariableError extends kindHeritage("environment-variable-error"
 /**
  * {@include common/environmentVariableOrThrow/index.md}
  */
-async function environmentVariableOrThrow(shape, params) {
-    const result = await environmentVariable(shape, params);
+async function environmentVariableOrThrow(shape, envFileParams) {
+    const result = await environmentVariable(shape, envFileParams);
     if (EE.isLeft(result)) {
         throw new EnvironmentVariableError(result);
     }

@@ -5,9 +5,13 @@ import { parseEnvironmentFiles } from "./parseEnvironmentFiles";
 import { expandEnvironmentVariables } from "./expandEnvironmentVariables";
 import { overrideEnvironmentVariables } from "./overrideEnvironmentVariables";
 
-export interface EnvironmentVariableParams {
+export interface EnvironmentVariableFileParams {
 
-	/** Env file paths to read and merge with runtime environment variables. */
+	includedFiles?: string[];
+
+	/**
+	 * @deprecated This property has been replaced by `includedFiles`.
+	 */
 	paths?: string[];
 
 	/**
@@ -23,13 +27,18 @@ export interface EnvironmentVariableParams {
 	justRead?: boolean;
 }
 
+/**
+ * @deprecated Use `EnvironmentVariableFileParams` instead.
+ */
+export type EnvironmentVariableParams = EnvironmentVariableFileParams;
+
 declare module "@scripts/implementor" {
 	interface ServerUtilsFunction {
 		environmentVariable<
 			GenericShape extends DP.DataParserObjectShape,
 		>(
 			shape: GenericShape,
-			params?: EnvironmentVariableParams,
+			envFileParams?: EnvironmentVariableFileParams,
 		): Promise<
 			| E.Success<DP.DataParserObjectShapeOutput<GenericShape>>
 			| SF.FileSystemLeft<"read-text-file">
@@ -44,7 +53,7 @@ declare module "@scripts/implementor" {
 export const environmentVariable = implementFunction(
 	"environmentVariable",
 	{
-		NODE: async(shape, params) => {
+		NODE: async(shape, envFileParams) => {
 			const baseEnv = pipe(
 				process.env,
 				O.entries,
@@ -54,7 +63,7 @@ export const environmentVariable = implementFunction(
 
 			const parseEnvFileResult = await parseEnvironmentFiles(
 				baseEnv,
-				params?.paths ?? [],
+				envFileParams?.includedFiles ?? envFileParams?.paths ?? [],
 			);
 
 			if (E.isLeft(parseEnvFileResult)) {
@@ -63,7 +72,7 @@ export const environmentVariable = implementFunction(
 
 			const overrideEnvResult = overrideEnvironmentVariables(
 				parseEnvFileResult,
-				params?.override ?? false,
+				envFileParams?.override ?? false,
 			);
 
 			const expandEnvResult = expandEnvironmentVariables(overrideEnvResult);
@@ -75,16 +84,16 @@ export const environmentVariable = implementFunction(
 				return parsedEnvResult;
 			}
 
-			if (params?.justRead !== true) {
+			if (envFileParams?.justRead !== true) {
 				process.env = unwrap(expandEnvResult);
 			}
 
 			return parsedEnvResult;
 		},
-		DENO: async(shape, params) => {
+		DENO: async(shape, envFileParams) => {
 			const parseEnvFileResult = await parseEnvironmentFiles(
 				Deno.env.toObject(),
-				params?.paths ?? [],
+				envFileParams?.includedFiles ?? envFileParams?.paths ?? [],
 			);
 
 			if (E.isLeft(parseEnvFileResult)) {
@@ -93,7 +102,7 @@ export const environmentVariable = implementFunction(
 
 			const overrideEnvResult = overrideEnvironmentVariables(
 				parseEnvFileResult,
-				params?.override ?? false,
+				envFileParams?.override ?? false,
 			);
 
 			const expandEnvResult = expandEnvironmentVariables(overrideEnvResult);
@@ -105,7 +114,7 @@ export const environmentVariable = implementFunction(
 				return parsedEnvResult;
 			}
 
-			if (params?.justRead !== true) {
+			if (envFileParams?.justRead !== true) {
 				for (const [key, value] of O.entries(expandEnvResult)) {
 					if (value) {
 						Deno.env.set(key, value);
