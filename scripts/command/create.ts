@@ -300,7 +300,7 @@ export function create(
 					await execute({ options: commandOptions.options });
 				}
 
-				return void exitProcess(0);
+				return;
 			},
 		} satisfies RemoveKind<Command>,
 	);

@@ -12,16 +12,14 @@ describe("exec", () => {
 	it("executes root command without params", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue([]);
-		const exitSpy = vi.fn();
 		const executeSpy = vi.fn();
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
-		TESTImplementation.set("exitProcess", exitSpy);
 
 		const promise = DServerCommand.exec(executeSpy);
 
 		type _CheckPromise = ExpectType<
 			typeof promise,
-			Promise<never>,
+			Promise<void>,
 			"strict"
 		>;
 
@@ -29,16 +27,13 @@ describe("exec", () => {
 
 		expect(getProcessArgumentsSpy).toHaveBeenCalledTimes(1);
 		expect(executeSpy).toHaveBeenCalledWith({ options: {} });
-		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
 	it("executes with options and wrapped arguments", async() => {
 		setEnvironment("TEST");
 		const getProcessArgumentsSpy = vi.fn().mockReturnValue(["--verbose", "subject"]);
-		const exitSpy = vi.fn();
 		const executeSpy = vi.fn();
 		TESTImplementation.set("getProcessArguments", getProcessArgumentsSpy);
-		TESTImplementation.set("exitProcess", exitSpy);
 
 		await DServerCommand.exec(
 			{
@@ -66,7 +61,6 @@ describe("exec", () => {
 			options: { verbose: true },
 			args: { name: "subject" },
 		});
-		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
 	it("prints interpreted error and exits with code 1 on command error", async() => {

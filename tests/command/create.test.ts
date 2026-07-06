@@ -25,24 +25,19 @@ describe("create", () => {
 		expect(command.subject).toBeNull();
 	});
 
-	it("executes simple command and exits 0", async() => {
+	it("executes simple command", async() => {
 		setEnvironment("TEST");
-		const exitSpy = vi.fn();
 		const executeSpy = vi.fn();
-		TESTImplementation.set("exitProcess", exitSpy);
 
 		const command = DServerCommand.create("root", () => executeSpy());
-		await command.execute([], createError("root"));
 
+		await expect(command.execute([], createError("root"))).resolves.toBeUndefined();
 		expect(executeSpy).toHaveBeenCalledTimes(1);
-		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
 	it("infers options and wrapped args types", async() => {
 		setEnvironment("TEST");
-		const exitSpy = vi.fn();
 		const executeSpy = vi.fn();
-		TESTImplementation.set("exitProcess", exitSpy);
 
 		const command = DServerCommand.create(
 			"root",
@@ -83,14 +78,11 @@ describe("create", () => {
 				tag: "x",
 			},
 		});
-		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
 	it("preserves declared argument order", async() => {
 		setEnvironment("TEST");
-		const exitSpy = vi.fn();
 		const executeSpy = vi.fn();
-		TESTImplementation.set("exitProcess", exitSpy);
 
 		const command = DServerCommand.create(
 			"root",
@@ -108,7 +100,6 @@ describe("create", () => {
 			first: "A",
 			second: "B",
 		});
-		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
 	it("returns command error on argument count mismatch", async() => {
@@ -161,10 +152,8 @@ describe("create", () => {
 
 	it("dispatches to matching child command", async() => {
 		setEnvironment("TEST");
-		const exitSpy = vi.fn();
 		const childSpy = vi.fn();
 		const rootSpy = vi.fn();
-		TESTImplementation.set("exitProcess", exitSpy);
 
 		const child = DServerCommand.create("child", () => childSpy());
 		const root = DServerCommand.create("root", { subjects: [child] }, () => rootSpy());
@@ -173,7 +162,6 @@ describe("create", () => {
 
 		expect(childSpy).toHaveBeenCalledTimes(1);
 		expect(rootSpy).not.toHaveBeenCalled();
-		expect(exitSpy).toHaveBeenCalledWith(0);
 	});
 
 	it("returns unknown child command error", async() => {

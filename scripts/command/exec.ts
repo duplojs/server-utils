@@ -26,7 +26,7 @@ export type ExecCommandParams<
  */
 export function exec(
 	execute: () => void,
-): Promise<never>;
+): Promise<void>;
 
 export function exec<
 	const GenericOptions extends AnyTuple<Option> = never,
@@ -42,7 +42,7 @@ export function exec<
 			Extract<GenericSubjects, AnyTuple<Argument>>
 		>,
 	) => MaybePromise<void>,
-): Promise<never>;
+): Promise<void>;
 
 export async function exec(
 	...args: [AnyFunction] | [ExecCommandParams, AnyFunction]
