@@ -2,6 +2,7 @@ Return the current working directory.
 
 Return an Either containing the current path for the current runtime,
 or an error if the working directory cannot be read.
+Errors are returned in the Either result.
 
 ```ts
 {@include common/getCurrentWorkDirectory/example.ts[3,11]}

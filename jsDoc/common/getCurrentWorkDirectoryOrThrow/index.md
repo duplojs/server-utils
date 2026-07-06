@@ -1,6 +1,7 @@
 Return the current working directory or throw.
 
 Return the current path directly and throw if the runtime cannot read it.
+Errors are thrown by the runtime.
 
 ```ts
 {@include common/getCurrentWorkDirectoryOrThrow/example.ts[3,11]}

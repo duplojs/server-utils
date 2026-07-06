@@ -7,6 +7,7 @@ Return runtime arguments after the executable/script part, as a `string[]` ready
 ```
 
 @remarks
-On Node.js and Bun, arguments are memoized after the first call.
+On Node.js and Bun, arguments are captured on the first call.
+Later calls return the same array, even if the runtime arguments change.
 
 @see https://server-utils.duplojs.dev/en/v0/api/common/getProcessArguments

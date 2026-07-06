@@ -18,7 +18,7 @@ const fromFiles = await environmentVariableOrThrow(
 		justRead: true,
 	},
 );
-// { APP_NAME: string; API_URL: string; PORT: number;}
+// { APP_NAME: string; API_URL: string; PORT: number; }
 
 try {
 	await environmentVariableOrThrow(

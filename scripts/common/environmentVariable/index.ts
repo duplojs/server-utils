@@ -7,6 +7,9 @@ import { overrideEnvironmentVariables } from "./overrideEnvironmentVariables";
 
 export interface EnvironmentVariableFileParams {
 
+	/**
+	 * {@include common/environmentVariable/properties/includedFiles.md}
+	 */
 	includedFiles?: string[];
 
 	/**
@@ -15,14 +18,12 @@ export interface EnvironmentVariableFileParams {
 	paths?: string[];
 
 	/**
-	 * Allow values from env files to replace existing runtime environment values.
-	 * @default false
+	 * {@include common/environmentVariable/properties/override.md}
 	 */
 	override?: boolean;
 
 	/**
-	 * Parse and validate values without writing resolved variables back to the runtime environment.
-	 * @default false
+	 * {@include common/environmentVariable/properties/justRead.md}
 	 */
 	justRead?: boolean;
 }

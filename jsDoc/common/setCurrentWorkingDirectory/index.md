@@ -1,8 +1,9 @@
 Change the current working directory.
 
 Update the current directory using a string path,
-and return an Either ok/fail based on the result.
-Use `setCurrentWorkingDirectoryOrThrow` if you prefer an exception-based failure flow.
+and return `E.Ok` when the runtime accepts the change.
+Return `E.Fail` when it cannot switch to that path.
+Errors are returned in the Either result.
 
 ```ts
 {@include common/setCurrentWorkingDirectory/example.ts[3,11]}

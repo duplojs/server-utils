@@ -1,11 +1,11 @@
 import { setCurrentWorkingDirectory } from "@scripts";
 
 setCurrentWorkingDirectory("/tmp/project");
-// Either ok/fail.
+// E.Ok | E.Fail
 
 setCurrentWorkingDirectory("/tmp/another-project");
-// Either ok/fail.
+// E.Ok | E.Fail
 
 const workingDirectory = "/tmp/third-project";
 setCurrentWorkingDirectory(workingDirectory);
-// Either ok/fail.
+// E.Ok | E.Fail
