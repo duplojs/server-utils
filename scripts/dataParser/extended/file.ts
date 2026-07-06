@@ -80,6 +80,10 @@ export class DataParserFileExtended<
 	 * {@include dataParserExtended/file/mimeType/index.md}
 	 */
 	public mimeType(
+
+		/**
+		 * {@include dataParserExtended/file/mimeType/parameters/mimeType.md}
+		 */
 		mimeType: RegExp | string | AnyTuple<string>,
 		definition?: Partial<
 			Omit<dataParsers.DataParserCheckerDefinitionFileMimeType, "mimeType">

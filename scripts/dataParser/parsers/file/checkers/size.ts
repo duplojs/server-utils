@@ -10,7 +10,15 @@ export interface DataParserCheckerDefinitionFileSize extends DDataParser.DataPar
 }
 
 export interface DataParserCheckerFileSizeInput {
+
+	/**
+	 * {@include dataParser/file/checkers/size/properties/min.md}
+	 */
 	min?: number | BytesInString;
+
+	/**
+	 * {@include dataParser/file/checkers/size/properties/max.md}
+	 */
 	max?: number | BytesInString;
 }
 

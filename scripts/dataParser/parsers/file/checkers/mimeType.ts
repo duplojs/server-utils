@@ -52,6 +52,10 @@ export class DataParserCheckerFileMimeType extends DDataParser.DataParserChecker
 	 * {@include dataParser/file/checkers/mimeType/index.md}
 	 */
 	public static override create(
+
+		/**
+		 * {@include dataParser/file/checkers/mimeType/parameters/mimeType.md}
+		 */
 		mimeType: RegExp | string | AnyTuple<string>,
 		definition: Partial<
 			Omit<DataParserCheckerDefinitionFileMimeType, "mimeType">

@@ -1,13 +1,19 @@
-Creates a data parser for `FileInterface` values.
+Creates a classic parser for `FileInterface` values.
 
-The parser validates `FileInterface` inputs and supports path coercion through `SDP.coerce.file()`. File-specific constraints are composed with the `checkers` definition property or `.addChecker(...)`.
+Signature: `SDP.file(definition?)` -> `DataParserFile`
+
+The parser accepts `FileInterface` values.
+With `coerce: true`, string paths are also converted to `FileInterface`.
+File checkers can be added with `checkers` or `.addChecker(...)`.
 
 ```ts
 {@include dataParser/file/example.ts[3,23]}
 ```
 
 @remarks
-Use `asyncParse` when the parser contains asynchronous checkers such as `checkerFileExist` or `checkerFileSize`.
+- Parsed output is always `FileInterface`.
+- `checkerFileExist` and `checkerFileSize` make the parser asynchronous.
+- The `definition` property stores the internal DataParser definition.
 
 @see https://server-utils.duplojs.dev/en/v0/api/dataParser/file
 @namespace SDP
