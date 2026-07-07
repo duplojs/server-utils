@@ -4,6 +4,7 @@ import { DP } from "@duplojs/utils";
 await SC.exec(() => {
 	// called for an empty root command
 });
+// CLI: tsx ./cli.ts
 
 await SC.exec(
 	{
@@ -15,6 +16,7 @@ await SC.exec(
 		}
 	},
 );
+// CLI: tsx ./cli.ts -v
 
 await SC.exec(
 	{
@@ -25,3 +27,4 @@ await SC.exec(
 		// taskName: string
 	},
 );
+// CLI: tsx ./cli.ts build

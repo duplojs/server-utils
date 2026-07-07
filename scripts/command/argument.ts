@@ -37,6 +37,10 @@ export function createArgument<
 	spec: GenericEligibleSpec,
 	params?: {
 		readonly description?: string;
+
+		/**
+		 * {@include command/createArgument/properties/optional.md}
+		 */
 		readonly optional?: false;
 	},
 ): Argument<GenericName, EligibleSpecOutput<GenericEligibleSpec>>;
@@ -49,6 +53,10 @@ export function createArgument<
 	spec: GenericEligibleSpec,
 	params?: {
 		readonly description?: string;
+
+		/**
+		 * {@include command/createArgument/properties/optional.md}
+		 */
 		readonly optional: boolean;
 	},
 ): Argument<GenericName, EligibleSpecOutput<GenericEligibleSpec> | undefined>;

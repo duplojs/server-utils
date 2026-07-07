@@ -27,6 +27,10 @@ export function createBooleanOption<
 	name: GenericName,
 	params?: {
 		description?: string;
+
+		/**
+		 * {@include command/properties/aliases.md}
+		 */
 		aliases?: readonly string[];
 	},
 ): BooleanOption<GenericName> {

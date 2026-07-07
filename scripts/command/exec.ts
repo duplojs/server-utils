@@ -15,7 +15,7 @@ export type ExecCommandParams<
 	> & {
 
 		/**
-		 * @default "root"
+		 * {@include command/exec/properties/displayName.md}
 		 */
 		displayName?: string;
 	}

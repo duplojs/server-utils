@@ -49,10 +49,30 @@ export function createArrayOption<
 	spec: GenericSpec,
 	params: {
 		description?: string;
+
+		/**
+		 * {@include command/properties/aliases.md}
+		 */
 		aliases?: readonly string[];
+
+		/**
+		 * {@include command/createArrayOption/properties/min.md}
+		 */
 		min?: GenericMinValues;
+
+		/**
+		 * {@include command/createArrayOption/properties/max.md}
+		 */
 		max?: number;
+
+		/**
+		 * {@include command/properties/requiredOption.md}
+		 */
 		required: true;
+
+		/**
+		 * {@include command/createArrayOption/properties/separator.md}
+		 */
 		separator?: string;
 	},
 ): ArrayOption<
@@ -75,10 +95,30 @@ export function createArrayOption<
 	spec: GenericSpec,
 	params?: {
 		description?: string;
+
+		/**
+		 * {@include command/properties/aliases.md}
+		 */
 		aliases?: readonly string[];
+
+		/**
+		 * {@include command/properties/requiredOption.md}
+		 */
 		required?: boolean;
+
+		/**
+		 * {@include command/createArrayOption/properties/min.md}
+		 */
 		min?: GenericMinValues;
+
+		/**
+		 * {@include command/createArrayOption/properties/max.md}
+		 */
 		max?: number;
+
+		/**
+		 * {@include command/createArrayOption/properties/separator.md}
+		 */
 		separator?: string;
 	},
 ): ArrayOption<

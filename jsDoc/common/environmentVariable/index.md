@@ -10,7 +10,7 @@ When `override` is `true`, file values can replace runtime values.
 
 After the merge, references like `${HOST}` are replaced with the final value of `HOST`.
 Missing references and circular references become an empty string.
-Escaped dollar references keep their `$`.
+Escaped dollar references keep their `$$`.
 
 When validation succeeds, the parsed object is returned in `E.Success`.
 Unless `justRead` is `true`, the final environment is also written back to the runtime.

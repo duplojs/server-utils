@@ -42,7 +42,15 @@ export function createOption<
 	spec: GenericSpec,
 	params: {
 		description?: string;
+
+		/**
+		 * {@include command/properties/aliases.md}
+		 */
 		aliases?: readonly string[];
+
+		/**
+		 * {@include command/properties/requiredOption.md}
+		 */
 		required: true;
 	},
 ): SimpleOption<GenericName, GenericOutput>;
@@ -56,7 +64,15 @@ export function createOption<
 	spec: GenericSpec,
 	params?: {
 		description?: string;
+
+		/**
+		 * {@include command/properties/aliases.md}
+		 */
 		aliases?: readonly string[];
+
+		/**
+		 * {@include command/properties/requiredOption.md}
+		 */
 		required?: boolean;
 	},
 ): SimpleOption<GenericName, GenericOutput | undefined>;

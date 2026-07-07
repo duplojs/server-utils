@@ -11,6 +11,7 @@ const portOption = SC.createOption(
 );
 const portResult = await SC.execOptions(portOption);
 // portResult.port: number
+// CLI: tsx ./server.ts --port=3000
 
 const tagOption = SC.createArrayOption(
 	"tag",
@@ -24,3 +25,4 @@ const forceOption = SC.createBooleanOption("force");
 
 const options = await SC.execOptions(tagOption, forceOption);
 // options.tag: string[] | undefined
+// CLI: tsx ./batch.ts -t=api,worker --force

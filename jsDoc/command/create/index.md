@@ -1,17 +1,16 @@
 Create a command node.
 
-Use this builder to define a command name, optional options, optional command subjects, and the execute handler called after parsing.
+Create a command with a name, options, subjects, and a handler.
+The handler runs after parsing.
 
 ```ts
 {@include command/create/example.ts[4,40]}
 ```
 
 @remarks
-`subjects` accepts either:
-- an array of `createArgument(...)` for positional arguments
-- an array of child commands for nested command trees
-
-When positional arguments are used, parsed values are exposed as `args` in the execute callback.
+`subjects` can be a list of arguments or a list of child commands.
+Arguments are read in order and exposed as `args`.
+With child commands, the first remaining value selects the child command.
 
 @see https://server-utils.duplojs.dev/en/v0/api/command/create
 @namespace SC

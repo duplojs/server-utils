@@ -64,6 +64,10 @@ export interface CreateCommandParams<
 		& GenericOptions
 		& ForbiddenDuplicateName<GenericOptions, "option">
 	);
+
+	/**
+	 * {@include command/create/properties/subjects.md}
+	 */
 	subjects?: (
 		& GenericSubject
 		& (
